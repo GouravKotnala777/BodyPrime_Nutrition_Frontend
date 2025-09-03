@@ -18,8 +18,8 @@ function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
                 <NavLink to="/home" className="nav_item">Home</NavLink>
                 <NavLink to="/profile" className="nav_item">Profile</NavLink>
                 <NavLink to="/orders" className="nav_item">Orders</NavLink>
-                <NavLink to="/signup" className="nav_item">Register</NavLink>
-                <NavLink to="/signin" className="nav_item">Login</NavLink>
+                <NavLink to="/register" className="nav_item">Register</NavLink>
+                <NavLink to="/login" className="nav_item">Login</NavLink>
                 </nav>
             </section>
             <section className="ham_section hidden w-[30px] h-[30px] relative">
