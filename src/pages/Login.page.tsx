@@ -1,18 +1,31 @@
+import { useState, type ChangeEvent, type MouseEvent } from "react";
 import { NavLink } from "react-router-dom";
+import { login, type LoginFormTypes } from "../apis/user.api";
 
 
 function Login() {
+    const [formData, setFormData] = useState<LoginFormTypes>({email:"", password:""});
+
+    function onChangeHandler(e:ChangeEvent<HTMLInputElement>) {
+        setFormData({...formData, [e.target.name]:e.target.value})
+    };
+
+    async function onClickHandler(e:MouseEvent<HTMLButtonElement>) {
+        const res = await login(formData);
+
+        console.log(res);
+    };
 
     return(
         <section className="login_section flex flex-col items-center gap-10 p-10">
             <h1 className="text-4xl font-bold">Login Page</h1>
             <label>
-                <input type="text" placeholder="Email" className="p-2 bg-amber-100" />
+                <input type="text" name="email" placeholder="Email" className="p-2 bg-amber-100" onChange={onChangeHandler} />
             </label>
             <label>
-                <input type="text" placeholder="Password" className="p-2 bg-amber-100" />
+                <input type="text" name="password" placeholder="Password" className="p-2 bg-amber-100" onChange={onChangeHandler} />
             </label>
-            <button className="p-2 bg-black text-white px-8 rounded-[8px]">Login</button>
+            <button className="p-2 bg-black text-white px-8 rounded-[8px]" onClick={onClickHandler}>Login</button>
 
             <section className="w-full">
             <div className="flex justify-between items-center">
