@@ -1,0 +1,18 @@
+
+
+
+@media screen and (width <= 700px) {
+    .header{
+        .nav_section{
+            display: none;
+            .nav_nav{
+                .nav_item{
+                    font-size: 1rem;
+                }
+            }
+        }
+        .ham_section{
+            display: block;
+        }
+    }
+}

@@ -4,6 +4,7 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  font-size: 18px;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,4 +16,10 @@ body {
   padding: 0;
   box-sizing: border-box;
   border: 2px solid red;
+}
+
+@media screen and (width <= 750px) {
+  :root {
+    font-size: 14px;
+  }
 }
