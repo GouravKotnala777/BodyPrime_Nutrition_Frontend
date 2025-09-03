@@ -1,5 +1,10 @@
 
-
+.header{
+    background: linear-gradient(90deg, #f44769, #f46a47);
+}
+.sidebar_aside{
+    background-color:rgba(0,0,0,0.78);
+}
 
 @media screen and (width <= 700px) {
     .header{
