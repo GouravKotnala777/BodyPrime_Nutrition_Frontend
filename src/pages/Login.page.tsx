@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type MouseEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { NavLink } from "react-router-dom";
 import type { LoginFormTypes } from "../utils/types";
 import { login } from "../apis/user.api";
@@ -11,7 +11,7 @@ function Login() {
         setFormData({...formData, [e.target.name]:e.target.value})
     };
 
-    async function onClickHandler(e:MouseEvent<HTMLButtonElement>) {
+    async function onClickHandler() {
         const res = await login(formData);
 
         console.log(res);

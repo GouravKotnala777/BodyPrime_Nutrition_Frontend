@@ -2,9 +2,6 @@ import { NavLink } from "react-router-dom";
 import vite from "/public/vite.svg";
 import RatingStars from "./RatingStars.component";
 import { addToLocalCart } from "../utils/functions";
-import { useState } from "react";
-
-const rating = 3.5;
 
 interface ProductCardPropTypes{
     productID:string;
@@ -18,7 +15,6 @@ interface ProductCardPropTypes{
 };
 
 function ProductCard({productID, name, brand, category, price, rating, numReviews, weight}:ProductCardPropTypes) {
-    const [quantity, setQuantity] = useState<number>(1);
 
     
     return(
@@ -37,7 +33,7 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                 <div>{rating} <RatingStars rating={rating} outOf={5} /> ({numReviews})</div>
                 <div className="text-[2rem] font-semibold flex gap-0.5"><span className="text-[1rem] font-normal">₹</span>{price}</div>
                 <div>Free delivery <span className="font-semibold">Thu, 11 Sept</span></div>
-                <button className="bg-yellow-300 rounded-2xl w-full py-2 mt-auto" onClick={() => addToLocalCart({productID, quantity})}>Add to cart</button>
+                <button className="bg-yellow-300 rounded-2xl w-full py-2 mt-auto" onClick={() => addToLocalCart({productID, quantity:1})}>Add to cart</button>
             </div>
         </div>
     )

@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type MouseEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { NavLink } from "react-router-dom";
 import { type RegisterFormTypes } from "../utils/types";
 import { register } from "../apis/user.api";
@@ -10,7 +10,7 @@ function Register() {
     function onChangeHandler(e:ChangeEvent<HTMLInputElement|HTMLSelectElement>) {
         setFormData({...formData, [e.target.name]:e.target.name});        
     };
-    async function onClickHandler(e:MouseEvent<HTMLButtonElement>) {
+    async function onClickHandler() {
         const res = await register(formData);
 
         console.log(res);

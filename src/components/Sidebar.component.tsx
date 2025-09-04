@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 import "../styles/components/header.component.css";
 
 export interface SidebarPropTypes {
