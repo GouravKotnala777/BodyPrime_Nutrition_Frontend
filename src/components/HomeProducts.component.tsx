@@ -23,13 +23,12 @@ function HomeProducts() {
         <section>
             {
                 products.map((p) => (
-                    <ProductCard key={p._id} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} />
+                    <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} />
                 ))
             }
-            {/*<pre>{JSON.stringify(products.map((p) => ({name:p.name, category:p.category, price:p.price})), null, `\t`)}</pre>*/}
 
             <button
-                className="text-white rounded-[8px] px-6 py-2 mx-auto block"
+                className="bg-black text-white rounded-[8px] px-6 py-2 mx-auto block"
                 onClick={getProductsHandler}
             >Next</button>
         </section>

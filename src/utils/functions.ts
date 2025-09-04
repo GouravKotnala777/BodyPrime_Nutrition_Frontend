@@ -6,6 +6,10 @@ interface APIHandlerTypes<BodyType> {
     contentType:"application/json"|"multipart/form-data";
     body?:BodyType;
 };
+export interface CartTypes{
+    productID:string;
+    quantity:number;
+}
 
 export async function apiHandler <BodyType, JsonResType>({endpoint, method, contentType, body}:APIHandlerTypes<BodyType>) {
     try {
@@ -20,6 +24,26 @@ export async function apiHandler <BodyType, JsonResType>({endpoint, method, cont
 
         const result = await res.json();
         return result as {success:boolean; message:string; jsonData:JsonResType};
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export function addToLocalCart({productID, quantity}:CartTypes) {
+    try {
+        const cartData = JSON.parse(localStorage.getItem("cart")||"[]") as CartTypes[];
+
+        const isProductExist = cartData.find((p) => p.productID === productID);
+
+        if (isProductExist) {
+            isProductExist.quantity+=quantity;
+        }
+        else{
+            cartData.push({productID, quantity});
+        }
+        
+        localStorage.setItem("cart", JSON.stringify(cartData));
     } catch (error) {
         console.log(error);
         throw error;

@@ -1,10 +1,14 @@
 import { NavLink } from "react-router-dom";
 import vite from "/public/vite.svg";
 import RatingStars from "./RatingStars.component";
+import { addToLocalCart } from "../utils/functions";
+import { useState } from "react";
 
 const rating = 3.5;
 
 interface ProductCardPropTypes{
+    productID:string;
+    name:string;
     brand:string;
     category:string;
     price:number;
@@ -13,7 +17,8 @@ interface ProductCardPropTypes{
     weight:string;
 };
 
-function ProductCard({brand, category, price, rating, numReviews, weight}:ProductCardPropTypes) {
+function ProductCard({productID, name, brand, category, price, rating, numReviews, weight}:ProductCardPropTypes) {
+    const [quantity, setQuantity] = useState<number>(1);
 
     
     return(
@@ -26,13 +31,13 @@ function ProductCard({brand, category, price, rating, numReviews, weight}:Produc
                     [display:-webkit-box] 
                     [-webkit-line-clamp:3] 
                     [-webkit-box-orient:vertical]
-                ">{brand} Beginer's {category}, No Added Sugar, Faster Muscle Recovery & Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veritatis, veniam.</div>
+                ">{name} {brand} Beginer's {category}, No Added Sugar, Faster Muscle Recovery & Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veritatis, veniam.</div>
                 <div className="bg-gray-100 w-fit rounded-[4px] text-[0.9rem] px-2">{weight} (Pack of 1)</div>
                 <div>Options: <NavLink to={"/patoni"} className="underline underline-offset-2 text-blue-700">2 flavours</NavLink>, <NavLink to={"/patoni"} className="underline underline-offset-2 text-blue-700">4 sizes</NavLink></div>
                 <div>{rating} <RatingStars rating={rating} outOf={5} /> ({numReviews})</div>
                 <div className="text-[2rem] font-semibold flex gap-0.5"><span className="text-[1rem] font-normal">₹</span>{price}</div>
                 <div>Free delivery <span className="font-semibold">Thu, 11 Sept</span></div>
-                <button className="bg-yellow-300 rounded-2xl w-full py-2 mt-auto">Add to cart</button>
+                <button className="bg-yellow-300 rounded-2xl w-full py-2 mt-auto" onClick={() => addToLocalCart({productID, quantity})}>Add to cart</button>
             </div>
         </div>
     )
