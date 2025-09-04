@@ -13,3 +13,30 @@ export interface UserTypes{
 };
 export type LoginFormTypes = Required<Pick<UserTypes, "email"|"password">>;
 export type RegisterFormTypes = Required<Pick<UserTypes, "name"|"email"|"mobile"|"gender"|"password">>;
+
+
+export interface ProductTypes {
+    name:string;
+    price:number;
+    brand:string;
+    category:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";
+    size:number;
+    tag:string[];
+    description: string;
+    images: string[];
+    stock: number;
+    weight?: string;
+    ingredients?: string[];
+    nutritionFacts?: {
+        servingSize: string;
+        servingsPerContainer: number;
+        protein?: number;
+        carbs?: number;
+        fat?: number;
+        calories?: number;
+    };
+    rating: number;
+    numReviews: number;
+    flavor?:string;
+    warning?:string[];
+};
