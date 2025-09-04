@@ -11,5 +11,5 @@ export interface UserTypes{
     emailVerificationToken?:string|null;
     emailVerificationTokenExpire?:number|null;
 };
-export type LoginFormTypes = Pick<UserTypes, "email"|"password">;
-export type RegisterFormTypes = Pick<UserTypes, "name"|"email"|"mobile"|"gender"|"password">;
+export type LoginFormTypes = Required<Pick<UserTypes, "email"|"password">>;
+export type RegisterFormTypes = Required<Pick<UserTypes, "name"|"email"|"mobile"|"gender"|"password">>;

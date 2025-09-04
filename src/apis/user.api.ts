@@ -1,39 +1,55 @@
 import type { LoginFormTypes, RegisterFormTypes, UserTypes } from "../utils/types";
 
+interface APIHandlerTypes<BodyType> {
+    endpoint:string;
+    method:"GET"|"POST"|"PUT"|"DELETE";
+    contentType:"application/json"|"multipart/form-data";
+    body:BodyType
+};
 
-
-
-export async function login({email, password}:LoginFormTypes) {
+async function apiHandler <BodyType, JsonResType>({endpoint, method, contentType, body}:APIHandlerTypes<BodyType>) {
     try {
-        const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/user/login`, {
-            method:"POST",
+        const res = await fetch(`${import.meta.env.VITE_SERVER_URL}${endpoint}`, {
+            method,
             headers:{
-                "Content-Type":"application/json"
+                "Content-Type":contentType
             },
             credentials:"include",
-            body:JSON.stringify({email, password})
+            body:JSON.stringify(body)
         });
 
         const result = await res.json();
-        return result as {success:boolean; message:string; jsonData:UserTypes};
+        return result as {success:boolean; message:string; jsonData:JsonResType};
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+
+export async function login(formData:LoginFormTypes) {
+    try {
+        const data = await apiHandler<LoginFormTypes, UserTypes>({
+            endpoint:"/user/login",
+            method:"POST",
+            contentType:"application/json",
+            body:formData
+        });
+        return data;
     } catch (error) {
         console.log(error);
         throw error;
     }
 };
-export async function register({name, email, mobile, gender, password}:RegisterFormTypes) {
+export async function register(formData:RegisterFormTypes) {
     try {
-        const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/user/register`, {
+        const data = await apiHandler<RegisterFormTypes, UserTypes>({
+            endpoint:"/user/register",
             method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            credentials:"include",
-            body:JSON.stringify({name, email, mobile, gender, password})
+            contentType:"application/json",
+            body:formData
         });
-
-        const result = await res.json();
-        return result as {success:boolean; message:string; jsonData:UserTypes};
+        return data;
     } catch (error) {
         console.log(error);
         throw error;
