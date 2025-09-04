@@ -16,6 +16,7 @@ export type RegisterFormTypes = Required<Pick<UserTypes, "name"|"email"|"mobile"
 
 
 export interface ProductTypes {
+    _id:string;
     name:string;
     price:number;
     brand:string;
@@ -25,7 +26,7 @@ export interface ProductTypes {
     description: string;
     images: string[];
     stock: number;
-    weight?: string;
+    weight: string;
     ingredients?: string[];
     nutritionFacts?: {
         servingSize: string;
