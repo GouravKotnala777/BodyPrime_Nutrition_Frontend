@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type MouseEvent } from "react";
 import { NavLink } from "react-router-dom";
-import { login, type LoginFormTypes } from "../apis/user.api";
+import type { LoginFormTypes } from "../utils/types";
+import { login } from "../apis/user.api";
 
 
 function Login() {
