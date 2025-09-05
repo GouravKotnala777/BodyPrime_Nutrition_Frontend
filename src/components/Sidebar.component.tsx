@@ -24,6 +24,7 @@ function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
                     <NavLink to="/orders" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Orders</NavLink>
                     <NavLink to="/register" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Register</NavLink>
                     <NavLink to="/login" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Login</NavLink>
+                    <NavLink to="/cart" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Cart</NavLink>
                 </nav>
             </section>
             <section className="side_closer_section h-full w-[20%] absolute top-0 right-0 text-right p-4">

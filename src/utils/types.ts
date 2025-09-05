@@ -41,3 +41,12 @@ export interface ProductTypes {
     flavor?:string;
     warning?:string[];
 };
+
+export interface LocalCartTypes{
+    _id:string;
+    name:string;
+    brand:string;
+    category:string;
+    price:number;
+    quantity:number;
+};
