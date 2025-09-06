@@ -7,6 +7,7 @@ import Header from './components/Header.component';
 import Sidebar from './components/Sidebar.component';
 import { useState } from 'react';
 import Cart from './pages/Cart.page.tsx';
+import SingleProduct from './pages/SingleProduct.page.tsx';
 
 function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
@@ -21,6 +22,7 @@ function App() {
         <Route path={"/login"} element={<Login />} />
         <Route path={"/register"} element={<Register />} />
         <Route path={"/cart"} element={<Cart />} />
+        <Route path={"/single_product/:productID"} element={<SingleProduct />} />
       </Routes>
     </main>
     <footer></footer>

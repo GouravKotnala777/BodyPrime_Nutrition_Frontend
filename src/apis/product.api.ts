@@ -16,3 +16,17 @@ export async function getProducts(skip:number) {
         throw error;
     }
 };
+
+export async function getSingleProduct(productID:string) {
+    try {
+        const data = await apiHandler<null, ProductTypes>({
+            endpoint:`/product/single_product/${productID}`,
+            method:"GET",
+            contentType:"application/json"
+        });
+        return data;        
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};

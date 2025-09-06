@@ -1,0 +1,139 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"
+import { getSingleProduct } from "../apis/product.api";
+import { type ProductTypes } from "../utils/types";
+import vite from "/public/vite.svg";
+import RatingStars from "../components/RatingStars.component";
+import { createReview } from "../apis/review.api";
+
+
+function SingleProduct() {
+    const {productID} = useParams();
+    const [singleProduct, setSingleProduct] = useState<ProductTypes|null>(null);
+    const [rating, setRating] = useState<number>(0);
+    const [comment, setComment] = useState<string>("");
+
+    async function getSingleProductHandler() {
+        if (!productID) return;
+
+        const res = await getSingleProduct(productID);
+
+        setSingleProduct(res.jsonData);
+    };
+
+    async function createReviewHandler() {
+        if (!productID) return;
+
+        console.log({productID, rating, comment});
+        
+
+        const res = await createReview({productID, rating, comment});
+
+        console.log(res);
+    };
+    
+
+    useEffect(() => {
+        getSingleProductHandler();
+    }, []);
+
+    return(
+        <section>
+            <div className="border-2 flex justify-between items-center">
+                <div><img src={vite} alt={vite} /></div>
+                <div className="flex flex-col">
+                    <span className="text-[1rem] font-semibold">Company Name</span>
+                    <span className="text-[0.9rem]">Brand name</span>
+                </div>
+                <div className="text-[0.8rem] flex">4.5 <RatingStars rating={4.5} outOf={5} /> (20,234)</div>
+            </div>
+            <p className="text-gray-700 font-semibold">Muscletech Whey Protein Powder (Milk Chocolate, 4 Pound) - Nitro-Tech Ultimate Muscle Building Formula with Whey Protein Isolate - 30g of Protein, 3g of Creatine & 6.8g of BCAA - Packaging May Vary</p>
+            <div className="w-full h-[45vh] bg-gray-100"><img src={vite} alt={vite} className="h-full w-full" /></div>
+            <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="text-[1.3rem]">
+                    <span>Flavor Name: </span><span className="font-semibold">Milk Chocolate</span>
+                </div>
+                <div className="flex text-gray-800 text-[1.2rem] gap-6 overflow-scroll py-2">
+                    {
+                        [1,2,3,4,5,6,7].map((num) => (
+                            <div key={num} className="border-2 border-gray-700 font-semibold px-3 py-1 rounded-[4px]">Flavor{num}</div>
+                        ))
+                    }
+                </div>
+            </div>
+            <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="text-[1.3rem]">
+                    <span>Size: </span><span className="font-semibold">2Kg (Pack of 1)</span>
+                </div>
+                <div className="flex text-gray-800 text-[1.2rem] gap-6 overflow-scroll py-2 w-full">
+                    {
+                        ["2Kg (Pack of 1)", "3Kg (Pack of 1)", "4Kg (Pack of 1)", "5Kg (Pack of 1)", "6Kg (Pack of 1)"].map((flav, index) => (
+                            <div key={index} className="border-2 border-gray-700 font-semibold px-3 py-1 rounded-[4px]">{flav}</div>
+                        ))
+                    }
+                </div>
+            </div>
+            <div>
+                <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100">See Similar Items</button>
+            </div>
+            <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="flex text-5xl justify-around">
+                    {
+                        [1,2,3,4,5].map((num) => (
+                            <span key={num} onClick={() => setRating(num)}>⭐</span>
+                        ))
+                    }
+                </div>
+                <div className="mt-4 border-2 border-red-400 rounded-[8px]">
+                    <textarea rows={5} className="w-full" placeholder="Comment...(optional)" onChange={(e) => setComment(e.target.value)}></textarea>
+                </div>
+                <div className="mt-4">
+                    <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100" onClick={createReviewHandler}>Submit</button>
+                </div>
+            </div>
+            <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="text-[1.3rem]">
+                    <span>Measurement</span><span className="font-semibold"></span>
+                </div>
+                <div className="text-[1.2rem] gap-6 overflow-scroll w-full">
+                    <div className="flex justify-between items-center border-b-[1px] border-b-gray-600">
+                        <span className="bg-gray-100 p-4 w-[40%]">Item Weight</span>
+                        <span>4 Pounds</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b-[1px] border-b-gray-600">
+                        <span className="bg-gray-100 p-4 w-[40%]">No of Items</span>
+                        <span>1</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b-[1px] border-b-gray-600">
+                        <span className="bg-gray-100 p-4 w-[40%]">Age Range (Description)</span>
+                        <span>Adult</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b-[1px] border-b-gray-600">
+                        <span className="bg-gray-100 p-4 w-[40%]">Net Content Volume</span>
+                        <span>9.41 Litres</span>
+                    </div>
+                </div>
+            </div>
+            <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="text-[1.3rem] font-semibold">
+                    <span>Safety and product resources</span><span className="font-semibold"></span>
+                </div>
+                <div className="text-[1rem] w-full">
+                    <p>As the Food and Drug Administration (FDA) advises, dietary supplements can support your overall health but may also have powerful effects on the body. It’s important to read labels carefully, exercise caution, and consult your healthcare professional before taking any supplement. Side effects are more likely if supplements are taken in high doses, as substitutes for prescribed medications, or in combination with multiple supplements. If you experience severe side effects, discontinue use immediately and seek medical attention.</p>
+                </div>
+            </div>
+            <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="text-[1.3rem] font-semibold">
+                    <span>LEGAL DESCLAIMER</span><span className="font-semibold"></span>
+                </div>
+                <div className="text-[1rem] w-full">
+                    <p>Some states prohibit the sale of products intended for weight loss or muscle building to individuals under age 18. Check your local laws prior to purchase.</p>
+                </div>
+            </div>
+
+            {/*<pre>{JSON.stringify(singleProduct, null, `\t`)}</pre>*/}
+        </section>
+    )
+};
+
+export default SingleProduct;

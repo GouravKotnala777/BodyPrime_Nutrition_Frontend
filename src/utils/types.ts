@@ -50,3 +50,13 @@ export interface LocalCartTypes{
     price:number;
     quantity:number;
 };
+
+export interface ReviewTypes {
+    productID:string;
+    userID:string;
+    rating:number;
+    comment?:string;
+    createdAt:string;
+    updatedAt:string;
+};
+export type CreateReviewBodyTypes = Pick<ReviewTypes, "rating"|"comment">&{productID:string;};
