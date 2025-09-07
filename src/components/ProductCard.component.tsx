@@ -36,7 +36,11 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                     <div className="flex">{rating} <RatingStars rating={rating} outOf={5} /> ({numReviews})</div>
                     <div className="text-[2rem] font-semibold flex gap-0.5"><span className="text-[1rem] font-normal">₹</span>{price}</div>
                     <div>Free delivery <span className="font-semibold">Thu, 11 Sept</span></div>
-                    <button className="bg-yellow-300 rounded-2xl w-full py-2 mt-auto" onClick={() => addToLocalCart({_id:productID, name, brand, category, price, quantity:1})}>Add to cart</button>
+                    <button className="bg-yellow-300 rounded-2xl w-full py-2 mt-auto" onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        addToLocalCart({_id:productID, name, brand, category, price, quantity:1});
+                        }}>Add to cart</button>
                 </NavLink>
             </div>
         </div>
