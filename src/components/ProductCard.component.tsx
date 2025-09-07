@@ -20,9 +20,9 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
     return(
         <div className="border-[1px] border-gray-100 rounded-[8px] flex justify-between h-[55vh] items-center my-2">
             <NavLink to={`/single_product/${productID}`} className="w-[40%] h-[100%] bg-gray-100"><img src={vite} alt={vite} className="w-full h-full"/></NavLink>
-            <div className="w-[60%] h-full flex flex-col gap-2 py-2">
+            <div className="w-[60%] h-full flex flex-col gap-2 py-4 px-2">
                 <NavLink to={`/single_product/${productID}`} className="h-[14rem]">
-                    <div className="text-[1.3rem] font-semibold h-[6rem] underline underline-offset-1
+                    <div className="text-[1.3rem] font-semibold h-[6rem]
                         overflow-hidden 
                         text-ellipsis 
                         [display:-webkit-box] 

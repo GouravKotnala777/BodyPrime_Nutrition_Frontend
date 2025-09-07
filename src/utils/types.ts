@@ -59,4 +59,8 @@ export interface ReviewTypes {
     createdAt:string;
     updatedAt:string;
 };
+export type ReviewTypesPopulated = Pick<ReviewTypes, "rating"|"comment"|"createdAt"|"updatedAt"> & {
+    productID:Pick<ProductTypes, "name"|"flavor"|"size"|"weight">;
+    userID:Pick<UserTypes, "name">;
+};
 export type CreateReviewBodyTypes = Pick<ReviewTypes, "rating"|"comment">&{productID:string;};

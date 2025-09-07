@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
+import { NavLink, useParams } from "react-router-dom"
 import { getSingleProduct } from "../apis/product.api";
-import { type ProductTypes } from "../utils/types";
+import { type ProductTypes, type ReviewTypes, type ReviewTypesPopulated } from "../utils/types";
 import vite from "/public/vite.svg";
 import RatingStars from "../components/RatingStars.component";
 import { createReview } from "../apis/review.api";
+import ReviewCard from "../components/ReviewCard.component";
 
-
+const dummyProduct:ProductTypes = {_id:"1246891", brand:"brand1", category:"protein", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product1", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"};
+const dummyReview:ReviewTypesPopulated[] = [
+    {productID:{name:"product1", size:1, weight:"1kg", flavor:"chocolate"}, userID:{name:"Gourav Kotnala"}, rating:4, comment:"Lorem ipsum dolor sit amet consectetur adipisicing elit. In ex dolore mollitia adipisci ut officia ab praesentium voluptatem ratione ipsa?", createdAt:"22-07-2004", updatedAt:""},
+    {productID:{name:"product1", size:1, weight:"2kg", flavor:"milk creame"}, userID:{name:"Naruto Uzumaki"}, rating:1.2, comment:"In ex dolore mollitia adipisci ut officia ab praesentium voluptatem ratione ipsa?", createdAt:"22-07-2004", updatedAt:""},
+    {productID:{name:"product1", size:1, weight:"1kg", flavor:"banana kesar"}, userID:{name:"Sasuke Uchiha"}, rating:3, comment:"good product", createdAt:"22-07-2004", updatedAt:"19-08-1999"},
+    {productID:{name:"product1", size:1, weight:"5kg", flavor:"vanilla"}, userID:{name:"Sakura Haruno"}, rating:5, comment:"Lorem ipsum dolor sit amet consectetur adipisicing elit. In ex dolore mollitia adipisci ut officia ab praesentium voluptatem ratione ipsa? Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.", createdAt:"22-07-2004", updatedAt:"19-08-1999"},
+    {productID:{name:"product1", size:1, weight:"1kg", flavor:"chocolate"}, userID:{name:"Kakashi Hatake"}, rating:0, comment:"Lorem ipsum dolor sit amet consectetur adipisicing elit. In ex dolore mollitia adipisci ut officia ab praesentium voluptatem ratione ipsa?", createdAt:"22-07-2004", updatedAt:"19-08-1999"},
+];
 function SingleProduct() {
     const {productID} = useParams();
     const [singleProduct, setSingleProduct] = useState<ProductTypes|null>(null);
@@ -34,7 +42,7 @@ function SingleProduct() {
     
 
     useEffect(() => {
-        getSingleProductHandler();
+        //getSingleProductHandler();
     }, []);
 
     return(
@@ -47,7 +55,7 @@ function SingleProduct() {
                 </div>
                 <div className="text-[0.8rem] flex">4.5 <RatingStars rating={4.5} outOf={5} /> (20,234)</div>
             </div>
-            <p className="text-gray-700 font-semibold">Muscletech Whey Protein Powder (Milk Chocolate, 4 Pound) - Nitro-Tech Ultimate Muscle Building Formula with Whey Protein Isolate - 30g of Protein, 3g of Creatine & 6.8g of BCAA - Packaging May Vary</p>
+            <p className="text-gray-700 font-semibold">{dummyProduct.brand} {dummyProduct.name} {dummyProduct.category} ({dummyProduct.flavor}, {dummyProduct.weight}) - Nitro-Tech Ultimate Muscle Building Formula with Whey Protein Isolate - 30g of Protein, 3g of Creatine & 6.8g of BCAA - Packaging May Vary</p>
             <div className="w-full h-[45vh] bg-gray-100"><img src={vite} alt={vite} className="h-full w-full" /></div>
             <div className="border-[1px] border-gray-100 my-2 py-4">
                 <div className="text-[1.3rem]">
@@ -128,6 +136,18 @@ function SingleProduct() {
                 </div>
                 <div className="text-[1rem] w-full">
                     <p>Some states prohibit the sale of products intended for weight loss or muscle building to individuals under age 18. Check your local laws prior to purchase.</p>
+                </div>
+            </div>
+            <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="text-[1.3rem] font-semibold">
+                    <span>Top Reviews</span><span className="font-semibold"></span>
+                </div>
+                <div className="text-[1rem] w-full flex flex-col gap-2">
+                    {
+                        dummyReview.map(({productID, userID, ...review}) => (
+                            <ReviewCard productID={productID} userID={userID} rating={review.rating} comment={review.comment} createdAt={review.createdAt} updatedAt={review.updatedAt} />
+                        ))
+                    }
                 </div>
             </div>
 
