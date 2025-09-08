@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent, type MouseEvent } from "react";
 import vite from "/public/vite.svg";
 import { type LocalCartTypes } from "../utils/types";
 import { NavLink } from "react-router-dom";
@@ -8,6 +8,8 @@ function Cart() {
     const [cartData, setCartData] = useState<LocalCartTypes[]>([]);
 
     function calculateTotalCartValue() {
+        console.log("ye bar bar nahi chalna chahiye");
+        
         return cartData.reduce((acc, iter) => {
             acc += (iter.price * iter.quantity);
             return acc;
@@ -45,7 +47,47 @@ function Cart() {
             return updatedCart;
         });
     };
-    
+
+    function changeLocalCartProductQuantity(e:(MouseEvent<HTMLButtonElement>|ChangeEvent<HTMLInputElement>), productId:string) {
+        const eventName = e.currentTarget.name;
+        let eventValue = e.currentTarget.value;
+        const step = eventName || eventValue;
+
+        const targetedProduct = cartData.find((p) => p._id === productId);       
+
+        if (!targetedProduct) throw Error("targetedProduct nahi mil raha");
+        if (typeof Number(eventValue) !== "number" || isNaN(Number(eventValue))) throw Error("targetedProduct ki quantity number honi chahiye");
+        if (Number(eventValue) > 10) throw Error("targetedProduct ki quantity 10 se jyada nahi ho sakti 1");
+        if (Number(eventValue) <= 0 && Number(eventName) <= 0 && targetedProduct.quantity <= 0 && targetedProduct.quantity > 10) throw Error("targetedProduct ki quantity 0 ya 0 se kam nahi ho sakti 1");
+        if (targetedProduct.quantity + Number(eventName) < 0) throw Error("targetedProduct ki quantity 0 ya 0 se kam nahi ho sakti 2");
+        if (targetedProduct.quantity + Number(eventName) > 10) throw Error("targetedProduct ki quantity 10 se jyada nahi ho sakti 2");
+
+        
+        setCartData((prev) => {
+            const updatedCart = prev.reduce((acc, p) => {
+                if (p._id === productId) {
+                    const newQuantity = p.quantity + Number(step);
+                    if (p.quantity >= 1 && p.quantity <= 10 && Number(eventValue) > 0) {
+                        acc.push({...p, quantity:Number(step)});
+                    }
+
+                    if (p.quantity > 1 && p.quantity - Number(step) <= 10 && p.quantity - Number(step) > 0 && Number(step) > 1 && !Number(eventValue)) {
+                        acc.push({...p, quantity:Number(step)})
+                    }
+                    if (newQuantity > 0 && !Number(eventValue)) {
+                        acc.push({...p, quantity:newQuantity})
+                    }
+                }
+                else{
+                    acc.push(p);
+                }
+                return acc;
+            }, [] as LocalCartTypes[]);
+            localStorage.setItem("cart", JSON.stringify(updatedCart));
+            return updatedCart;
+        });
+
+    };
     
     useEffect(() => {
         const res = fetchLocalCartProducts();
@@ -76,8 +118,8 @@ function Cart() {
                                             underline
                                             underline-offset-2
                                         ">{p.name} {p.brand} {p.category} Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, numquam.</NavLink>
-                                        <div className="flex gap-4 items-center mt-2">
-                                            <div>{p.quantity} x</div>
+                                        <div className="mt-2">
+                                            {/*<div>{p.quantity} x</div>*/}
                                             <div className="font-semibold text-[1.4rem]">₹{p.price}</div>
                                         </div>
                                     </div>
@@ -87,9 +129,9 @@ function Cart() {
 
                             <div className="flex justify-between items-center gap-4 mt-2">
                                 <div className="flex justify-around items-center border-[1px] border-green-500 py-1 rounded-[4px] flex-1/2">
-                                    <button className="text-3xl">-</button>
-                                    <span className="text-xl">2</span>
-                                    <button className="text-3xl">+</button>
+                                    <button className="text-3xl" name="-1" onClick={(e) => changeLocalCartProductQuantity(e, p._id)}>-</button>
+                                    <span className="text-xl w-1/3"><input type="text" placeholder={p.quantity.toString()} className="w-full text-center" onChange={(e) => changeLocalCartProductQuantity(e, p._id)} /></span>
+                                    <button className="text-3xl" name="1" onClick={(e) => changeLocalCartProductQuantity(e, p._id)}>+</button>
                                 </div>
                                 {/*<button className="border-[1px] border-green-500 text-white bg-green-500 py-2 rounded-[4px] flex-1/2 mr-2">Buy</button>*/}
                                 <button className="border-[1px] border-red-500 text-red-500 py-2 rounded-[4px] flex-1/2 text-xl"
