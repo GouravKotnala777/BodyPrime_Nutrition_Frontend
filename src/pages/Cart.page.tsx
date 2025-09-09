@@ -1,97 +1,16 @@
-import { useEffect, useState, type ChangeEvent, type MouseEvent } from "react";
+import { useEffect } from "react";
 import vite from "/public/vite.svg";
-import { type LocalCartTypes } from "../utils/types";
 import { NavLink } from "react-router-dom";
+import { useCart } from "../contexts/CartContext";
 
 
 function Cart() {
-    const [cartData, setCartData] = useState<LocalCartTypes[]>([]);
+    const {cartData, changeLocalCartProductQuantity, removeProductFromLocalCart, calculateTotalCartItems, calculateTotalCartValue} = useCart();
 
-    function calculateTotalCartValue() {
-        console.log("ye bar bar nahi chalna chahiye");
-        
-        return cartData.reduce((acc, iter) => {
-            acc += (iter.price * iter.quantity);
-            return acc;
-        }, 0);
-    };
 
-    function fetchLocalCartProducts() {
-        const cart = JSON.parse(localStorage.getItem("cart")||"[]");
-        return cart;
-    };
-
-    function removeProductFromLocalCart({_id}:{_id:string}) {
-        
-        setCartData((prev) => {
-            const selectedProduct = prev.find((product) => product._id === _id);
-            if (!selectedProduct) {
-                console.warn("selectedProduct not found");                
-                return prev;
-            };
-            
-            let updatedCart;
-            if (selectedProduct.quantity > 1) {
-                updatedCart = prev.map((product) => product._id === _id ?
-                {...product, quantity:product.quantity-1}
-                :
-                product);
-            }
-            else{
-                updatedCart = prev.filter((product) => product._id !== _id);
-            };
-
-            console.log(updatedCart);
-            localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-            return updatedCart;
-        });
-    };
-
-    function changeLocalCartProductQuantity(e:(MouseEvent<HTMLButtonElement>|ChangeEvent<HTMLInputElement>), productId:string) {
-        const eventName = e.currentTarget.name;
-        let eventValue = e.currentTarget.value;
-        const step = eventName || eventValue;
-
-        const targetedProduct = cartData.find((p) => p._id === productId);       
-
-        if (!targetedProduct) throw Error("targetedProduct nahi mil raha");
-        if (typeof Number(eventValue) !== "number" || isNaN(Number(eventValue))) throw Error("targetedProduct ki quantity number honi chahiye");
-        if (Number(eventValue) > 10) throw Error("targetedProduct ki quantity 10 se jyada nahi ho sakti 1");
-        if (Number(eventValue) <= 0 && Number(eventName) <= 0 && targetedProduct.quantity <= 0 && targetedProduct.quantity > 10) throw Error("targetedProduct ki quantity 0 ya 0 se kam nahi ho sakti 1");
-        if (targetedProduct.quantity + Number(eventName) < 0) throw Error("targetedProduct ki quantity 0 ya 0 se kam nahi ho sakti 2");
-        if (targetedProduct.quantity + Number(eventName) > 10) throw Error("targetedProduct ki quantity 10 se jyada nahi ho sakti 2");
-
-        
-        setCartData((prev) => {
-            const updatedCart = prev.reduce((acc, p) => {
-                if (p._id === productId) {
-                    const newQuantity = p.quantity + Number(step);
-                    if (p.quantity >= 1 && p.quantity <= 10 && Number(eventValue) > 0) {
-                        acc.push({...p, quantity:Number(step)});
-                    }
-
-                    if (p.quantity > 1 && p.quantity - Number(step) <= 10 && p.quantity - Number(step) > 0 && Number(step) > 1 && !Number(eventValue)) {
-                        acc.push({...p, quantity:Number(step)})
-                    }
-                    if (newQuantity > 0 && !Number(eventValue)) {
-                        acc.push({...p, quantity:newQuantity})
-                    }
-                }
-                else{
-                    acc.push(p);
-                }
-                return acc;
-            }, [] as LocalCartTypes[]);
-            localStorage.setItem("cart", JSON.stringify(updatedCart));
-            return updatedCart;
-        });
-
-    };
-    
     useEffect(() => {
-        const res = fetchLocalCartProducts();
-        setCartData(res);
+        //const res = fetchLocalCartProducts();
+        //setCartData(res);
     }, []);
 
     
@@ -99,7 +18,7 @@ function Cart() {
         <section className="px-2">
             <div className="my-2">
                 <div className="text-3xl"><span>Subtotal</span> <span className="font-semibold">{calculateTotalCartValue()}</span>₹</div>
-                <div><button className="w-full py-3 mt-2 rounded-4xl bg-yellow-300 text-xl">Proceed to checkout (13 items)</button></div>
+                <div><button className="w-full py-3 mt-2 rounded-4xl bg-yellow-300 text-xl">Proceed to checkout ({calculateTotalCartItems()} items)</button></div>
             </div>
             <div className="">
                 {
@@ -119,7 +38,7 @@ function Cart() {
                                             underline-offset-2
                                         ">{p.name} {p.brand} {p.category} Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus, numquam.</NavLink>
                                         <div className="mt-2">
-                                            {/*<div>{p.quantity} x</div>*/}
+                                            <div>{p.quantity} x</div>
                                             <div className="font-semibold text-[1.4rem]">₹{p.price}</div>
                                         </div>
                                     </div>
@@ -141,7 +60,7 @@ function Cart() {
                             
                             <div className="flex justify-between items-center gap-2 mt-2">
                                 <button className="border-[1px] border-gray-300 py-2 px-2 rounded-[4px] text-xl"
-                                    onClick={() => removeProductFromLocalCart({_id:p._id})}
+                                    //onClick={() => removeProductFromLocalCart({_id:p._id})}
                                 >Save for later</button>
                                 <button className="border-[1px] border-gray-300 py-2 px-2 rounded-[4px] text-xl">Compare with similar items</button>
                             </div>

@@ -2,13 +2,14 @@ import viteLogo from '/vite.svg';
 import { NavLink } from "react-router-dom";
 import "../styles/components/header.component.css";
 import type { SidebarPropTypes } from './Sidebar.component';
+import { FiShoppingCart } from 'react-icons/fi';
 
-function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
+function Header({isHamActive, setIsHamActive, totalCartItem}:SidebarPropTypes) {
     return(
         <header 
-            className="header flex justify-between items-center p-3"
+            className="header flex justify-between gap-10 items-center p-3"
         >
-            <section className="logo_section ">
+            <section className="logo_section">
                 <img className="w-[40px] h-[40px]" src={viteLogo} alt={viteLogo} />
             </section>
             <section
@@ -22,6 +23,12 @@ function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
                 <NavLink to="/login" className="nav_item">Login</NavLink>
                 <NavLink to="/cart" className="nav_item">Cart</NavLink>
                 </nav>
+            </section>
+            <section className="mobile_nav ml-auto items-center hidden">
+                <NavLink to="/cart" className="relative w-[50px] h-[30px]">
+                    <FiShoppingCart className="absolute text-3xl bottom-0 left-0" />
+                    <span className="text-[12px] font-semibold w-[23px] h-[23px] grid place-items-center rounded-2xl absolute right-[9px] top-[-8px] bg-white text-[#b11433]">{totalCartItem}</span>
+                </NavLink>
             </section>
             <section className="ham_section hidden w-[30px] h-[30px] relative">
                 <div className="w-full h-full flex flex-col justify-between">

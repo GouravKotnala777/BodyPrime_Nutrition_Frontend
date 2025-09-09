@@ -1,4 +1,4 @@
-import type { LocalCartTypes } from "./types";
+
 
 interface APIHandlerTypes<BodyType> {
     endpoint:string;
@@ -20,27 +20,6 @@ export async function apiHandler <BodyType, JsonResType>({endpoint, method, cont
 
         const result = await res.json();
         return result as {success:boolean; message:string; jsonData:JsonResType};
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
-};
-
-export function addToLocalCart({_id, name, brand, category, price, quantity}:LocalCartTypes) {
-
-    try {
-        const cartData = JSON.parse(localStorage.getItem("cart")||"[]") as LocalCartTypes[];
-
-        const isProductExist = cartData.find((p) => p._id === _id);
-
-        if (isProductExist) {
-            isProductExist.quantity+=quantity;
-        }
-        else{
-            cartData.push({_id, name, brand, category, price, quantity});
-        }
-        
-        localStorage.setItem("cart", JSON.stringify(cartData));
     } catch (error) {
         console.log(error);
         throw error;

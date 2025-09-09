@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import vite from "/public/vite.svg";
 import RatingStars from "./RatingStars.component";
-import { addToLocalCart } from "../utils/functions";
+import { useCart } from "../contexts/CartContext";
 
 interface ProductCardPropTypes{
     productID:string;
@@ -15,8 +15,8 @@ interface ProductCardPropTypes{
 };
 
 function ProductCard({productID, name, brand, category, price, rating, numReviews, weight}:ProductCardPropTypes) {
+    const {addToLocalCart} = useCart();
 
-    
     return(
         <div className="border-[1px] border-gray-100 rounded-[8px] flex justify-between h-[55vh] items-center my-2">
             <NavLink to={`/single_product/${productID}`} className="w-[40%] h-[100%] bg-gray-100"><img src={vite} alt={vite} className="w-full h-full"/></NavLink>

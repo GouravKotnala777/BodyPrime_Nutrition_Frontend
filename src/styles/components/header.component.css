@@ -16,6 +16,9 @@
                 }
             }
         }
+        .mobile_nav{
+            display: flex;
+        }
         .ham_section{
             display: block;
         }
