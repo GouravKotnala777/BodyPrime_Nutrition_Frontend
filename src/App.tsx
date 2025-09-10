@@ -12,7 +12,7 @@ import { useCart } from './contexts/CartContext.tsx';
 
 function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
-  const {fetchLocalCartProducts, calculateTotalCartItems, calculateTotalCartValue} = useCart();
+  const {fetchLocalCartProducts} = useCart();
 
 
   useEffect(() => {
@@ -21,8 +21,8 @@ function App() {
 
   return (
     <BrowserRouter>
-    <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} totalCartItem={calculateTotalCartItems()} />
-    <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} totalCartItem={calculateTotalCartItems()} />
+    <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} />
+    <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} />
     <main className="border-2 border-red-500">
       <Routes>
         <Route path={"/home"} element={<Home />} />

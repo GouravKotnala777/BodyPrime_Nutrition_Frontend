@@ -23,10 +23,6 @@ function HomeProducts() {
         console.log(data);
         setSkip(skip+1)
     };
-    
-    useEffect(() => {
-        //getProductsHandler();
-    }, []);
 
     return(
         <section>

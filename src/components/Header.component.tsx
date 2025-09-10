@@ -3,8 +3,11 @@ import { NavLink } from "react-router-dom";
 import "../styles/components/header.component.css";
 import type { SidebarPropTypes } from './Sidebar.component';
 import { FiShoppingCart } from 'react-icons/fi';
+import { useCart } from '../contexts/CartContext';
 
-function Header({isHamActive, setIsHamActive, totalCartItem}:SidebarPropTypes) {
+function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
+    const {calculateTotalCartItems} = useCart();
+
     return(
         <header 
             className="header flex justify-between gap-10 items-center p-3"
@@ -27,7 +30,7 @@ function Header({isHamActive, setIsHamActive, totalCartItem}:SidebarPropTypes) {
             <section className="mobile_nav ml-auto items-center hidden">
                 <NavLink to="/cart" className="relative w-[50px] h-[30px]">
                     <FiShoppingCart className="absolute text-3xl bottom-0 left-0" />
-                    <span className="text-[12px] font-semibold w-[23px] h-[23px] grid place-items-center rounded-2xl absolute right-[9px] top-[-8px] bg-white text-[#b11433]">{totalCartItem}</span>
+                    <span className="text-[12px] font-semibold w-[23px] h-[23px] grid place-items-center rounded-2xl absolute right-[9px] top-[-8px] bg-white text-[#b11433]">{calculateTotalCartItems()}</span>
                 </NavLink>
             </section>
             <section className="ham_section hidden w-[30px] h-[30px] relative">

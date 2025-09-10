@@ -1,15 +1,15 @@
 import { NavLink } from "react-router-dom";
 import { type Dispatch, type SetStateAction } from 'react';
 import "../styles/components/header.component.css";
-import { FiShoppingCart } from "react-icons/fi";
+import { useCart } from "../contexts/CartContext";
 
 export interface SidebarPropTypes {
     isHamActive:boolean;
     setIsHamActive:Dispatch<SetStateAction<boolean>>;
-    totalCartItem:number;
-}
+};
 
-function Sidebar({isHamActive, setIsHamActive, totalCartItem}:SidebarPropTypes) {
+function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
+    const {calculateTotalCartItems} = useCart();
     
     return(
         <aside
@@ -28,7 +28,7 @@ function Sidebar({isHamActive, setIsHamActive, totalCartItem}:SidebarPropTypes) 
                     <NavLink to="/login" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Login</NavLink>
                     <NavLink to="/cart" className="nav_item font-semibold relative" onClick={() => setIsHamActive(false)}>
                         <span>Cart</span>
-                        <span className="border-2 text-[12px] font-semibold w-[23px] h-[23px] grid place-items-center rounded-2xl absolute left-[58%] top-[0px] bg-[#b11433] text-white">{totalCartItem}</span>
+                        <span className="border-2 text-[12px] font-semibold w-[23px] h-[23px] grid place-items-center rounded-2xl absolute left-[58%] top-[0px] bg-[#b11433] text-white">{calculateTotalCartItems()}</span>
                     </NavLink>
                 </nav>
             </section>
