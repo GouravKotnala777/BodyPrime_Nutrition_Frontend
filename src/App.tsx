@@ -9,14 +9,22 @@ import { useEffect, useState } from 'react';
 import Cart from './pages/Cart.page.tsx';
 import SingleProduct from './pages/SingleProduct.page.tsx';
 import { useCart } from './contexts/CartContext.tsx';
+import { myProfile } from './apis/user.api.ts';
+import { useUser } from './contexts/UserContext.tsx';
 
 function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
   const {fetchLocalCartProducts} = useCart();
+  const {userData, setUser} = useUser();
 
+  async function myProfileHandler() {
+    const res = await myProfile();
+    setUser(res.jsonData);
+  };
 
   useEffect(() => {
     fetchLocalCartProducts();
+    myProfileHandler();
   }, []);
 
   return (

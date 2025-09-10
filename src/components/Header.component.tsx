@@ -4,16 +4,18 @@ import "../styles/components/header.component.css";
 import type { SidebarPropTypes } from './Sidebar.component';
 import { FiShoppingCart } from 'react-icons/fi';
 import { useCart } from '../contexts/CartContext';
+import { useUser } from '../contexts/UserContext';
 
 function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
     const {calculateTotalCartItems} = useCart();
-
+    const {loggedInUserName} = useUser();
     return(
         <header 
             className="header flex justify-between gap-10 items-center p-3"
         >
-            <section className="logo_section">
+            <section className="logo_section flex items-center gap-4">
                 <img className="w-[40px] h-[40px]" src={viteLogo} alt={viteLogo} />
+                <span className="text-xl font-semibold text-white">{loggedInUserName()}</span>
             </section>
             <section
                 className="nav_section block"

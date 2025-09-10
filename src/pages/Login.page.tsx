@@ -2,9 +2,11 @@ import { useState, type ChangeEvent } from "react";
 import { NavLink } from "react-router-dom";
 import type { LoginFormTypes } from "../utils/types";
 import { login } from "../apis/user.api";
+import { useUser } from "../contexts/UserContext";
 
 
 function Login() {
+    const {userData, setUser} = useUser();
     const [formData, setFormData] = useState<LoginFormTypes>({email:"", password:""});
 
     function onChangeHandler(e:ChangeEvent<HTMLInputElement>) {
@@ -13,7 +15,7 @@ function Login() {
 
     async function onClickHandler() {
         const res = await login(formData);
-
+        setUser(res.jsonData);
         console.log(res);
     };
 

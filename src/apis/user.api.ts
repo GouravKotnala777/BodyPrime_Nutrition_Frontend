@@ -31,3 +31,16 @@ export async function register(formData:RegisterFormTypes) {
         throw error;
     }
 };
+export async function myProfile() {
+    try {
+        const data = await apiHandler<null, UserTypes>({
+            endpoint:"/user/my_profile",
+            method:"GET",
+            contentType:"application/json"
+        });
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
