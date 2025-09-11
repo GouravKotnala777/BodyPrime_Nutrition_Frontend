@@ -13,7 +13,7 @@ export interface UserTypes{
 };
 export type LoginFormTypes = Required<Pick<UserTypes, "email"|"password">>;
 export type RegisterFormTypes = Required<Pick<UserTypes, "name"|"email"|"mobile"|"gender"|"password">>;
-
+export type UpdateProfileFormType = Partial<Pick<UserTypes, "name"|"gender"|"mobile">>;
 
 export interface ProductTypes {
     _id:string;

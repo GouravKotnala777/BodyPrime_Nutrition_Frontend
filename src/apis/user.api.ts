@@ -44,3 +44,17 @@ export async function myProfile() {
         throw error;
     }
 };
+export async function updateProfile(formData:{name?:string; mobile?:string; gender?:string}) {
+    try {
+        const data = await apiHandler<{name?:string; mobile?:string; gender?:string}, UserTypes>({
+            endpoint:"/user/update_profile",
+            method:"PUT",
+            contentType:"application/json",
+            body:formData
+        });
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
