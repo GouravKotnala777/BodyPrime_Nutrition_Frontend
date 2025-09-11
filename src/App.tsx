@@ -11,6 +11,7 @@ import SingleProduct from './pages/SingleProduct.page.tsx';
 import { useCart } from './contexts/CartContext.tsx';
 import { myProfile } from './apis/user.api.ts';
 import { useUser } from './contexts/UserContext.tsx';
+import MyProfile from './pages/MyProfile.page.tsx';
 
 function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
@@ -38,6 +39,7 @@ function App() {
         <Route path={"/register"} element={<Register />} />
         <Route path={"/cart"} element={<Cart />} />
         <Route path={"/single_product/:productID"} element={<SingleProduct />} />
+        <Route path={"/my_profile"} element={<MyProfile />} />
       </Routes>
     </main>
     <footer></footer>

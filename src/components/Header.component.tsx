@@ -13,9 +13,9 @@ function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
         <header 
             className="header flex justify-between gap-10 items-center p-3"
         >
-            <section className="logo_section flex items-center gap-4">
+            <section className="logo_section flex items-center gap-6">
                 <img className="w-[40px] h-[40px]" src={viteLogo} alt={viteLogo} />
-                <span className="text-xl font-semibold text-white">{loggedInUserName()}</span>
+                <NavLink to="/my_profile" className="text-xl font-semibold text-white">{loggedInUserName()}</NavLink>
             </section>
             <section
                 className="nav_section block"
