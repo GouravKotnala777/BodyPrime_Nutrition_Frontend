@@ -6,7 +6,7 @@ import type { ReviewTypesPopulated } from "../utils/types";
 
 
 function ReviewCard({productID, userID, ...review}:ReviewTypesPopulated) {
-    const reviewActionDate = review.updatedAt ? `Review updated on ${review.updatedAt}`:`Reviewed in India on ${review.createdAt}`;
+    const reviewActionDate = review.updatedAt ? `Review updated on ${new Date(review.updatedAt).toLocaleString(undefined, {day:"2-digit", month:"short", year:"numeric"})}`:`Reviewed in India on ${new Date(review.createdAt).toLocaleString(undefined, {day:"numeric", month:"short", year:"numeric"})}`;
 
     return(
         <div className="flex flex-col gap-2 py-5 border-b-[1px] border-b-gray-200">

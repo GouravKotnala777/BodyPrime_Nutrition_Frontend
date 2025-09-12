@@ -30,3 +30,16 @@ export async function getSingleProduct(productID:string) {
         throw error;
     }
 };
+
+export async function addImages(formData:FormData) {
+    try {
+        const data = await apiHandler<FormData, {}>({
+            endpoint:"/product/add_image",
+            method:"POST",
+            body:formData
+        });
+        return data;        
+    } catch (error) {
+        throw error;
+    }
+};

@@ -6,7 +6,7 @@ import { useUser } from "../contexts/UserContext";
 
 
 function Login() {
-    const {userData, setUser} = useUser();
+    const {setUser} = useUser();
     const [formData, setFormData] = useState<LoginFormTypes>({email:"", password:""});
 
     function onChangeHandler(e:ChangeEvent<HTMLInputElement>) {

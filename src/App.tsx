@@ -16,7 +16,7 @@ import MyProfile from './pages/MyProfile.page.tsx';
 function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
   const {fetchLocalCartProducts} = useCart();
-  const {userData, setUser} = useUser();
+  const {setUser} = useUser();
 
   async function myProfileHandler() {
     const res = await myProfile();
