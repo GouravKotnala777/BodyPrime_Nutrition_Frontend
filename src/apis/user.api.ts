@@ -58,3 +58,16 @@ export async function updateProfile(formData:{name?:string; mobile?:string; gend
         throw error;
     }
 };
+export async function logout() {
+    try {
+        const data = await apiHandler<null, string>({
+            endpoint:"/user/logout",
+            method:"POST",
+            contentType:"application/json"
+        });
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
