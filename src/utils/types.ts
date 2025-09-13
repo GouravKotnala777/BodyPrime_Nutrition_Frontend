@@ -1,6 +1,7 @@
 
 
 export interface UserTypes{
+    _id:string;
     name:string;
     email:string;
     password?:string;
@@ -50,7 +51,22 @@ export interface LocalCartTypes{
     price:number;
     quantity:number;
 };
-
+export interface CartTypes{
+    userID:string;
+    products:{
+        productID:string;
+        quantity:number;
+    }[];
+    totalPrice:number;
+};
+export interface CartTypesPopulated{
+    userID:Pick<UserTypes, "_id"|"name"|"email"|"mobile">;
+    products:{
+        productID:Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"flavor"|"images"|"price"|"size"|"weight">;
+        quantity:number;
+    }[];
+    totalPrice:number;
+};
 export interface ReviewTypes {
     productID:string;
     userID:string;

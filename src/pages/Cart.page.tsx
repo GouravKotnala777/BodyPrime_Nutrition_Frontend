@@ -2,11 +2,20 @@ import { useEffect } from "react";
 import vite from "/public/vite.svg";
 import { NavLink } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
+import { addToCart } from "../apis/cart.api";
+import { useUser } from "../contexts/UserContext";
 
 
 function Cart() {
+    const {isUserAuthenticated} = useUser();
     const {cartData, changeLocalCartProductQuantity, removeProductFromLocalCart, calculateTotalCartItems, calculateTotalCartValue} = useCart();
 
+
+    async function addToCartHandler({productID, quantity}:{productID:string; quantity:number;}) {
+        const res = await addToCart({productID, quantity});
+
+        console.log(res);
+    };
 
     useEffect(() => {
         //const res = fetchLocalCartProducts();
@@ -48,7 +57,14 @@ function Cart() {
 
                             <div className="flex justify-between items-center gap-4 mt-2">
                                 <div className="flex justify-around items-center border-[1px] border-green-500 py-1 rounded-[4px] flex-1/2">
-                                    <button className="text-3xl" name="-1" onClick={(e) => changeLocalCartProductQuantity(e, p._id)}>-</button>
+                                    <button className="text-3xl" name="-1" onClick={(e) => {
+                                        if (isUserAuthenticated()) {
+                                            addToCartHandler({productID:p._id, quantity:(Number(e.currentTarget.value)||Number(e.currentTarget.name))});
+                                        }
+                                        else{
+                                            changeLocalCartProductQuantity(e, p._id);
+                                        }
+                                    }}>-</button>
                                     <span className="text-xl w-1/3"><input type="text" placeholder={p.quantity.toString()} className="w-full text-center" onChange={(e) => changeLocalCartProductQuantity(e, p._id)} /></span>
                                     <button className="text-3xl" name="1" onClick={(e) => changeLocalCartProductQuantity(e, p._id)}>+</button>
                                 </div>
