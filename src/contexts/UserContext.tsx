@@ -4,7 +4,7 @@ import type { UserTypes } from "../utils/types";
 
 interface UserContextTypes{
     userData:UserTypes|null;
-    setUser:(user:UserTypes)=>void;
+    setUser:(user:UserTypes|null)=>void;
     loggedInUserName:()=>string|undefined;
     isUserAdmin:()=>boolean;
     isUserAuthenticated:()=>boolean;
@@ -16,7 +16,7 @@ export function UserProvider({children}:{children:ReactNode;}) {
     const [userData, setUserData] = useState<UserTypes|null>(null);
 
 
-    function setUser(user:UserTypes) {
+    function setUser(user:UserTypes|null) {
         setUserData(user);
     };
 
@@ -24,10 +24,10 @@ export function UserProvider({children}:{children:ReactNode;}) {
         return userData?.name;
     };
     function isUserAdmin() {
-        return userData?.role === "admin";
+        return (userData&&typeof userData === "object"&&userData.toString() !== "{}"&&userData?.role === "admin")?true:false;
     };
-    function isUserAuthenticated() {
-        return userData !== null;
+    function isUserAuthenticated() {        
+        return (userData&&typeof userData === "object"&&userData.toString() !== "{}")?true:false;
     };
 
     return(

@@ -22,7 +22,7 @@ function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
             <section className="side_nav_section h-full w-[80%] top-0 left-0 absolute bg-white">
                 <nav className="side_nav_nav h-full flex flex-col gap-15 pt-25 text-center text-xl">
                     <NavLink to="/home" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Home</NavLink>
-                    <NavLink to="/profile" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Profile</NavLink>
+                    <NavLink to="/my_profile" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Profile</NavLink>
                     <NavLink to="/orders" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Orders</NavLink>
                     <NavLink to="/register" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Register</NavLink>
                     <NavLink to="/login" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Login</NavLink>

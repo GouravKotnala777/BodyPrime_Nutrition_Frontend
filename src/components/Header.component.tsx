@@ -8,21 +8,21 @@ import { useUser } from '../contexts/UserContext';
 
 function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
     const {calculateTotalCartItems} = useCart();
-    const {loggedInUserName} = useUser();
+    const {loggedInUserName, isUserAuthenticated} = useUser();
     return(
         <header 
             className="header flex justify-between gap-10 items-center p-3"
         >
             <section className="logo_section flex items-center gap-6">
                 <img className="w-[40px] h-[40px]" src={viteLogo} alt={viteLogo} />
-                <NavLink to="/my_profile" className="text-xl font-semibold text-white">{loggedInUserName()}</NavLink>
+                <NavLink to="/my_profile" className="text-xl font-semibold text-white">{isUserAuthenticated()?loggedInUserName():"Login"}</NavLink>
             </section>
             <section
                 className="nav_section block"
             >
                 <nav className="nav_nav flex w-[500px] justify-around text-white">
                 <NavLink to="/home" className="nav_item">Home</NavLink>
-                <NavLink to="/profile" className="nav_item">Profile</NavLink>
+                <NavLink to="/my_profile" className="nav_item">Profile</NavLink>
                 <NavLink to="/orders" className="nav_item">Orders</NavLink>
                 <NavLink to="/register" className="nav_item">Register</NavLink>
                 <NavLink to="/login" className="nav_item">Login</NavLink>

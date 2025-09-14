@@ -33,7 +33,7 @@ export async function register(formData:RegisterFormTypes) {
 };
 export async function myProfile() {
     try {
-        const data = await apiHandler<null, UserTypes>({
+        const data = await apiHandler<null, UserTypes|null>({
             endpoint:"/user/my_profile",
             method:"GET",
             contentType:"application/json"
