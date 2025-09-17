@@ -8,7 +8,7 @@ import { useUser } from '../contexts/UserContext';
 
 function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
     const {calculateTotalCartItems} = useCart();
-    const {loggedInUserName, isUserAuthenticated} = useUser();
+    const {loggedInUserName, isUserAuthenticated, isUserAdmin} = useUser();
     return(
         <header 
             className="header flex justify-between gap-10 items-center p-3"
@@ -23,6 +23,7 @@ function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
                 <nav className="nav_nav flex w-[500px] justify-around text-white">
                 <NavLink to="/home" className="nav_item">Home</NavLink>
                 <NavLink to="/my_profile" className="nav_item">Profile</NavLink>
+                {isUserAdmin() && <NavLink to="/inventory" className="nav_item">Inventory</NavLink>}
                 <NavLink to="/orders" className="nav_item">Orders</NavLink>
                 <NavLink to="/register" className="nav_item">Register</NavLink>
                 <NavLink to="/login" className="nav_item">Login</NavLink>

@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { type Dispatch, type SetStateAction } from 'react';
 import "../styles/components/header.component.css";
 import { useCart } from "../contexts/CartContext";
+import { useUser } from "../contexts/UserContext";
 
 export interface SidebarPropTypes {
     isHamActive:boolean;
@@ -10,6 +11,7 @@ export interface SidebarPropTypes {
 
 function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
     const {calculateTotalCartItems} = useCart();
+    const {isUserAdmin} = useUser();
     
     return(
         <aside
@@ -23,6 +25,7 @@ function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
                 <nav className="side_nav_nav h-full flex flex-col gap-15 pt-25 text-center text-xl">
                     <NavLink to="/home" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Home</NavLink>
                     <NavLink to="/my_profile" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Profile</NavLink>
+                    {isUserAdmin()&&<NavLink to="/inventory" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Inventory</NavLink>}
                     <NavLink to="/orders" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Orders</NavLink>
                     <NavLink to="/register" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Register</NavLink>
                     <NavLink to="/login" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Login</NavLink>

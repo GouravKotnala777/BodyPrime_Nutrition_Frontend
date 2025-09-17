@@ -2,6 +2,8 @@ import { NavLink } from "react-router-dom";
 import vite from "/public/vite.svg";
 import RatingStars from "./RatingStars.component";
 import { useCart } from "../contexts/CartContext";
+import { useUser } from "../contexts/UserContext";
+import { addToCart } from "../apis/cart.api";
 
 interface ProductCardPropTypes{
     productID:string;
@@ -16,6 +18,7 @@ interface ProductCardPropTypes{
 
 function ProductCard({productID, name, brand, category, price, rating, numReviews, weight}:ProductCardPropTypes) {
     const {addToLocalCart} = useCart();
+    const {isUserAuthenticated} = useUser();
 
     return(
         <div className="border-[1px] border-gray-100 rounded-[8px] flex justify-between h-[55vh] items-center my-2">
@@ -39,7 +42,12 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                     <button className="bg-yellow-300 rounded-2xl w-full py-2 mt-auto" onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        addToLocalCart({_id:productID, name, brand, category, price, quantity:1});
+                        if (isUserAuthenticated()) {
+                            addToCart({productID, quantity:1});
+                        }
+                        else{
+                            addToLocalCart({_id:productID, name, brand, category, price, quantity:1});
+                        }
                         }}>Add to cart</button>
                 </NavLink>
             </div>
