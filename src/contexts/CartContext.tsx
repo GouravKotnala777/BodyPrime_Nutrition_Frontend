@@ -1,9 +1,10 @@
-import { createContext, useContext, useState, type ChangeEvent, type MouseEvent, type ReactNode } from "react";
+import { createContext, useContext, useState, type ChangeEvent, type Dispatch, type MouseEvent, type ReactNode, type SetStateAction } from "react";
 import type { LocalCartTypes } from "../utils/types";
 
 
 interface CartContextPropTypes{
     cartData:LocalCartTypes[];
+    setCartData:Dispatch<SetStateAction<LocalCartTypes[]>>
     addToLocalCart:(product:LocalCartTypes)=>void;
     fetchLocalCartProducts:()=>void;
     removeProductFromLocalCart:({_id}:{_id:string;})=>void;
@@ -22,7 +23,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
         setCartData(cart);
     };
 
-    function addToLocalCart({_id, name, brand, category, price, quantity}:LocalCartTypes) {
+    function addToLocalCart({_id, name, brand, category, price, quantity, size, weight, flavor, images}:LocalCartTypes) {
         try {
             const localStorageCartData = JSON.parse(localStorage.getItem("cart")||"[]") as LocalCartTypes[];
 
@@ -32,7 +33,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
                 isProductExist.quantity+=quantity;
             }
             else{
-                localStorageCartData.push({_id, name, brand, category, price, quantity});
+                localStorageCartData.push({_id, name, brand, category, price, quantity, size, weight, flavor, images});
             }
             
             localStorage.setItem("cart", JSON.stringify(localStorageCartData));
@@ -129,7 +130,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
 
     
     return(
-        <CartContext.Provider value={{cartData, fetchLocalCartProducts, addToLocalCart, removeProductFromLocalCart, changeLocalCartProductQuantity, calculateTotalCartItems, calculateTotalCartValue}}>
+        <CartContext.Provider value={{cartData, setCartData, fetchLocalCartProducts, addToLocalCart, removeProductFromLocalCart, changeLocalCartProductQuantity, calculateTotalCartItems, calculateTotalCartValue}}>
             {children}
         </CartContext.Provider>
     );

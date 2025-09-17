@@ -2,13 +2,34 @@ import { useEffect } from "react";
 import vite from "/public/vite.svg";
 import { NavLink } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
-import { addToCart } from "../apis/cart.api";
+import { addToCart, getCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
+import type { CartTypesFlatted, CartTypesPopulated } from "../utils/types";
 
+function transformCartDataForRes(cartData:CartTypesPopulated) {
+    const transformedCartData = cartData.products.reduce((acc, {productID, quantity}) => {
+        acc.products.push({
+            _id:productID._id,
+            name:productID.name,
+            brand:productID.brand,
+            category:productID.category,
+            price:productID.price,
+            size:productID.size,
+            weight:productID.weight,
+            flavor:productID.flavor,
+            images:productID.images,
+            quantity
+        });
+        return acc;
+    }, {userID:"", products:[], totalPrice:0} as CartTypesFlatted);
+
+    console.log(transformedCartData);
+    return transformedCartData;
+};
 
 function Cart() {
     const {isUserAuthenticated} = useUser();
-    const {cartData, changeLocalCartProductQuantity, removeProductFromLocalCart, calculateTotalCartItems, calculateTotalCartValue} = useCart();
+    const {cartData, setCartData, changeLocalCartProductQuantity, removeProductFromLocalCart, calculateTotalCartItems, calculateTotalCartValue} = useCart();
 
 
     async function addToCartHandler({productID, quantity}:{productID:string; quantity:number;}) {
@@ -17,9 +38,20 @@ function Cart() {
         console.log(res);
     };
 
+    async function getCartHandler() {
+        const res = await getCart();
+
+        setCartData(transformCartDataForRes(res.jsonData).products);
+    }
+
     useEffect(() => {
-        //const res = fetchLocalCartProducts();
-        //setCartData(res);
+        if (isUserAuthenticated()) {
+            getCartHandler();
+        }
+        else{
+            //const res = fetchLocalCartProducts();
+            //setCartData(res);
+        }
     }, []);
 
     

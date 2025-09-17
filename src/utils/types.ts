@@ -24,14 +24,14 @@ export interface ProductTypes {
     category:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";
     size:number;
     tag:string[];
-    description: string;
-    images: string[];
-    stock: number;
+    description?: string;
+    images?: string[];
+    stock?: number;
     weight: string;
     ingredients?: string[];
     nutritionFacts?: {
-        servingSize: string;
-        servingsPerContainer: number;
+        servingSize?: string;
+        servingsPerContainer?: number;
         protein?: number;
         carbs?: number;
         fat?: number;
@@ -42,15 +42,9 @@ export interface ProductTypes {
     flavor?:string;
     warning?:string[];
 };
+export type CreateProductFormTypes = Pick<ProductTypes, "name"|"brand"|"category"|"price"|"flavor"|"size"|"tag"|"weight"|"warning">;
 
-export interface LocalCartTypes{
-    _id:string;
-    name:string;
-    brand:string;
-    category:string;
-    price:number;
-    quantity:number;
-};
+export type LocalCartTypes = (Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">&{quantity: number;});
 export interface CartTypes{
     userID:string;
     products:{
@@ -59,13 +53,18 @@ export interface CartTypes{
     }[];
     totalPrice:number;
 };
-export interface CartTypesPopulated{
-    userID:Pick<UserTypes, "_id"|"name"|"email"|"mobile">;
-    products:{
-        productID:Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"flavor"|"images"|"price"|"size"|"weight">;
-        quantity:number;
-    }[];
-    totalPrice:number;
+export interface CartTypesPopulated {
+  userID: string;
+  products: {
+    productID: Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">;
+    quantity: number;
+  }[];
+  totalPrice: number;
+};
+export interface CartTypesFlatted {
+  userID: string;
+  products: (Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">&{quantity: number;})[];
+  totalPrice: number;
 };
 export interface ReviewTypes {
     productID:string;
