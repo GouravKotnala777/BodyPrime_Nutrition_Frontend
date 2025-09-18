@@ -31,3 +31,18 @@ export async function addToCart({productID, quantity}:{productID:string; quantit
         throw error;
     }
 };
+export async function removeFromCart({productID, quantity}:{productID:string; quantity:number;}) {
+    try {
+        const data = await apiHandler<{productID:string; quantity:number;}, {products:string; quantity:number;}>({
+            endpoint:"/cart/remove_from_cart",
+            method:"POST",
+            contentType:"application/json",
+            body:{productID, quantity}
+        });
+
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};

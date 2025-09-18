@@ -17,14 +17,14 @@ import Logout from './pages/Logout.page.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.component.tsx';
 import Inventory from './pages/Inventory.tsx';
 
-const dummyUser:UserTypes = {
-  name:"Gourav",
-  email:"gourav@gmail.com",
-  mobile:"8882732859",
-  gender:"male",
-  isVerified:true,
-  role:"admin"
-};
+//const dummyUser:UserTypes = {
+//  name:"Gourav",
+//  email:"gourav@gmail.com",
+//  mobile:"8882732859",
+//  gender:"male",
+//  isVerified:true,
+//  role:"admin"
+//};
 
 function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
@@ -53,13 +53,13 @@ function App() {
       <Routes>
         <Route path={"/home"} element={<Home />} />
         <Route path={"/single_product/:productID"} element={<SingleProduct />} />
+        <Route path={"/cart"} element={<Cart />} />
 
 
 
 
         // Show only if user is loggedin
         <>
-          <Route path={"/cart"} element={isUserAuthenticated()?<Cart />:<Login />} />
           <Route path={"/my_profile"} element={isUserAuthenticated()?<MyProfile />:<Login />} />
           <Route path={"/logout"} element={isUserAuthenticated()?<Logout />:<Login />} />
         </>

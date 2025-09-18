@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import vite from "/public/vite.svg";
 import { NavLink } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
-import { addToCart, getCart } from "../apis/cart.api";
+import { addToCart, getCart, removeFromCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
 import type { CartTypesFlatted, CartTypesPopulated } from "../utils/types";
 
@@ -35,6 +35,15 @@ function Cart() {
     async function addToCartHandler({productID, quantity}:{productID:string; quantity:number;}) {
         const res = await addToCart({productID, quantity});
 
+        const selectedProduct = cartData.find((p) => p._id === res.jsonData.products._id);
+
+        if (!selectedProduct) return Error("selectedProduct not found");
+
+        if (res.jsonData.quantity < 10) {
+            setCartData(cartData.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p));
+        } else {
+            return Error("Cannot add more than 10 products");
+        }
         console.log(res);
     };
 
@@ -42,7 +51,23 @@ function Cart() {
         const res = await getCart();
 
         setCartData(transformCartDataForRes(res.jsonData).products);
-    }
+    };
+
+    async function removeFromCartHandler({productID, quantity}:{productID:string; quantity:number;}) {
+        const res = await removeFromCart({productID, quantity});
+
+        const selectedProduct = cartData.find((p) => p._id === res.jsonData.products);
+
+        if (!selectedProduct) return Error("selectedProduct not found");
+        if (res.jsonData.quantity < 1) {
+            setCartData(cartData.filter(p => p._id !== res.jsonData.products));
+        }
+        else{
+            selectedProduct.quantity = res.jsonData.quantity;
+            setCartData(cartData.map(p => p._id === res.jsonData.products?{...p, quantity:res.jsonData.quantity}:p));
+            "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
+        }        
+    };
 
     useEffect(() => {
         if (isUserAuthenticated()) {
@@ -91,18 +116,32 @@ function Cart() {
                                 <div className="flex justify-around items-center border-[1px] border-green-500 py-1 rounded-[4px] flex-1/2">
                                     <button className="text-3xl" name="-1" onClick={(e) => {
                                         if (isUserAuthenticated()) {
-                                            addToCartHandler({productID:p._id, quantity:(Number(e.currentTarget.value)||Number(e.currentTarget.name))});
+                                            removeFromCartHandler({productID:p._id, quantity:1});
                                         }
                                         else{
                                             changeLocalCartProductQuantity(e, p._id);
                                         }
                                     }}>-</button>
-                                    <span className="text-xl w-1/3"><input type="text" placeholder={p.quantity.toString()} className="w-full text-center" onChange={(e) => changeLocalCartProductQuantity(e, p._id)} /></span>
-                                    <button className="text-3xl" name="1" onClick={(e) => changeLocalCartProductQuantity(e, p._id)}>+</button>
+                                    <span className="text-xl w-1/3 text-center">{p.quantity.toString()}</span>
+                                    <button className="text-3xl" name="1" onClick={(e) => {
+                                        if (isUserAuthenticated()) {
+                                            addToCartHandler({productID:p._id, quantity:1});
+                                        }
+                                        else{
+                                            changeLocalCartProductQuantity(e, p._id)
+                                        }
+                                    }}>+</button>
                                 </div>
                                 {/*<button className="border-[1px] border-green-500 text-white bg-green-500 py-2 rounded-[4px] flex-1/2 mr-2">Buy</button>*/}
                                 <button className="border-[1px] border-red-500 text-red-500 py-2 rounded-[4px] flex-1/2 text-xl"
-                                    onClick={() => removeProductFromLocalCart({_id:p._id})}
+                                    onClick={() => {
+                                        if (isUserAuthenticated()) {
+                                            removeFromCartHandler({productID:p._id, quantity:p.quantity});
+                                        }
+                                        else{
+                                            removeProductFromLocalCart({_id:p._id})
+                                        }
+                                    }}
                                 >Remove</button>
                             </div>
                             
