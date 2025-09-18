@@ -9,14 +9,15 @@ interface ProductCardPropTypes{
     productID:string;
     name:string;
     brand:string;
-    category:string;
+    category:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";
     price:number;
     rating:number;
     numReviews:number;
     weight:string;
+    flavor?:string;
 };
 
-function ProductCard({productID, name, brand, category, price, rating, numReviews, weight}:ProductCardPropTypes) {
+function ProductCard({productID, name, brand, category, price, rating, numReviews, weight, flavor}:ProductCardPropTypes) {
     const {addToLocalCart} = useCart();
     const {isUserAuthenticated} = useUser();
 
@@ -46,7 +47,7 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                             addToCart({productID, quantity:1});
                         }
                         else{
-                            addToLocalCart({_id:productID, name, brand, category, price, quantity:1});
+                            addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1});
                         }
                         }}>Add to cart</button>
                 </NavLink>
