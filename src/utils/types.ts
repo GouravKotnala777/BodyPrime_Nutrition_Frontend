@@ -25,7 +25,7 @@ export interface ProductTypes {
     size:number;
     tag:string[];
     description?: string;
-    images?: string[];
+    images: string[];
     stock?: number;
     weight: string;
     ingredients?: string[];

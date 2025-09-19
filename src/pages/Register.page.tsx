@@ -8,7 +8,7 @@ function Register() {
     const [formData, setFormData] = useState<RegisterFormTypes>({name:"", email:"", mobile:"", gender:"male", password:""});
 
     function onChangeHandler(e:ChangeEvent<HTMLInputElement|HTMLSelectElement>) {
-        setFormData({...formData, [e.target.name]:e.target.name});        
+        setFormData({...formData, [e.target.name]:e.target.value});        
     };
     async function onClickHandler() {
         const res = await register(formData);
@@ -20,16 +20,16 @@ function Register() {
         <section className="Register_section flex flex-col items-center gap-10 p-10">
             <h1 className="text-4xl font-bold">Register Page</h1>
             <label>
-                <input type="text" placeholder="Full Name" className="p-2 bg-amber-100" onChange={onChangeHandler} />
+                <input type="text" name="name" placeholder="Full Name" className="p-2 bg-amber-100" onChange={onChangeHandler} />
             </label>
             <label>
-                <input type="text" placeholder="Email" className="p-2 bg-amber-100" onChange={onChangeHandler} />
+                <input type="text" name="email" placeholder="Email" className="p-2 bg-amber-100" onChange={onChangeHandler} />
             </label>
             <label>
-                <input type="text" placeholder="Mobile" className="p-2 bg-amber-100" onChange={onChangeHandler} />
+                <input type="text" name="mobile" placeholder="Mobile" className="p-2 bg-amber-100" onChange={onChangeHandler} />
             </label>
             <label>
-                <input type="text" placeholder="Password" className="p-2 bg-amber-100" onChange={onChangeHandler} />
+                <input type="text" name="password" placeholder="Password" className="p-2 bg-amber-100" onChange={onChangeHandler} />
             </label>
 
             <label className="p-2 bg-amber-100">

@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom";
-import vite from "/public/vite.svg";
 import RatingStars from "./RatingStars.component";
 import { useCart } from "../contexts/CartContext";
 import { useUser } from "../contexts/UserContext";
@@ -15,15 +14,23 @@ interface ProductCardPropTypes{
     numReviews:number;
     weight:string;
     flavor?:string;
+    images:string[];
 };
 
-function ProductCard({productID, name, brand, category, price, rating, numReviews, weight, flavor}:ProductCardPropTypes) {
+function ProductCard({productID, name, brand, category, price, rating, numReviews, weight, flavor, images}:ProductCardPropTypes) {
     const {addToLocalCart} = useCart();
     const {isUserAuthenticated} = useUser();
 
     return(
         <div className="border-[1px] border-gray-100 rounded-[8px] flex justify-between h-[55vh] items-center my-2">
-            <NavLink to={`/single_product/${productID}`} className="w-[40%] h-[100%] bg-gray-100"><img src={vite} alt={vite} className="w-full h-full"/></NavLink>
+            <NavLink to={`/single_product/${productID}`} className="w-[40%] h-[100%] bg-gray-100">
+                {
+                    (images&&images.length !== 0) ?
+                    <img src={`http://localhost:8000/api/v1${images[0]}`} alt={`http://localhost:8000/api/v1${images[0]}`} className="h-full w-full" />
+                    :
+                    <img src={"http://localhost:8000/api/v1/public/no_product.png"} alt={"http://localhost:8000/api/v1/public/no_product.png"} className="h-full w-full" />
+                }
+            </NavLink>
             <div className="w-[60%] h-full flex flex-col gap-2 py-4 px-2">
                 <NavLink to={`/single_product/${productID}`} className="h-[14rem]">
                     <div className="text-[1.3rem] font-semibold h-[6rem]
@@ -47,7 +54,7 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                             addToCart({productID, quantity:1});
                         }
                         else{
-                            addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1});
+                            addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1, images});
                         }
                         }}>Add to cart</button>
                 </NavLink>

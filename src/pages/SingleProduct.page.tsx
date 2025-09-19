@@ -73,7 +73,7 @@ function SingleProduct() {
 
     return(
         <section>
-            <div className="border-2 flex justify-between items-center">
+            <div className="flex justify-between items-center py-2 bg-[#f4476a24]">
                 <div><img src={vite} alt={vite} /></div>
                 <div className="flex flex-col">
                     <span className="text-[1rem] font-semibold">Company Name</span>
@@ -82,7 +82,14 @@ function SingleProduct() {
                 <div className="text-[0.8rem] flex">4.5 <RatingStars rating={4.5} outOf={5} /> (20,234)</div>
             </div>
             <p className="text-gray-700 font-semibold">{singleProduct?.brand} {singleProduct?.name} {singleProduct?.category} ({singleProduct?.flavor}, {singleProduct?.weight}) - Nitro-Tech Ultimate Muscle Building Formula with Whey Protein Isolate - 30g of Protein, 3g of Creatine & 6.8g of BCAA - Packaging May Vary</p>
-            <div className="w-full h-[45vh] bg-gray-100"><img src={`http://localhost:8000/api/v1${singleProduct?.images[0]}`} alt={`http://localhost:8000/api/v1${singleProduct?.images[0]}`} className="h-full w-full" /></div>
+            <div className="w-full h-[45vh] bg-gray-100">
+                {
+                    (singleProduct&&singleProduct.images&&singleProduct.images[0]) ?
+                    <img src={`http://localhost:8000/api/v1${singleProduct.images[0]}`} alt={`http://localhost:8000/api/v1${singleProduct?.images[0]}`} className="h-full w-full" />
+                    :
+                    <img src={"http://localhost:8000/api/v1/public/no_product.png"} alt={"http://localhost:8000/api/v1/public/no_product.png"} className="h-full w-full" />
+                }
+            </div>
 
             {
                 isUserAdmin() &&
