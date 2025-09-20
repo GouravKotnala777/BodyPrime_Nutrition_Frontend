@@ -11,7 +11,7 @@ function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
     const {loggedInUserName, isUserAuthenticated, isUserAdmin} = useUser();
     return(
         <header 
-            className="header flex justify-between gap-10 items-center p-3"
+            className="border-2 border-green-400 header flex justify-between gap-10 items-center h-[10vh] px-3"
         >
             <section className="logo_section flex items-center gap-6">
                 <img className="w-[40px] h-[40px]" src={viteLogo} alt={viteLogo} />

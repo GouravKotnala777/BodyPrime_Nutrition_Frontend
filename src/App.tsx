@@ -15,7 +15,7 @@ import MyProfile from './pages/MyProfile.page.tsx';
 //import type { UserTypes } from './utils/types.ts';
 import Logout from './pages/Logout.page.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.component.tsx';
-import Inventory from './pages/Inventory.tsx';
+import Inventory from './pages/Inventory.page.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
