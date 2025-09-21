@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { createProduct, getProducts, updateProduct } from "../apis/product.api";
+import { createProduct, getProducts, getSingleProduct, updateProduct } from "../apis/product.api";
 import { type ProductTypes, type CreateProductFormTypes, type UpdateProductFormTypes } from "../utils/types";
 import { AiOutlineProduct } from "react-icons/ai";
 import { BiCamera } from "react-icons/bi";
@@ -65,6 +65,13 @@ function Inventory() {
 
         console.log(res);
     };
+
+    async function findSingleProductHandler() {
+        const res = await getSingleProduct(productID);
+
+        setSelectedProduct(res.jsonData);
+        console.log(res);
+    }
 
     useEffect(() => {
         getProductsHandler();
@@ -141,7 +148,7 @@ function Inventory() {
                     </div>
                     <div className="flex justify-between text-[1.2rem] mt-4">
                         <input type="text" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?._id||"Search product by Id"} onChange={(e) => setProductID(e.target.value)} />
-                        <button className="text-white font-semibold bg-[#f44769] px-5 py-2 rounded-[4px]">Search</button>
+                        <button className="text-white font-semibold bg-[#f44769] px-5 py-2 rounded-[4px]" onClick={findSingleProductHandler}>Search</button>
                     </div>
                     <div className="grid place-items-center py-[30px]">
                         <div className="relative w-1/2">
