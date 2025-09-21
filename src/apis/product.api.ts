@@ -33,7 +33,7 @@ export async function getSingleProduct(productID:string) {
 
 export async function addImages(formData:FormData) {
     try {
-        const data = await apiHandler<FormData, {}>({
+        const data = await apiHandler<FormData, {images:string[]}>({
             endpoint:"/product/add_image",
             method:"POST",
             body:formData

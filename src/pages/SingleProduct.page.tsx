@@ -46,6 +46,7 @@ function SingleProduct() {
         
         if (!productID)  throw new Error("ProductID params not found");
         if (!images || images.length === 0) throw new Error("Please select atleast one image");
+        if (!singleProduct) throw new Error("singleProduct not found");
         
         formData.append("productID", productID);
         Array.from(images).forEach((image) => {
@@ -54,6 +55,7 @@ function SingleProduct() {
         
         const res = await addImages(formData);
 
+        setSingleProduct({...singleProduct, images:res.jsonData.images});
         console.log({res});
         
     };

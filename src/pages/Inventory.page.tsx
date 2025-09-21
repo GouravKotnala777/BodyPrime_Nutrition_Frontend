@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { createProduct, getProducts, getSingleProduct, updateProduct } from "../apis/product.api";
+import { addImages, createProduct, getProducts, getSingleProduct, updateProduct } from "../apis/product.api";
 import { type ProductTypes, type CreateProductFormTypes, type UpdateProductFormTypes } from "../utils/types";
 import { AiOutlineProduct } from "react-icons/ai";
 import { BiCamera } from "react-icons/bi";
@@ -66,6 +66,31 @@ function Inventory() {
         console.log(res);
     };
 
+    async function updateProductImagesHandler(e:ChangeEvent<HTMLInputElement>) {
+        const images = e.target.files;
+
+        console.log({e:e.target.files});
+        console.log({images});
+        
+
+        const formData = new FormData();
+
+        if (!selectedProduct || !selectedProduct._id) throw new Error("selectedProduct._id not found");
+        if (!images || images.length === 0) throw new Error("Please select atlest one image");
+
+        formData.append("productID", selectedProduct._id);
+        Array.from(images).forEach((image) => {
+            formData.append("images", image);
+        });
+
+        const res = await addImages(formData);
+
+        setSelectedProduct({...selectedProduct, images:res.jsonData.images})
+
+        console.log({res});
+        
+    }
+
     async function findSingleProductHandler() {
         const res = await getSingleProduct(productID);
 
@@ -91,7 +116,9 @@ function Inventory() {
                                 setTab("update");
                             }}>
                                 <div className="border-2 h-[85%]">
-                                    <img src="http://localhost:8000/api/v1/public/no_product.png" alt="" />
+                                    <img src={p.images[0]?`http://localhost:8000/api/v1${p.images[0]}`:"http://localhost:8000/api/v1/public/no_product.png"}
+                                        alt={p.images[0]?`http://localhost:8000/api/v1${p.images[0]}`:"http://localhost:8000/api/v1/public/no_product.png"}
+                                    />
                                 </div>
                                 <div className="border-2 text-center h-[15%]">
                                     <h3>₹ {p.price}/-</h3>
@@ -143,6 +170,7 @@ function Inventory() {
         {tab === "update" && (
             <>
                 <section className="border-2 border-green-500 px-2 h-[80vh] overflow-scroll">
+                    {/*<pre>{JSON.stringify(selectedProduct, null, `\t`)}</pre>*/}
                     <div className="text-center text-[1.5rem] font-semibold">
                         <h1>Update Existing Product</h1>
                     </div>
@@ -152,11 +180,12 @@ function Inventory() {
                     </div>
                     <div className="grid place-items-center py-[30px]">
                         <div className="relative w-1/2">
-                            <img src={selectedProduct?.images[0]||"http://localhost:8000/api/v1/public/no_product.png"}
+                            <img src={selectedProduct?.images[0]?`http://localhost:8000/api/v1${selectedProduct?.images[0]}`:"http://localhost:8000/api/v1/public/no_product.png"}
+                                alt={selectedProduct?.images[0]?`http://localhost:8000/api/v1${selectedProduct?.images[0]}`:"http://localhost:8000/api/v1/public/no_product.png"}
                                 className="w-full border-[1px] border-gray-400 rounded-[8px] p-1"
                             />
                             <BiCamera className="absolute right-[-25px] bottom-[-25px] w-[50px] h-[50px] rounded-[100%] bg-[#f44769] p-2 text-white" />
-                            <input type="file" name="images" className="w-[60px] h-[60px] absolute right-[-30px] bottom-[-30px] opacity-0" />
+                            <input type="file" multiple={true} name="images" className="w-[60px] h-[60px] absolute right-[-30px] bottom-[-30px] opacity-0" onChange={(e) => updateProductImagesHandler(e)} />
                         </div>
                     </div>
                     {/*<pre>{JSON.stringify(selectedProduct, null, `\t`)}</pre>*/}
