@@ -43,6 +43,7 @@ export interface ProductTypes {
     warning?:string[];
 };
 export type CreateProductFormTypes = Pick<ProductTypes, "name"|"brand"|"category"|"price"|"flavor"|"size"|"tag"|"weight"|"warning">;
+export type UpdateProductFormTypes = Partial<Pick<ProductTypes, "name"|"brand"|"category"|"price"|"flavor"|"size"|"tag"|"weight"|"warning">>;
 
 export type LocalCartTypes = (Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">&{quantity: number;});
 export interface CartTypes{

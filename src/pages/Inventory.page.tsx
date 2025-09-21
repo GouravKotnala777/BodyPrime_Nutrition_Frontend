@@ -1,25 +1,25 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { createProduct, getProducts } from "../apis/product.api";
-import { type ProductTypes, type CreateProductFormTypes } from "../utils/types";
+import { createProduct, getProducts, updateProduct } from "../apis/product.api";
+import { type ProductTypes, type CreateProductFormTypes, type UpdateProductFormTypes } from "../utils/types";
 import { AiOutlineProduct } from "react-icons/ai";
 import { BiCamera } from "react-icons/bi";
 
 type InventoryTabTypes = "all"|"add"|"update"|"tab4";
 
 
-const dummyProducts:ProductTypes[] = [
-    {_id:"1246891", brand:"brand1", category:"protein", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product1", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246892", brand:"brand2", category:"pre-workout", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product2", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246893", brand:"brand3", category:"protein", description:"Lorem ipsum dolor sit amet.", images:["/public/vite.svg"], name:"product3", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246894", brand:"brand4", category:"vitamins", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore. consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product4", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246895", brand:"brand5", category:"creatine", description:"this is my coment", images:["/public/vite.svg"], name:"product5", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246896", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246897", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246898", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246899", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246810", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-    {_id:"1246811", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
-];
+//const dummyProducts:ProductTypes[] = [
+//    {_id:"1246891", brand:"brand1", category:"protein", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product1", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246892", brand:"brand2", category:"pre-workout", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product2", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246893", brand:"brand3", category:"protein", description:"Lorem ipsum dolor sit amet.", images:["/public/vite.svg"], name:"product3", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246894", brand:"brand4", category:"vitamins", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore. consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product4", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246895", brand:"brand5", category:"creatine", description:"this is my coment", images:["/public/vite.svg"], name:"product5", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246896", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246897", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246898", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246899", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246810", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//    {_id:"1246811", brand:"brand6", category:"other", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid.", images:["/public/vite.svg"], name:"product6", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
+//];
 
 function Inventory() {
     const [products, setProducts] = useState<ProductTypes[]>([]);
@@ -28,9 +28,14 @@ function Inventory() {
     const [skip, setSkip] = useState<number>(0);
     const [productID, setProductID] = useState<string>("");
     const [createProductForm, setCreateProductForm] = useState<Omit<CreateProductFormTypes, "tag"|"warning">&{tag:string; warning:string;}>({name:"", brand:"", category:"other", price:0, size:0, weight:"", tag:"", flavor:"", warning:""});
+    const [updateProductForm, setUpdateProductForm] = useState<Omit<UpdateProductFormTypes, "tag"|"warning"|"category">&{tag?:string; warning?:string; category?:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";}>({name:"", brand:"", price:0, size:0, weight:"", tag:"", flavor:"", warning:""});
 
     function onChangeHandler(e:ChangeEvent<HTMLInputElement|HTMLSelectElement>) {
         setCreateProductForm({...createProductForm, [e.target.name]:e.target.value});
+    };
+
+    function onChangeUpdateHandler(e:ChangeEvent<HTMLInputElement|HTMLSelectElement>) {
+        setUpdateProductForm({...updateProductForm, [e.target.name]:e.target.value});
     };
 
     async function createProductHandler() {
@@ -49,9 +54,17 @@ function Inventory() {
         setSkip(skip+1)
     };
 
-    function aa() {
-        console.log(selectedProduct);
-    }
+    async function updateProductHandler() {
+        if (!selectedProduct || !selectedProduct._id) return Error("ProductID not found");
+        const res = await updateProduct({
+            ...updateProductForm,
+            tag:updateProductForm.tag?.split(","),
+            warning:updateProductForm.warning?.split(","),
+            category:updateProductForm.category
+        }, selectedProduct._id);
+
+        console.log(res);
+    };
 
     useEffect(() => {
         getProductsHandler();
@@ -65,7 +78,7 @@ function Inventory() {
             <>
                 <section className="border-2 border-blue-600 flex flex-wrap justify-around gap-4 h-[80vh] overflow-scroll">
                     {
-                        dummyProducts.map((p) => (
+                        products.map((p) => (
                             <div key={p._id} className="border-2 w-[110px] h-[160px]" onClick={() => {
                                 setSelectedProduct(p);
                                 setTab("update");
@@ -79,6 +92,9 @@ function Inventory() {
                             </div>
                         ))
                     }
+                    <div className="border-2 w-full h-fit text-xl text-center font-semibold mt-8 mb-4">
+                        <button className="border-2 px-4 py-2 rounded-[8px] text-white bg-[#f06682bb]" onClick={getProductsHandler}>Next</button>
+                    </div>
                 </section>
             </>
         )}
@@ -138,9 +154,9 @@ function Inventory() {
                     </div>
                     {/*<pre>{JSON.stringify(selectedProduct, null, `\t`)}</pre>*/}
                     <div className="flex flex-col gap-2 text-[1.2rem] mt-4">
-                        <input type="text" name="name" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.name||"Product name"} onChange={onChangeHandler} />
-                        <input type="text" name="brand" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.brand||"Product brand"} onChange={onChangeHandler} />
-                        <select name="category" className="px-5 py-2" defaultValue={selectedProduct?.category} onChange={onChangeHandler}>
+                        <input type="text" name="name" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.name||"Product name"} onChange={onChangeUpdateHandler} />
+                        <input type="text" name="brand" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.brand||"Product brand"} onChange={onChangeUpdateHandler} />
+                        <select name="category" className="px-5 py-2" defaultValue={selectedProduct?.category} onChange={onChangeUpdateHandler}>
                             <option value="null" disabled>--select--</option>
                             <option value="protein">protein</option>
                             <option value="pre-workout">pre-workout</option>
@@ -148,14 +164,14 @@ function Inventory() {
                             <option value="creatine">creatine</option>
                             <option value="other">other</option>
                         </select>
-                        <input type="text" name="price" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.price.toString()||"Price"} onChange={onChangeHandler} />
-                        <input type="text" name="flavor" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.flavor||"Flavor"} onChange={onChangeHandler} />
-                        <input type="text" name="size" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.size.toString()||"Size"} onChange={onChangeHandler} />
-                        <input type="text" name="tag" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.tag.join(",")||"Tag"} onChange={onChangeHandler} />
-                        <input type="text" name="weight" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.weight||"Weight"} onChange={onChangeHandler} />
-                        <input type="text" name="warning" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.warning?.join(",")||"Warning"} onChange={onChangeHandler} />
+                        <input type="text" name="price" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.price.toString()||"Price"} onChange={onChangeUpdateHandler} />
+                        <input type="text" name="flavor" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.flavor||"Flavor"} onChange={onChangeUpdateHandler} />
+                        <input type="text" name="size" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.size.toString()||"Size"} onChange={onChangeUpdateHandler} />
+                        <input type="text" name="tag" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.tag.join(",")||"Tag"} onChange={onChangeUpdateHandler} />
+                        <input type="text" name="weight" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.weight||"Weight"} onChange={onChangeUpdateHandler} />
+                        <input type="text" name="warning" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.warning?.join(",")||"Warning"} onChange={onChangeUpdateHandler} />
 
-                        <button className="font-semibold py-3 rounded-2xl text-white bg-[#f44769]" onClick={createProductHandler}>Update Product</button>
+                        <button className="font-semibold py-3 rounded-2xl text-white bg-[#f44769]" onClick={updateProductHandler}>Update Product</button>
                     </div>
                     <p>
                         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi nam magnam deserunt eligendi illum debitis tenetur optio quae voluptatem officiis quasi perferendis aliquam sequi, voluptatum dolores nostrum eos praesentium laboriosam dolorum. Ipsa repudiandae optio esse, quo explicabo reiciendis tenetur fuga.

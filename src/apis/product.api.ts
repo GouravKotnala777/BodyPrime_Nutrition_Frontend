@@ -1,5 +1,5 @@
 import { apiHandler } from "../utils/functions";
-import type { CreateProductFormTypes, ProductTypes } from "../utils/types";
+import type { CreateProductFormTypes, ProductTypes, UpdateProductFormTypes } from "../utils/types";
 
 
 
@@ -49,6 +49,20 @@ export async function createProduct(formData:CreateProductFormTypes) {
         const data = await apiHandler<CreateProductFormTypes, ProductTypes>({
             endpoint:"/product/create_product",
             method:"POST",
+            contentType:"application/json",
+            body:formData
+        });
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export async function updateProduct(formData:UpdateProductFormTypes, productID:string) {
+    try {
+        const data = await apiHandler<UpdateProductFormTypes, ProductTypes>({
+            endpoint:`/product/update_product?productID=${productID}`,
+            method:"PUT",
             contentType:"application/json",
             body:formData
         });
