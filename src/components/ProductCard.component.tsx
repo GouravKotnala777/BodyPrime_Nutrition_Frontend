@@ -3,6 +3,7 @@ import RatingStars from "./RatingStars.component";
 import { useCart } from "../contexts/CartContext";
 import { useUser } from "../contexts/UserContext";
 import { addToCart } from "../apis/cart.api";
+import ImageWithFallback from "./ImageWithFallback.component";
 
 interface ProductCardPropTypes{
     productID:string;
@@ -18,18 +19,22 @@ interface ProductCardPropTypes{
 };
 
 function ProductCard({productID, name, brand, category, price, rating, numReviews, weight, flavor, images}:ProductCardPropTypes) {
-    const {addToLocalCart} = useCart();
+    const {cartData, addToLocalCart, setCartData} = useCart();
     const {isUserAuthenticated} = useUser();
+
+    async function addToCartHandler() {
+        const res = await addToCart({productID, quantity:1});
+
+        setCartData((prev) => {
+            return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p)
+        })
+    }
 
     return(
         <div className="border-[1px] border-gray-100 rounded-[8px] flex justify-between h-[55vh] items-center my-2">
+            <pre>{JSON.stringify(cartData, null, `\t`)}</pre>
             <NavLink to={`/single_product/${productID}`} className="w-[40%] h-[100%] bg-gray-100">
-                {
-                    (images&&images.length !== 0) ?
-                    <img src={`http://localhost:8000/api/v1${images[0]}`} alt={`http://localhost:8000/api/v1${images[0]}`} className="h-full w-full" />
-                    :
-                    <img src={"http://localhost:8000/api/v1/public/no_product.png"} alt={"http://localhost:8000/api/v1/public/no_product.png"} className="h-full w-full" />
-                }
+                <ImageWithFallback src={`http://localhost:8000/api/v1${images[0]}`} alt={`http://localhost:8000/api/v1${images[0]}`} fallbackSrc="http://localhost:8000/api/v1/public/no_product.png" className="h-full w-full" />
             </NavLink>
             <div className="w-[60%] h-full flex flex-col gap-2 py-4 px-2">
                 <NavLink to={`/single_product/${productID}`} className="h-[14rem]">
@@ -51,7 +56,7 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                         e.stopPropagation();
                         e.preventDefault();
                         if (isUserAuthenticated()) {
-                            addToCart({productID, quantity:1});
+                            addToCartHandler();
                         }
                         else{
                             addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1, images});

@@ -5,6 +5,7 @@ import type { SidebarPropTypes } from './Sidebar.component';
 import { FiShoppingCart } from 'react-icons/fi';
 import { useCart } from '../contexts/CartContext';
 import { useUser } from '../contexts/UserContext';
+import ImageWithFallback from './ImageWithFallback.component';
 
 function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
     const {calculateTotalCartItems} = useCart();
@@ -14,7 +15,8 @@ function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
             className="border-2 border-green-400 header flex justify-between gap-10 items-center h-[10vh] px-3"
         >
             <section className="logo_section flex items-center gap-6">
-                <img className="w-[40px] h-[40px]" src={viteLogo} alt={viteLogo} />
+                
+                <ImageWithFallback src={viteLogo} alt={viteLogo} fallbackSrc="http://localhost:8000/api/v1/public/no_user.png" className="w-[40px] h-[40px]" />
                 <NavLink to="/my_profile" className="text-xl font-semibold text-white">{isUserAuthenticated()?loggedInUserName():"Login"}</NavLink>
             </section>
             <section

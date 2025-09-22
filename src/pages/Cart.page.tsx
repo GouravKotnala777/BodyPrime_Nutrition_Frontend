@@ -5,6 +5,7 @@ import { useCart } from "../contexts/CartContext";
 import { addToCart, getCart, removeFromCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
 import type { CartTypesFlatted, CartTypesPopulated } from "../utils/types";
+import ImageWithFallback from "../components/ImageWithFallback.component";
 
 function transformCartDataForRes(cartData:CartTypesPopulated) {
     const transformedCartData = cartData.products.reduce((acc, {productID, quantity}) => {
@@ -91,7 +92,9 @@ function Cart() {
                     cartData.map((p) => (
                         <div key={p._id} className="border-[1px] border-gray-100 my-4 py-4">
                             <div className="flex gap-2 my-2 py-4">
-                                <div className="w-[20%] bg-gray-100"><img src={vite} alt={vite} className="w-full h-full"/></div>
+                                <div className="w-[20%] bg-gray-100">
+                                    <ImageWithFallback src={vite} alt={vite} fallbackSrc="http://localhost:8000/api/v1/public/no_product.png" className="w-full h-full"/>
+                                </div>
                                 <div className="w-[80%]">    
                                     <div>
                                         <NavLink to={`/single_product/${p._id}`} className="font-semibold text-[1.2rem] text-gray-700
