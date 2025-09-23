@@ -16,6 +16,8 @@ import MyProfile from './pages/MyProfile.page.tsx';
 import Logout from './pages/Logout.page.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.component.tsx';
 import Inventory from './pages/Inventory.page.tsx';
+import { getCart } from './apis/cart.api.ts';
+import { transformCartDataForRes } from './utils/functions.ts';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -28,7 +30,7 @@ import Inventory from './pages/Inventory.page.tsx';
 
 function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
-  const {fetchLocalCartProducts} = useCart();
+  const {setCartData, fetchLocalCartProducts} = useCart();
   const {setUser, isUserAuthenticated, isUserAdmin} = useUser();
 
   async function myProfileHandler() {
@@ -38,12 +40,27 @@ function App() {
     
     setUser(res.jsonData);
   };
+
+  async function getCartHandler() {
+      const res = await getCart();
+
+      setCartData(transformCartDataForRes(res.jsonData).products);
+  };
   
   useEffect(() => {
-    fetchLocalCartProducts();
     myProfileHandler();
     //setUser(dummyUser);
   }, []);
+
+  useEffect(() => {
+    if (isUserAuthenticated()) {
+        getCartHandler();
+    }
+    else{
+        //const res = fetchLocalCartProducts();
+        //setCartData(res);
+    }
+}, [isUserAuthenticated()]);
 
   return (
     <BrowserRouter>

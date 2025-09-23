@@ -4,6 +4,7 @@ import { useCart } from "../contexts/CartContext";
 import { useUser } from "../contexts/UserContext";
 import { addToCart } from "../apis/cart.api";
 import ImageWithFallback from "./ImageWithFallback.component";
+import { transformCartDataForRes } from "../utils/functions";
 
 interface ProductCardPropTypes{
     productID:string;
@@ -25,14 +26,26 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
     async function addToCartHandler() {
         const res = await addToCart({productID, quantity:1});
 
-        setCartData((prev) => {
-            return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p)
-        })
+        if (cartData.length === 0) {
+            setCartData([{...res.jsonData.products, quantity:res.jsonData.quantity}]);
+        }
+        else{
+            setCartData((prev) => {
+                const findResult = prev.find(p => p._id === res.jsonData.products._id);
+
+                if (findResult) {
+                    return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p);
+                }
+                else{
+                    return [...prev, {...res.jsonData.products, quantity:res.jsonData.quantity}];
+                }
+            });
+        }
     }
 
     return(
         <div className="border-[1px] border-gray-100 rounded-[8px] flex justify-between h-[55vh] items-center my-2">
-            <pre>{JSON.stringify(cartData, null, `\t`)}</pre>
+            {/*<pre>{JSON.stringify(cartData, null, `\t`)}</pre>*/}
             <NavLink to={`/single_product/${productID}`} className="w-[40%] h-[100%] bg-gray-100">
                 <ImageWithFallback src={`http://localhost:8000/api/v1${images[0]}`} alt={`http://localhost:8000/api/v1${images[0]}`} fallbackSrc="http://localhost:8000/api/v1/public/no_product.png" className="h-full w-full" />
             </NavLink>

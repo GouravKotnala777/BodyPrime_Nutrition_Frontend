@@ -1,3 +1,4 @@
+import type { CartTypesFlatted, CartTypesPopulated } from "./types";
 
 
 interface APIHandlerTypes<BodyType> {
@@ -27,4 +28,25 @@ export async function apiHandler <BodyType, JsonResType>({endpoint, method, cont
         console.log(error);
         throw error;
     }
+};
+
+export function transformCartDataForRes(cartData:CartTypesPopulated) {
+    const transformedCartData = cartData.products.reduce((acc, {productID, quantity}) => {
+        acc.products.push({
+            _id:productID._id,
+            name:productID.name,
+            brand:productID.brand,
+            category:productID.category,
+            price:productID.price,
+            size:productID.size,
+            weight:productID.weight,
+            flavor:productID.flavor,
+            images:productID.images,
+            quantity
+        });
+        return acc;
+    }, {userID:"", products:[], totalPrice:0} as CartTypesFlatted);
+
+    console.log(transformedCartData);
+    return transformedCartData;
 };

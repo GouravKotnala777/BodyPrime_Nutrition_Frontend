@@ -1,32 +1,10 @@
-import { useEffect } from "react";
 import vite from "/public/vite.svg";
 import { NavLink } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
-import { addToCart, getCart, removeFromCart } from "../apis/cart.api";
+import { addToCart, removeFromCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
-import type { CartTypesFlatted, CartTypesPopulated } from "../utils/types";
 import ImageWithFallback from "../components/ImageWithFallback.component";
 
-function transformCartDataForRes(cartData:CartTypesPopulated) {
-    const transformedCartData = cartData.products.reduce((acc, {productID, quantity}) => {
-        acc.products.push({
-            _id:productID._id,
-            name:productID.name,
-            brand:productID.brand,
-            category:productID.category,
-            price:productID.price,
-            size:productID.size,
-            weight:productID.weight,
-            flavor:productID.flavor,
-            images:productID.images,
-            quantity
-        });
-        return acc;
-    }, {userID:"", products:[], totalPrice:0} as CartTypesFlatted);
-
-    console.log(transformedCartData);
-    return transformedCartData;
-};
 
 function Cart() {
     const {isUserAuthenticated} = useUser();
@@ -48,12 +26,6 @@ function Cart() {
         console.log(res);
     };
 
-    async function getCartHandler() {
-        const res = await getCart();
-
-        setCartData(transformCartDataForRes(res.jsonData).products);
-    };
-
     async function removeFromCartHandler({productID, quantity}:{productID:string; quantity:number;}) {
         const res = await removeFromCart({productID, quantity});
 
@@ -69,17 +41,6 @@ function Cart() {
             "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
         }        
     };
-
-    useEffect(() => {
-        if (isUserAuthenticated()) {
-            getCartHandler();
-        }
-        else{
-            //const res = fetchLocalCartProducts();
-            //setCartData(res);
-        }
-    }, []);
-
     
     return(
         <section className="px-2">
