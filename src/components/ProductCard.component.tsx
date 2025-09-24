@@ -4,7 +4,6 @@ import { useCart } from "../contexts/CartContext";
 import { useUser } from "../contexts/UserContext";
 import { addToCart } from "../apis/cart.api";
 import ImageWithFallback from "./ImageWithFallback.component";
-import { transformCartDataForRes } from "../utils/functions";
 
 interface ProductCardPropTypes{
     productID:string;

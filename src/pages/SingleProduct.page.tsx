@@ -7,6 +7,8 @@ import RatingStars from "../components/RatingStars.component";
 import { getReviews, createReview } from "../apis/review.api";
 import ReviewCard from "../components/ReviewCard.component";
 import { useUser } from "../contexts/UserContext";
+import { addToCart, removeFromCart } from "../apis/cart.api";
+import { useCart } from "../contexts/CartContext";
 
 
 function SingleProduct() {
@@ -16,7 +18,10 @@ function SingleProduct() {
     const [allReviews, setAllReviews] = useState<ReviewTypesPopulated[]>([]);
     const [rating, setRating] = useState<number>(0);
     const [comment, setComment] = useState<string>("");
+    const [quantityInCart, setQuantityInCart] = useState<number>(0);
     const {isUserAdmin} = useUser();
+    const {cartData, setCartData} = useCart();
+
 
     async function getSingleProductHandler() {
         if (!productID) return;
@@ -66,12 +71,57 @@ function SingleProduct() {
         setAllReviews(res.jsonData);
         console.log(res);
     }
+
+    async function addToCartHandler() {
+        if (!productID) throw Error("productID not found");
+
+        const res = await addToCart({productID, quantity:1});
+
+        if (cartData.length === 0) {
+            setCartData([{...res.jsonData.products, quantity:res.jsonData.quantity}]);
+        }
+        else{
+            setCartData((prev) => {
+                const findResult = prev.find(p => p._id === res.jsonData.products._id);
+
+                if (findResult) {
+                    return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p);
+                }
+                else{
+                    return [...prev, {...res.jsonData.products, quantity:res.jsonData.quantity}];
+                }
+            });
+        }
+    }
+
+    async function removeFromCartHandler() {
+        if (!productID) throw Error("productID not found");
+
+        const res = await removeFromCart({productID, quantity:1});
+
+        const selectedProduct = cartData.find((p) => p._id === res.jsonData.products);
+
+        if (!selectedProduct) return Error("selectedProduct not found");
+        if (res.jsonData.quantity < 1) {
+            setCartData(cartData.filter(p => p._id !== res.jsonData.products));
+        }
+        else{
+            selectedProduct.quantity = res.jsonData.quantity;
+            setCartData(cartData.map(p => p._id === res.jsonData.products?{...p, quantity:res.jsonData.quantity}:p));
+            "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
+        }        
+    };
     
 
     useEffect(() => {
         getSingleProductHandler();
         getReviewsHandler();
     }, []);
+    
+    useEffect(() => {
+        const findResult = cartData.find(p => p._id === singleProduct?._id);
+        setQuantityInCart(findResult?.quantity||0);
+    }, [cartData]);
 
     return(
         <section>
@@ -105,7 +155,23 @@ function SingleProduct() {
                     </div>
                 </div>
             }
-            <div className="border-[1px] border-gray-100 my-2 py-4">
+
+            <div>
+                {
+                    quantityInCart ?
+                    <div className="border-2 flex justify-between items-center w-60 mx-auto rounded-2xl">
+                        <button className="text-3xl font-semibold w-[4rem] h-[3rem]" onClick={removeFromCartHandler}>-</button>
+                        <span className="text-xl">{quantityInCart}</span>
+                        <button className="text-3xl font-semibold w-[4rem] h-[3rem]" onClick={addToCartHandler}>+</button>
+                    </div>
+                    :
+                    <button className="w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100 bg-yellow-300" onClick={addToCartHandler}>Add to cart</button>
+
+                }
+            </div>
+
+
+            <div className="border-[1px] border-gray-900 my-2 py-4">
                 <div className="text-[1.3rem]">
                     <span>Flavor Name: </span><span className="font-semibold">Milk Chocolate</span>
                 </div>
