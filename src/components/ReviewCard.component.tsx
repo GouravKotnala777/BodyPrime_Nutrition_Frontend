@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
 import RatingStars from "./RatingStars.component";
-import vite from "/public/vite.svg";
 import type { ReviewTypesPopulated } from "../utils/types";
 
 
@@ -11,7 +10,7 @@ function ReviewCard({productID, userID, ...review}:ReviewTypesPopulated) {
     return(
         <div className="flex flex-col gap-2 py-5 border-b-[1px] border-b-gray-200">
             <div className="flex">
-                <img src={vite} alt={vite} />
+                <img src="/vite.svg" alt="/vite.svg" />
                 <span>{userID.name}</span>
             </div>
             <div className="flex">

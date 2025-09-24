@@ -2,7 +2,6 @@ import { useEffect, useState, type ChangeEvent } from "react";
 import { useParams } from "react-router-dom"
 import { addImages, getSingleProduct } from "../apis/product.api";
 import { type ProductTypes, type ReviewTypesPopulated } from "../utils/types";
-import vite from "/public/vite.svg";
 import RatingStars from "../components/RatingStars.component";
 import { getReviews, createReview } from "../apis/review.api";
 import ReviewCard from "../components/ReviewCard.component";
@@ -126,7 +125,7 @@ function SingleProduct() {
     return(
         <section>
             <div className="flex justify-between items-center py-2 bg-[#f4476a24]">
-                <div><img src={vite} alt={vite} /></div>
+                <div><img src="/vite.svg" alt="/vite.svg" /></div>
                 <div className="flex flex-col">
                     <span className="text-[1rem] font-semibold">Company Name</span>
                     <span className="text-[0.9rem]">Brand name</span>

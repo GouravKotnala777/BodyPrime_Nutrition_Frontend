@@ -1,6 +1,5 @@
 import { BiEdit } from "react-icons/bi";
 import { useUser } from "../contexts/UserContext";
-import img from "/public/vite.svg";
 import { FcCancel } from "react-icons/fc";
 import { useState, type ChangeEvent, type MouseEvent } from "react";
 import { type UpdateProfileFormType } from "../utils/types";
@@ -40,7 +39,7 @@ function MyProfile() {
     return(
         <section className="px-4 py-5">
             <div className="w-full">
-                <img src={img} alt={img} className="w-full" />
+                <img src="/vite.svg" alt="/vite.svg" className="w-full" />
             </div>
             <div className="flex flex-col items-center gap-4">
                 <div className="flex justify-between items-center w-full">
