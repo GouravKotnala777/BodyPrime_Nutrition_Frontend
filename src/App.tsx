@@ -18,6 +18,7 @@ import { ProtectedRoute } from './components/ProtectedRoute.component.tsx';
 import Inventory from './pages/Inventory.page.tsx';
 import { getCart } from './apis/cart.api.ts';
 import { transformCartDataForRes } from './utils/functions.ts';
+import Address from './pages/Address.page.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -71,6 +72,7 @@ function App() {
         <Route path={"/home"} element={<Home />} />
         <Route path={"/single_product/:productID"} element={<SingleProduct />} />
         <Route path={"/cart"} element={<Cart />} />
+        <Route path={"/address"} element={<Address />} />
 
 
 
