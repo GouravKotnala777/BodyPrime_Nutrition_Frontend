@@ -67,6 +67,85 @@ export interface CartTypesFlatted {
   products: (Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">&{quantity: number;})[];
   totalPrice: number;
 };
+export interface OrderTypes {
+    userID: string;
+    products: {
+        productID: string;
+        name:string;
+        price:number;
+        quantity: number;
+    }[];
+    shippingInfo: {
+        address: string;
+        city: string;
+        state: string;
+        country: string;
+        pincode: string;
+        phone: string;
+    };
+    paymentInfo: {
+        method: "COD" | "Stripe";
+        transactionID?: string;
+        status: "pending" | "paid" | "failed" | "refunded";
+    };
+    priceSummary: {
+        itemsPrice: number;
+        taxPrice: number;
+        shippingPrice: number;
+        discount: number;
+        totalPrice: number;
+    };
+    orderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+    deliveredAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
+};
+export interface OrderTypesPopulates {
+    userID: string;
+    products: {
+        productID: Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">;
+        name:string;
+        price:number;
+        quantity: number;
+    }[];
+    shippingInfo: {
+        address: string;
+        city: string;
+        state: string;
+        country: string;
+        pincode: string;
+        phone: string;
+    };
+    paymentInfo: {
+        method: "COD" | "Stripe";
+        transactionID?: string;
+        status: "pending" | "paid" | "failed" | "refunded";
+    };
+    priceSummary: {
+        itemsPrice: number;
+        taxPrice: number;
+        shippingPrice: number;
+        discount: number;
+        totalPrice: number;
+    };
+    orderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+    deliveredAt?: Date;
+    createdAt: Date;
+    updatedAt: Date;
+};
+export interface CreateOrderFormType{
+    products:{
+        productID:string;
+        name:string;
+        price:number;
+        quantity: number;
+    }[];
+    address:string; city:string; state:string; country:string; pincode:string;
+    method:"COD"|"Stripe"; transactionID?:string; status:"pending"|"paid"|"failed"|"refunded";
+    itemsPrice:number; taxPrice:number; shippingPrice:number; discount:number; totalPrice:number;
+    phone:string;
+    orderStatus:"pending"|"processing"|"shipped"|"delivered"|"cancelled";
+};
 export interface ReviewTypes {
     productID:string;
     userID:string;

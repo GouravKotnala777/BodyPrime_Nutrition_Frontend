@@ -58,7 +58,7 @@ function App() {
         getCartHandler();
     }
     else{
-        //const res = fetchLocalCartProducts();
+        fetchLocalCartProducts();
         //setCartData(res);
     }
 }, [isUserAuthenticated()]);
