@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { addToCart, removeFromCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
@@ -8,7 +8,7 @@ import ImageWithFallback from "../components/ImageWithFallback.component";
 function Cart() {
     const {isUserAuthenticated} = useUser();
     const {cartData, setCartData, changeLocalCartProductQuantity, removeProductFromLocalCart, calculateTotalCartItems, calculateTotalCartValue} = useCart();
-
+    const navigate = useNavigate();
 
     async function addToCartHandler({productID, quantity}:{productID:string; quantity:number;}) {
         const res = await addToCart({productID, quantity});
@@ -45,7 +45,7 @@ function Cart() {
         <section className="px-2">
             <div className="my-2">
                 <div className="text-3xl"><span>Subtotal</span> <span className="font-semibold">{calculateTotalCartValue()}</span>₹</div>
-                <div><button className="w-full py-3 mt-2 rounded-4xl bg-yellow-300 text-xl">Proceed to checkout ({calculateTotalCartItems()} items)</button></div>
+                <div><button className="w-full py-3 mt-2 rounded-4xl bg-yellow-300 text-xl" onClick={() => navigate("/address")}>Proceed to checkout ({calculateTotalCartItems()} items)</button></div>
             </div>
             <div className="">
                 {
