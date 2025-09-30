@@ -16,4 +16,19 @@ export async function createOrder(body:CreateOrderFormType) {
         console.log(error);
         throw error;
     }
+};
+
+export async function createPaymentIntent({totalPrice}:{totalPrice:number}) {
+    try {
+        const res = await apiHandler<{totalPrice:number}, {clientSecret:string;}>({
+            endpoint:"/order/create-payment-intent",
+            method:"POST",
+            contentType:"application/json",
+            body:{totalPrice}
+        });
+        return res;        
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
 }
