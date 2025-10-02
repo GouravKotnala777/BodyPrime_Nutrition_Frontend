@@ -4,6 +4,9 @@ import { FaLocationDot } from "react-icons/fa6";
 import { createOrder } from "../apis/order.api";
 import { useCart } from "../contexts/CartContext";
 import { useUser } from "../contexts/UserContext";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutForm from "../components/CheckoutForm.component";
 
 const addressDummyData = [
     {address:"New bhoor colony", city:"Old Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
@@ -17,11 +20,14 @@ const shippingTypeOptions = {
     Regular:0
 };
 
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
 function Address() {
     const {cartData, calculateTotalCartValue} = useCart();
     const {userData} = useUser();
     const [shippingInfo, setShippingInfo] = useState<{address:string; city:string; state:string; country:string; pincode:string;}>({address:"", city:"", state:"", country:"", pincode:""});
     const [isAddressFormHidden, setIsAddressFormHidden] = useState<boolean>(true);
+    const [isPreviousAddressHidden, setIsPreviousAddressHidden] = useState<boolean>(true);
     const [shippingType, setShippingType] = useState<"Express"|"Standard"|"Regular">("Regular");
     const [priceSummary, setPriceSummary] = useState<{
         itemsPrice: number;
@@ -93,17 +99,26 @@ function Address() {
                     <h4>{shippingInfo.address}, {shippingInfo.city}, {shippingInfo.state}, {shippingInfo.country}, {shippingInfo.pincode}</h4>
                 </div>
 
-                <h3 className="text-2xl text-center py-2 font-semibold">Select shipping address</h3>
-                <div className="border-amber-400 flex flex-col gap-4">
-                    {
-                        addressDummyData.map((item) => (
-                            <div className="border-[1px] border-[#f44769] flex gap-4 pl-2 py-2 rounded-[8px] active:bg-[#f4476a58]" onClick={() => {setShippingInfo(item); setIsAddressFormHidden(true);}}>
-                                <FaLocationDot className="text-2xl" />
-                                <span>{item.address}, {item.city}, {item.state}, {item.country}, {item.pincode}, {item.phone}</span>
-                            </div>
-                        ))
-                    }
+                <button className="flex items-center gap-2 text-center text-[1rem] text-blue-600 my-3 underline underline-offset-1" onClick={() => setIsPreviousAddressHidden(!isPreviousAddressHidden)}>Select from previous <span>{isPreviousAddressHidden?<BiDownArrow/>:<BiUpArrow/>}</span></button>
+                <div style={{
+                    height:isPreviousAddressHidden?"0":"340px",
+                    //height:"max-content",
+                    transition:"0.5s",
+                    overflow:"hidden"
+                }}>
+                    <h3 className="text-2xl text-center py-2 font-semibold">Select shipping address</h3>
+                    <div className="border-amber-400 flex flex-col gap-4">
+                        {
+                            addressDummyData.map((item) => (
+                                <div className="border-[1px] border-[#f44769] flex gap-4 pl-2 py-2 rounded-[8px] active:bg-[#f4476a58]" onClick={() => {setShippingInfo(item); setIsAddressFormHidden(true); setIsPreviousAddressHidden(true);}}>
+                                    <FaLocationDot className="text-2xl" />
+                                    <span>{item.address}, {item.city}, {item.state}, {item.country}, {item.pincode}, {item.phone}</span>
+                                </div>
+                            ))
+                        }
+                    </div>
                 </div>
+
                 <button className="flex items-center gap-2 text-center text-[1rem] text-blue-600 my-3 underline underline-offset-1" onClick={() => setIsAddressFormHidden(!isAddressFormHidden)}>Add new address <span>{isAddressFormHidden?<BiDownArrow/>:<BiUpArrow/>}</span></button>
 
                 <div className="flex flex-col gap-3 mt-3" style={{
@@ -151,6 +166,11 @@ function Address() {
                     :
                     <h1>COD</h1>
                 }
+
+
+                <Elements stripe={stripePromise}>
+                    <CheckoutForm totalPrice={1000} />
+                </Elements>
 
 
                 <button onClick={createOrderHandler}>Confirm pay ₹{priceSummary.totalPrice}</button>
