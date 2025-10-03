@@ -1,11 +1,18 @@
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useState, type FormEvent } from "react";
-import { createPaymentIntent } from "../apis/order.api";
+import type { OrderTypes } from "../utils/types";
 
 
 
 
-function CheckoutForm({totalPrice}:{totalPrice:number;}) {
+function CheckoutForm({createOrderHandler}:{createOrderHandler:()=>Promise<{
+    success: boolean;
+    message: string;
+    jsonData: {
+        clientSecret: string;
+        newOrder: OrderTypes;
+    };
+}>}) {
     const stripe = useStripe();
     const elements = useElements();
 
@@ -15,7 +22,7 @@ function CheckoutForm({totalPrice}:{totalPrice:number;}) {
         e.preventDefault();
         setLoading(true);
 
-        const res = await createPaymentIntent({totalPrice});
+        const res = await createOrderHandler();
 
         console.log(res);
 
@@ -36,9 +43,12 @@ function CheckoutForm({totalPrice}:{totalPrice:number;}) {
 
 
     return(
-        <form onSubmit={handleSubmit}>
-            <CardElement />
-            <button disabled={!stripe || loading}>
+        <form onSubmit={handleSubmit} className="border-2">
+            <CardElement className="border-2" />
+            <button
+             className="border-2 border-amber-500"
+             disabled={!stripe || loading}
+             >
                 {loading ? "Processing..." : "Pay"}
             </button>
         </form>

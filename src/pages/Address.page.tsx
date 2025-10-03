@@ -85,6 +85,8 @@ function Address() {
             orderStatus:"processing"
         });
         console.log(res);
+
+        return res;
     };
     
     useEffect(() => {
@@ -160,20 +162,22 @@ function Address() {
                     </div>
                 </div>
 
-                {
-                    paymentInfo.method === "Stripe"?
-                    <h1>Stripe</h1>
-                    :
-                    <h1>COD</h1>
-                }
+                <h1>
+                    {
+                        paymentInfo.method === "Stripe"?
+                        "Stripe"
+                        :
+                        "COD"
+                    }
+                </h1>
 
 
                 <Elements stripe={stripePromise}>
-                    <CheckoutForm totalPrice={1000} />
+                    <CheckoutForm createOrderHandler={createOrderHandler} />
                 </Elements>
 
 
-                <button onClick={createOrderHandler}>Confirm pay ₹{priceSummary.totalPrice}</button>
+                {/*<button onClick={createOrderHandler}>Confirm pay ₹{priceSummary.totalPrice}</button>*/}
 
 
             </div>
