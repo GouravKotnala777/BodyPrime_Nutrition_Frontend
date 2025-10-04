@@ -7,6 +7,7 @@ import { useUser } from "../contexts/UserContext";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "../components/CheckoutForm.component";
+import { useNavigate } from "react-router-dom";
 
 const addressDummyData = [
     {address:"New bhoor colony", city:"Old Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
@@ -23,12 +24,13 @@ const shippingTypeOptions = {
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 function Address() {
-    const {cartData, calculateTotalCartValue} = useCart();
+    const {cartData, setCartData, calculateTotalCartValue} = useCart();
     const {userData} = useUser();
     const [shippingInfo, setShippingInfo] = useState<{address:string; city:string; state:string; country:string; pincode:string;}>({address:"", city:"", state:"", country:"", pincode:""});
     const [isAddressFormHidden, setIsAddressFormHidden] = useState<boolean>(true);
     const [isPreviousAddressHidden, setIsPreviousAddressHidden] = useState<boolean>(true);
     const [shippingType, setShippingType] = useState<"Express"|"Standard"|"Regular">("Regular");
+    const navigate = useNavigate();
     const [priceSummary, setPriceSummary] = useState<{
         itemsPrice: number;
         taxPrice: number;
@@ -43,8 +45,8 @@ function Address() {
     const [paymentInfo, setPaymentInfo] = useState<{
         method:"COD"|"Stripe";
         transactionID?:string;
-        status:"pending"|"paid"|"failed"|"refunded";
-    }>({method:"COD", status:"pending", transactionID:""});
+        status:"canceled"|"processing"|"requires_action"|"requires_capture"|"requires_confirmation"|"requires_payment_method"|"succeeded";
+    }>({method:"COD", status:"processing", transactionID:""});
 
 
     function calculatePriceSummaryHandler() {
@@ -85,6 +87,12 @@ function Address() {
             orderStatus:"processing"
         });
         console.log(res);
+
+        
+        if (res.success && res.jsonData.newOrder.paymentInfo.method === "COD") {
+            setCartData([]);
+            navigate("/home");
+        }
 
         return res;
     };
@@ -138,14 +146,6 @@ function Address() {
                     <button className="py-3 rounded-4xl bg-[#4d80ff] text-white text-xl font-semibold" onClick={createAddressHandler}>Save</button>
                 </div>
 
-                <div className="my-4">
-                    <h4 className="text-[1rem] text-gray-800 py-2">Mode of Payment :</h4>
-                    <div className="flex justify-around">
-                        <label className="flex items-center gap-2 p-2">Stripe <input type="radio" name="paymentMethod" value="Stripe" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "Stripe"})} /></label>
-                        <label className="flex items-center gap-2 p-2">Cash On Delivery <input type="radio" name="paymentMethod" value="COD" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "COD"})} /></label>
-                    </div>
-                </div>
-
                 <h3 className="text-2xl text-center py-2 font-semibold">Shipping type</h3>
                 <div className="border-amber-400 flex flex-col gap-4">
                     <div className="border-[1px] border-[#f44769] flex gap-4 px-2 rounded-[8px] active:bg-[#f4476a58]">
@@ -157,24 +157,42 @@ function Address() {
                     <div className="border-[1px] border-[#f44769] flex gap-4 px-2 rounded-[8px] active:bg-[#f4476a58]">
                         <label className="w-full flex justify-between py-2"><input type="radio" name="shippingType" value="Regular" onChange={(e) => setShippingType(e.target.value as "Regular")} /> Regular Shipping (6-7 days) : ₹0/-</label>
                     </div>
-                    <div className="border-[1px] border-[#f44769] flex justify-between rounded-[8px] active:bg-[#f4476a58]">
+                    <div className="flex justify-between rounded-[8px] active:bg-[#f4476a58]">
                         <h4>Total</h4> <span>₹{priceSummary.totalPrice} + {shippingType} {`(₹${shippingTypeOptions[shippingType]})`} = ₹{priceSummary.totalPrice}/-</span>
                     </div>
                 </div>
 
+                <div className="my-4">
+                    <h4 className="text-[1rem] text-gray-800 py-2">Mode of Payment :</h4>
+                    <div className="flex justify-around">
+                        <label className="flex items-center gap-2 p-2">Stripe <input type="radio" name="paymentMethod" value="Stripe" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "Stripe"})} /></label>
+                        <label className="flex items-center gap-2 p-2">Cash On Delivery <input type="radio" name="paymentMethod" value="COD" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "COD"})} /></label>
+                    </div>
+                </div>
+
+
                 <h1>
                     {
                         paymentInfo.method === "Stripe"?
-                        "Stripe"
-                        :
-                        "COD"
+                            <Elements stripe={stripePromise}>
+                                <CheckoutForm
+                                    createOrderHandler={createOrderHandler}
+                                    totalCartValue={calculateTotalCartValue()}
+                                    navigate={navigate}
+                                    setCartData={setCartData}
+                                />
+                            </Elements>
+                            :
+                            <div>
+                                <button className="p-2 w-full text-2xl bg-yellow-400 rounded-2xl"
+                                    onClick={createOrderHandler}
+                                >Proceed</button>
+                            </div>
                     }
                 </h1>
 
 
-                <Elements stripe={stripePromise}>
-                    <CheckoutForm createOrderHandler={createOrderHandler} />
-                </Elements>
+                
 
 
                 {/*<button onClick={createOrderHandler}>Confirm pay ₹{priceSummary.totalPrice}</button>*/}
