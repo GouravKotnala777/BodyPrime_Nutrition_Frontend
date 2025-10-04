@@ -68,6 +68,7 @@ export interface CartTypesFlatted {
   totalPrice: number;
 };
 export interface OrderTypes {
+    _id:string;
     userID: string;
     products: {
         productID: string;
@@ -101,6 +102,7 @@ export interface OrderTypes {
     updatedAt: Date;
 };
 export interface OrderTypesPopulates {
+    _id:string;
     userID: string;
     products: {
         productID: Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">;
@@ -133,6 +135,7 @@ export interface OrderTypesPopulates {
     createdAt: Date;
     updatedAt: Date;
 };
+export type PaymentStatusType = "canceled"|"processing"|"requires_action"|"requires_capture"|"requires_confirmation"|"requires_payment_method"|"succeeded"|"refunded";
 export interface CreateOrderFormType{
     products:{
         productID:string;
@@ -141,7 +144,7 @@ export interface CreateOrderFormType{
         quantity: number;
     }[];
     address:string; city:string; state:string; country:string; pincode:string;
-    method:"COD"|"Stripe"; transactionID?:string; status:"pending"|"paid"|"failed"|"refunded";
+    method:"COD"|"Stripe"; transactionID?:string; status:PaymentStatusType;
     itemsPrice:number; taxPrice:number; shippingPrice:number; discount:number; totalPrice:number;
     phone:string;
     orderStatus:"pending"|"processing"|"shipped"|"delivered"|"cancelled";
