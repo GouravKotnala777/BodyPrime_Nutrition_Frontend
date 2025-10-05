@@ -71,3 +71,18 @@ export async function logout() {
         throw error;
     }
 };
+export async function verifyEmail({emailVerificationToken}:{emailVerificationToken:string;}) {
+
+    try {
+        const data = await apiHandler<null, UserTypes>({
+            endpoint:`/user/verify_email?email_verification_token=${emailVerificationToken}`,
+            method:"POST",
+            contentType:"application/json"
+        });
+
+        return data;        
+    } catch (error) {
+        console.log(error);
+        throw error;        
+    }
+}

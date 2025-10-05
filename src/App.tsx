@@ -19,6 +19,7 @@ import Inventory from './pages/Inventory.page.tsx';
 import { getCart } from './apis/cart.api.ts';
 import { transformCartDataForRes } from './utils/functions.ts';
 import Address from './pages/Address.page.tsx';
+import Verification from './pages/Verification.page.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -90,6 +91,7 @@ function App() {
             <>
               <Route path={"/login"} element={<Login />} />
               <Route path={"/register"} element={<Register />} />
+              <Route path={"/verify_email/:emailVerificationToken"} element={<Verification />} />
             </>
         }
 
