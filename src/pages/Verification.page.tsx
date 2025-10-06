@@ -27,9 +27,9 @@ function Verification() {
     }, []);
 
     return(
-        <div className="border-2 border-red-500">
-            <h1 className="border-2 text-center text-2xl">Email Verification</h1>
-            <h3 className="border-2 text-center text-xl">{emailVerificationToken}</h3>
+        <div>
+            <h1 className="text-center text-2xl">Email Verification</h1>
+            <h3 className="text-center text-xl">{emailVerificationToken}</h3>
             <pre>{JSON.stringify(response, null, `\t`)}</pre>
         </div>
     )
