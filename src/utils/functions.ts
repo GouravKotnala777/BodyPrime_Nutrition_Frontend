@@ -1,5 +1,5 @@
 import type { CartTypesFlatted, CartTypesPopulated } from "./types";
-
+import toast from "react-hot-toast";
 
 interface APIHandlerTypes<BodyType> {
     endpoint:string;
@@ -49,4 +49,20 @@ export function transformCartDataForRes(cartData:CartTypesPopulated) {
 
     console.log(transformedCartData);
     return transformedCartData;
+};
+
+export function toastHandler({success, message}:{success:boolean; message:string;}) {
+    if (success) {
+        toast.success(message, {
+            duration:2400,
+            position:"top-center"
+        });
+    }
+    else{
+        toast.error(message, {
+            duration:2400,
+            position:"top-center",
+            style:{fontSize:"1.3rem"}
+        });
+    }
 };

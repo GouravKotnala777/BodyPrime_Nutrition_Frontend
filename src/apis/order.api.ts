@@ -1,4 +1,4 @@
-import { apiHandler } from "../utils/functions";
+import { apiHandler, toastHandler } from "../utils/functions";
 import type { CreateOrderFormType, OrderTypes, PaymentStatusType } from "../utils/types";
 
 
@@ -11,9 +11,11 @@ export async function createOrder(body:CreateOrderFormType) {
             contentType:"application/json",
             body
         });
+        toastHandler(res);
         return res;        
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -26,9 +28,11 @@ export async function updateOrder(orderID:string, body:{transactionID:string; st
             contentType:"application/json",
             body
         });
+        toastHandler(res);
         return res;        
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };

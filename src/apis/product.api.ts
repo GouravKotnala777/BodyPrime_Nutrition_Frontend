@@ -1,4 +1,4 @@
-import { apiHandler } from "../utils/functions";
+import { apiHandler, toastHandler } from "../utils/functions";
 import type { CreateProductFormTypes, ProductTypes, UpdateProductFormTypes } from "../utils/types";
 
 
@@ -13,6 +13,7 @@ export async function getProducts(skip:number) {
         return data;        
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -27,6 +28,7 @@ export async function getSingleProduct(productID:string) {
         return data;        
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -38,8 +40,11 @@ export async function addImages(formData:FormData) {
             method:"POST",
             body:formData
         });
+        toastHandler(data);
         return data;        
     } catch (error) {
+        console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -52,8 +57,11 @@ export async function createProduct(formData:CreateProductFormTypes) {
             contentType:"application/json",
             body:formData
         });
+        toastHandler(data);
         return data;
     } catch (error) {
+        console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -66,8 +74,11 @@ export async function updateProduct(formData:UpdateProductFormTypes, productID:s
             contentType:"application/json",
             body:formData
         });
+        toastHandler(data);
         return data;
     } catch (error) {
+        console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };

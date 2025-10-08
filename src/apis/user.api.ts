@@ -1,4 +1,4 @@
-import { apiHandler } from "../utils/functions";
+import { apiHandler, toastHandler } from "../utils/functions";
 import type { LoginFormTypes, RegisterFormTypes, UserTypes } from "../utils/types";
 
 
@@ -11,9 +11,12 @@ export async function login(formData:LoginFormTypes) {
             contentType:"application/json",
             body:formData
         });
+
+        toastHandler(data);
         return data;
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -25,9 +28,11 @@ export async function register(formData:RegisterFormTypes) {
             contentType:"application/json",
             body:formData
         });
+        toastHandler(data);
         return data;
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -38,9 +43,13 @@ export async function myProfile() {
             method:"GET",
             contentType:"application/json"
         });
+        if (!data.success) {
+            toastHandler(data);
+        }
         return data;
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -52,9 +61,11 @@ export async function updateProfile(formData:{name?:string; mobile?:string; gend
             contentType:"application/json",
             body:formData
         });
+        toastHandler(data);
         return data;
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -65,24 +76,26 @@ export async function logout() {
             method:"POST",
             contentType:"application/json"
         });
+        toastHandler(data);
         return data;
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
 export async function verifyEmail({emailVerificationToken}:{emailVerificationToken:string;}) {
-
     try {
         const data = await apiHandler<null, UserTypes>({
             endpoint:`/user/verify_email?email_verification_token=${emailVerificationToken}`,
             method:"POST",
             contentType:"application/json"
         });
-
+        toastHandler(data);
         return data;        
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;        
     }
 }

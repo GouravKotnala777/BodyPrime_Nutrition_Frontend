@@ -20,6 +20,7 @@ import { getCart } from './apis/cart.api.ts';
 import { transformCartDataForRes } from './utils/functions.ts';
 import Address from './pages/Address.page.tsx';
 import Verification from './pages/Verification.page.tsx';
+import {Toaster} from "react-hot-toast";
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -69,6 +70,7 @@ function App() {
     <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} />
     <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} />
     <main className="border-2 border-red-500">
+      <Toaster />
       <Routes>
         <Route path={"/home"} element={<Home />} />
         <Route path={"/single_product/:productID"} element={<SingleProduct />} />

@@ -1,4 +1,4 @@
-import { apiHandler } from "../utils/functions";
+import { apiHandler, toastHandler } from "../utils/functions";
 import type { CreateReviewBodyTypes, ReviewTypes, ReviewTypesPopulated } from "../utils/types";
 
 
@@ -12,9 +12,11 @@ export async function createReview({productID, rating, comment}:CreateReviewBody
             contentType:"application/json",
             body:{rating, comment}
         });
+        toastHandler(data);
         return data;        
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -28,6 +30,7 @@ export async function getReviews({productID}:{productID:string;}) {
         return data;        
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };

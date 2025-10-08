@@ -1,4 +1,4 @@
-import { apiHandler } from "../utils/functions";
+import { apiHandler, toastHandler } from "../utils/functions";
 import type { CartTypesPopulated, ProductTypes } from "../utils/types";
 
 
@@ -9,10 +9,10 @@ export async function getCart() {
             method:"GET",
             contentType:"application/json"
         });
-
         return data;
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -24,10 +24,11 @@ export async function addToCart({productID, quantity}:{productID:string; quantit
             contentType:"application/json",
             body:{productID, quantity}
         });
-
+        toastHandler(data);
         return data;
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -39,10 +40,11 @@ export async function removeFromCart({productID, quantity}:{productID:string; qu
             contentType:"application/json",
             body:{productID, quantity}
         });
-
+        toastHandler(data);
         return data;
     } catch (error) {
         console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
