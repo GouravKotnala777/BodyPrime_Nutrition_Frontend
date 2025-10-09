@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { addImages, getSingleProduct } from "../apis/product.api";
 import { type ProductTypes, type ReviewTypesPopulated } from "../utils/types";
 import RatingStars from "../components/RatingStars.component";
@@ -8,7 +8,7 @@ import ReviewCard from "../components/ReviewCard.component";
 import { useUser } from "../contexts/UserContext";
 import { addToCart, removeFromCart } from "../apis/cart.api";
 import { useCart } from "../contexts/CartContext";
-
+import pageNotFound from "../../public/page_not_found8.jpg"; 
 
 function SingleProduct() {
     const {productID} = useParams();
@@ -20,6 +20,7 @@ function SingleProduct() {
     const [quantityInCart, setQuantityInCart] = useState<number>(0);
     const {isUserAdmin} = useUser();
     const {cartData, setCartData} = useCart();
+    const navigate = useNavigate();
 
 
     async function getSingleProductHandler() {
@@ -69,7 +70,7 @@ function SingleProduct() {
         const res = await getReviews({productID});
         setAllReviews(res.jsonData);
         console.log(res);
-    }
+    };
 
     async function addToCartHandler() {
         if (!productID) throw Error("productID not found");
@@ -91,7 +92,7 @@ function SingleProduct() {
                 }
             });
         }
-    }
+    };
 
     async function removeFromCartHandler() {
         if (!productID) throw Error("productID not found");
@@ -121,6 +122,18 @@ function SingleProduct() {
         const findResult = cartData.find(p => p._id === singleProduct?._id);
         setQuantityInCart(findResult?.quantity||0);
     }, [cartData]);
+
+    if (!singleProduct) {
+        return(
+            <>
+                <pre>{JSON.stringify(singleProduct, null, `\t`)}</pre>
+                <img src={pageNotFound} alt={pageNotFound} />
+                <div className="text-center">
+                    <button className="bg-[#dc7589] text-white text-[1.2rem] py-2 px-3 font-medium rounded-[8px] my-7" onClick={() => navigate("/home")}>Go Back Home</button>
+                </div>
+            </>
+        )
+    }
 
     return(
         <section>

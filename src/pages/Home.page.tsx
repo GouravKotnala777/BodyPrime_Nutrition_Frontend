@@ -7,7 +7,6 @@ function Home() {
         <section>
             <h1>This is Home Page</h1>
             <HomeProducts />
-            <p>this is nothing but a paragraph.</p>
         </section>
     )
 };

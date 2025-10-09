@@ -3,6 +3,8 @@ import { addImages, createProduct, getProducts, getSingleProduct, updateProduct 
 import { type ProductTypes, type CreateProductFormTypes, type UpdateProductFormTypes } from "../utils/types";
 import { AiOutlineProduct } from "react-icons/ai";
 import { BiCamera } from "react-icons/bi";
+import { useLocation } from "react-router-dom";
+import emptyStateImage from "../../public/empty_cart2.png";
 
 type InventoryTabTypes = "all"|"add"|"update"|"tab4";
 
@@ -22,9 +24,10 @@ type InventoryTabTypes = "all"|"add"|"update"|"tab4";
 //];
 
 function Inventory() {
+    const {state} = useLocation();
     const [products, setProducts] = useState<ProductTypes[]>([]);
     const [selectedProduct, setSelectedProduct] = useState<ProductTypes|null>(null);
-    const [tab, setTab] = useState<InventoryTabTypes>("all");
+    const [tab, setTab] = useState<InventoryTabTypes>(state?.tab||"all");
     const [skip, setSkip] = useState<number>(0);
     const [productID, setProductID] = useState<string>("");
     const [createProductForm, setCreateProductForm] = useState<Omit<CreateProductFormTypes, "tag"|"warning">&{tag:string; warning:string;}>({name:"", brand:"", category:"other", price:0, size:0, weight:"", tag:"", flavor:"", warning:""});
@@ -89,14 +92,14 @@ function Inventory() {
 
         console.log({res});
         
-    }
+    };
 
     async function findSingleProductHandler() {
         const res = await getSingleProduct(productID);
 
         setSelectedProduct(res.jsonData);
         console.log(res);
-    }
+    };
 
     useEffect(() => {
         getProductsHandler();
@@ -107,6 +110,16 @@ function Inventory() {
         <>
         
         {tab === "all" && (
+            products.length === 0 ?
+            <>
+                <img src={emptyStateImage} alt={emptyStateImage} />
+                <h1 className="text-2xl text-center font-bold text-[#f44769] py-1">No Product!</h1>
+                <p className="text-[1.1rem] text-center text-gray-400 font-semibold py-1/2">It looks like there is no product yet.</p>
+                <div className="text-center">
+                    <button className="bg-[#f44769] text-white text-[1.2rem] py-2 px-3 font-medium rounded-[8px] my-7" onClick={() => setTab("add")}>Add New Products</button>
+                </div>
+            </>
+            :
             <>
                 <section className="border-2 border-blue-600 flex flex-wrap justify-around gap-4 h-[80vh] overflow-scroll">
                     {

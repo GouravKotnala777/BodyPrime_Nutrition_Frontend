@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { getProducts } from "../apis/product.api";
 import { type ProductTypes } from "../utils/types";
 import ProductCard from "./ProductCard.component";
+import emptyStateImage from "../../public/empty_cart2.png";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
 
 //const dummyProducts:ProductTypes[] = [
 //    {_id:"1246891", brand:"brand1", category:"protein", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product1", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
@@ -16,6 +19,8 @@ import ProductCard from "./ProductCard.component";
 function HomeProducts() {
     const [skip, setSkip] = useState<number>(0);
     const [products, setProducts] = useState<ProductTypes[]>([]);
+    const navigate = useNavigate();
+    const {isUserAdmin} = useUser();
 
     async function getProductsHandler() {
         const data = await getProducts(skip);
@@ -24,9 +29,27 @@ function HomeProducts() {
         setSkip(skip+1)
     };
 
+    function navigateToInventoryHandler() {
+        navigate("/inventory", {state:{tab:"add"}});
+    };
+
     useEffect(() => {
         getProductsHandler();
     }, []);
+
+    if (products.length === 0 && isUserAdmin()) {
+
+        return(
+            <>
+                <img src={emptyStateImage} alt={emptyStateImage} />
+                <h1 className="text-2xl text-center font-bold text-[#f44769] py-1">No Product!</h1>
+                <p className="text-[1.1rem] text-center text-gray-400 font-semibold py-1/2">It looks like there is no product yet.</p>
+                <div className="text-center">
+                    <button className="bg-[#f44769] text-white text-[1.2rem] py-2 px-3 font-medium rounded-[8px] my-7" onClick={navigateToInventoryHandler}>Add New Products</button>
+                </div>
+            </>
+        )
+    }
 
     return(
         <section>
