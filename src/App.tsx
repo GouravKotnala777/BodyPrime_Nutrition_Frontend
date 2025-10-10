@@ -12,7 +12,6 @@ import { useCart } from './contexts/CartContext.tsx';
 import { myProfile } from './apis/user.api.ts';
 import { useUser } from './contexts/UserContext.tsx';
 import MyProfile from './pages/MyProfile.page.tsx';
-//import type { UserTypes } from './utils/types.ts';
 import Logout from './pages/Logout.page.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.component.tsx';
 import Inventory from './pages/Inventory.page.tsx';
@@ -41,7 +40,9 @@ function App() {
     //console.log({"res.json":res.jsonData});
     //console.log({res});
     
-    setUser(res.jsonData);
+    if (res.success) {
+      setUser(res.jsonData);
+    }
   };
 
   async function getCartHandler() {

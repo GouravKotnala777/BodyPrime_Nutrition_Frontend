@@ -5,6 +5,7 @@ import ProductCard from "./ProductCard.component";
 import emptyStateImage from "../../public/empty_cart2.png";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
+import HandlePageUIWithState from "./HandlePageUIWithState";
 
 //const dummyProducts:ProductTypes[] = [
 //    {_id:"1246891", brand:"brand1", category:"protein", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product1", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
@@ -21,12 +22,20 @@ function HomeProducts() {
     const [products, setProducts] = useState<ProductTypes[]>([]);
     const navigate = useNavigate();
     const {isUserAdmin} = useUser();
+    const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
 
     async function getProductsHandler() {
+        setDataStatus({isLoading:true, isSuccess:false, error:""});
         const data = await getProducts(skip);
-        setProducts((prev) => [...prev, ...data.jsonData]);
-        console.log(data);
-        setSkip(skip+1)
+        
+        if (data.success) {
+            setProducts((prev) => [...prev, ...data.jsonData]);
+            setSkip(skip+1);
+            setDataStatus({isLoading:false, isSuccess:true, error:""});
+        }
+        else{
+            setDataStatus({isLoading:false, isSuccess:false, error:data.message});
+        }
     };
 
     function navigateToInventoryHandler() {
@@ -37,7 +46,8 @@ function HomeProducts() {
         getProductsHandler();
     }, []);
 
-    if (products.length === 0 && isUserAdmin()) {
+    
+    if (dataStatus.isSuccess && products.length === 0 && isUserAdmin()) {
 
         return(
             <>
@@ -52,18 +62,20 @@ function HomeProducts() {
     }
 
     return(
-        <section>
-            {
-                products.map((p) => (
-                    <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
-                ))
-            }
+        <HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error}>
+            <section>
+                {
+                    products.map((p) => (
+                        <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
+                    ))
+                }
 
-            <button
-                className="bg-black text-white rounded-[8px] px-6 py-2 mx-auto block"
-                onClick={getProductsHandler}
-            >Next</button>
-        </section>
+                <button
+                    className="bg-black text-white rounded-[8px] px-6 py-2 mx-auto block"
+                    onClick={getProductsHandler}
+                >Next</button>
+            </section>
+        </HandlePageUIWithState>
     )
 };
 

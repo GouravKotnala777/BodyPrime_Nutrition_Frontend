@@ -5,6 +5,7 @@ import { AiOutlineProduct } from "react-icons/ai";
 import { BiCamera } from "react-icons/bi";
 import { useLocation } from "react-router-dom";
 import emptyStateImage from "../../public/empty_cart2.png";
+import HandlePageUIWithState from "../components/HandlePageUIWithState";
 
 type InventoryTabTypes = "all"|"add"|"update"|"tab4";
 
@@ -32,6 +33,8 @@ function Inventory() {
     const [productID, setProductID] = useState<string>("");
     const [createProductForm, setCreateProductForm] = useState<Omit<CreateProductFormTypes, "tag"|"warning">&{tag:string; warning:string;}>({name:"", brand:"", category:"other", price:0, size:0, weight:"", tag:"", flavor:"", warning:""});
     const [updateProductForm, setUpdateProductForm] = useState<Omit<UpdateProductFormTypes, "tag"|"warning"|"category">&{tag?:string; warning?:string; category?:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";}>({name:"", brand:"", price:0, size:0, weight:"", tag:"", flavor:"", warning:""});
+    const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
+
 
     function onChangeHandler(e:ChangeEvent<HTMLInputElement|HTMLSelectElement>) {
         setCreateProductForm({...createProductForm, [e.target.name]:e.target.value});
@@ -51,10 +54,18 @@ function Inventory() {
     };
 
     async function getProductsHandler() {
+        setDataStatus({isLoading:true, isSuccess:false, error:""});
         const data = await getProducts(skip);
-        setProducts((prev) => [...prev, ...data.jsonData]);
-        console.log(data);
-        setSkip(skip+1)
+        console.log({data});
+        
+        if (data.success) {
+            setProducts((prev) => [...prev, ...data.jsonData]);
+            setSkip(skip+1);
+            setDataStatus({isLoading:false, isSuccess:true, error:""});
+        }
+        else{
+            setDataStatus({isLoading:false, isSuccess:false, error:data.message});
+        }
     };
 
     async function updateProductHandler() {
@@ -110,17 +121,16 @@ function Inventory() {
         <>
         
         {tab === "all" && (
-            products.length === 0 ?
-            <>
-                <img src={emptyStateImage} alt={emptyStateImage} />
-                <h1 className="text-2xl text-center font-bold text-[#f44769] py-1">No Product!</h1>
-                <p className="text-[1.1rem] text-center text-gray-400 font-semibold py-1/2">It looks like there is no product yet.</p>
-                <div className="text-center">
-                    <button className="bg-[#f44769] text-white text-[1.2rem] py-2 px-3 font-medium rounded-[8px] my-7" onClick={() => setTab("add")}>Add New Products</button>
-                </div>
-            </>
-            :
-            <>
+            <HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error} errorChildren={
+                <>
+                    <img src={emptyStateImage} alt={emptyStateImage} />
+                    <h1 className="text-2xl text-center font-bold text-[#f44769] py-1">No Product!</h1>
+                    <p className="text-[1.1rem] text-center text-gray-400 font-semibold py-1/2">It looks like there is no product yet.</p>
+                    <div className="text-center">
+                        <button className="bg-[#f44769] text-white text-[1.2rem] py-2 px-3 font-medium rounded-[8px] my-7" onClick={() => setTab("add")}>Add New Products</button>
+                    </div>
+                </>
+            }>
                 <section className="border-2 border-blue-600 flex flex-wrap justify-around gap-4 h-[80vh] overflow-scroll">
                     {
                         products.map((p) => (
@@ -143,7 +153,7 @@ function Inventory() {
                         <button className="border-2 px-4 py-2 rounded-[8px] text-white bg-[#f06682bb]" onClick={getProductsHandler}>Next</button>
                     </div>
                 </section>
-            </>
+            </HandlePageUIWithState>
         )}
         
         
