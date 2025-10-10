@@ -47,7 +47,9 @@ function App() {
   async function getCartHandler() {
       const res = await getCart();
 
-      setCartData(transformCartDataForRes(res.jsonData).products);
+      if (res.success) {
+        setCartData(transformCartDataForRes(res.jsonData).products);
+      }
   };
   
   useEffect(() => {
