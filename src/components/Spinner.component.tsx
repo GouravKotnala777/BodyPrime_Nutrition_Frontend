@@ -21,11 +21,12 @@ function Spinner({width, thickness, type, text, fontSize, fontWeight}:SpinnerPro
 
     return(
         <div className="spinner_cont relative" style={{
-            width:width?width:"100%",
-            height:width?width:"100%"
+
         }}>
-            <div className="spinner w-full h-full"
+            <div className="spinner w-full h-full mx-auto"
                 style={{
+                    width:width?width:"20px",
+                    height:width?width:"20px",
                     border:thickness?`${thickness} solid #f44769`:"2px solid #f44769",
                     borderTop:thickness?`${thickness} solid transparent`:"2px solid transparent",
                     ...(type==="secondary"&&{
