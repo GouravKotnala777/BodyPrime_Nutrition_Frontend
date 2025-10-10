@@ -46,7 +46,7 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
         <div className="border-[1px] border-gray-100 rounded-[8px] flex justify-between h-[55vh] items-center my-2">
             {/*<pre>{JSON.stringify(cartData, null, `\t`)}</pre>*/}
             <NavLink to={`/single_product/${productID}`} className="w-[40%] h-[100%] bg-gray-100">
-                <ImageWithFallback src={`http://localhost:8000/api/v1${images[0]}`} alt={`http://localhost:8000/api/v1${images[0]}`} fallbackSrc="http://localhost:8000/api/v1/public/no_product.png" className="h-full w-full" />
+                <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${images[0]}`} fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} className="h-full w-full" />
             </NavLink>
             <div className="w-[60%] h-full flex flex-col gap-2 py-4 px-2">
                 <NavLink to={`/single_product/${productID}`} className="h-[14rem]">

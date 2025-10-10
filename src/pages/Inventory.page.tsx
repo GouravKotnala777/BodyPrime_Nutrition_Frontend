@@ -139,8 +139,8 @@ function Inventory() {
                                 setTab("update");
                             }}>
                                 <div className="border-2 h-[85%]">
-                                    <img src={p.images[0]?`http://localhost:8000/api/v1${p.images[0]}`:"http://localhost:8000/api/v1/public/no_product.png"}
-                                        alt={p.images[0]?`http://localhost:8000/api/v1${p.images[0]}`:"http://localhost:8000/api/v1/public/no_product.png"}
+                                    <img src={p.images[0]?`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`:`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
+                                        alt={p.images[0]?`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`:`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
                                     />
                                 </div>
                                 <div className="border-2 text-center h-[15%]">
@@ -203,8 +203,8 @@ function Inventory() {
                     </div>
                     <div className="grid place-items-center py-[30px]">
                         <div className="relative w-1/2">
-                            <img src={selectedProduct?.images[0]?`http://localhost:8000/api/v1${selectedProduct?.images[0]}`:"http://localhost:8000/api/v1/public/no_product.png"}
-                                alt={selectedProduct?.images[0]?`http://localhost:8000/api/v1${selectedProduct?.images[0]}`:"http://localhost:8000/api/v1/public/no_product.png"}
+                            <img src={selectedProduct?.images[0]?`${import.meta.env.VITE_SERVER_URL}/api/v1${selectedProduct?.images[0]}`:`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
+                                alt={selectedProduct?.images[0]?`${import.meta.env.VITE_SERVER_URL}/api/v1${selectedProduct?.images[0]}`:`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
                                 className="w-full border-[1px] border-gray-400 rounded-[8px] p-1"
                             />
                             <BiCamera className="absolute right-[-25px] bottom-[-25px] w-[50px] h-[50px] rounded-[100%] bg-[#f44769] p-2 text-white" />

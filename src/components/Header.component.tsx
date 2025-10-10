@@ -16,7 +16,7 @@ function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
         >
             <section className="logo_section flex items-center gap-6">
                 
-                <ImageWithFallback src="/vite.svg" alt="/vite.svg" fallbackSrc="http://localhost:8000/api/v1/public/no_user.png" className="w-[40px] h-[40px]" />
+                <ImageWithFallback src="/vite.svg" alt="/vite.svg" fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_user.png`} className="w-[40px] h-[40px]" />
                 <NavLink to="/my_profile" className="text-xl font-semibold text-white">{isUserAuthenticated()?loggedInUserName():"Login"}</NavLink>
             </section>
             <section

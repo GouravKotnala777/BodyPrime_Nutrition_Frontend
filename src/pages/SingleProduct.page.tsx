@@ -159,9 +159,9 @@ function SingleProduct() {
                 <div className="w-full h-[45vh] bg-gray-100">
                     {
                         (singleProduct&&singleProduct.images&&singleProduct.images[0]) ?
-                        <img src={`http://localhost:8000/api/v1${singleProduct.images[0]}`} alt={`http://localhost:8000/api/v1${singleProduct?.images[0]}`} className="h-full w-full" />
+                        <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images[0]}`} className="h-full w-full" />
                         :
-                        <img src={"http://localhost:8000/api/v1/public/no_product.png"} alt={"http://localhost:8000/api/v1/public/no_product.png"} className="h-full w-full" />
+                        <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} className="h-full w-full" />
                     }
                 </div>
 

@@ -53,7 +53,7 @@ function Cart() {
                         <div key={p._id} className="border-[1px] border-gray-100 my-4 py-4">
                             <div className="flex gap-2 my-2 py-4">
                                 <div className="w-[20%] bg-gray-100">
-                                    <ImageWithFallback src="/vite.svg" alt="/vite.svg" fallbackSrc="http://localhost:8000/api/v1/public/no_product.png" className="w-full h-full"/>
+                                    <ImageWithFallback src="/vite.svg" alt="/vite.svg" fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} className="w-full h-full"/>
                                 </div>
                                 <div className="w-[80%]">    
                                     <div>
