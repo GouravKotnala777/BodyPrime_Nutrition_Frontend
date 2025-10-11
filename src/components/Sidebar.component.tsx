@@ -26,7 +26,7 @@ function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
                     <NavLink to="/home" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Home</NavLink>
                     <NavLink to="/my_profile" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Profile</NavLink>
                     {isUserAdmin()&&<NavLink to="/inventory" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Inventory</NavLink>}
-                    <NavLink to="/orders" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Orders</NavLink>
+                    <NavLink to="/my_orders" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>My Orders</NavLink>
                     <NavLink to="/register" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Register</NavLink>
                     <NavLink to="/login" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Login</NavLink>
                     <NavLink to="/cart" className="nav_item font-semibold relative" onClick={() => setIsHamActive(false)}>

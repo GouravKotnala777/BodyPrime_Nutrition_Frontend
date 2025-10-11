@@ -3,6 +3,21 @@ import type { CreateOrderFormType, OrderTypes, PaymentStatusType } from "../util
 
 
 
+export async function myOrders() {
+    try {
+        const res = await apiHandler<null, OrderTypes[]>({
+            endpoint:"/order/my_orders",
+            method:"GET",
+            contentType:"application/json"
+        });
+        return res;        
+    } catch (error) {
+        console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
+        throw error;
+    }
+};
+
 export async function createOrder(body:CreateOrderFormType) {
     try {
         const res = await apiHandler<CreateOrderFormType, {clientSecret:string; newOrder:OrderTypes;}>({

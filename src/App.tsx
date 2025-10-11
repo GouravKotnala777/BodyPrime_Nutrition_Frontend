@@ -20,6 +20,7 @@ import { transformCartDataForRes } from './utils/functions.ts';
 import Address from './pages/Address.page.tsx';
 import Verification from './pages/Verification.page.tsx';
 import {Toaster} from "react-hot-toast";
+import MyOrders from './pages/MyOrders.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -88,6 +89,7 @@ function App() {
           <Route path={"/my_profile"} element={isUserAuthenticated()?<MyProfile />:<Login />} />
           <Route path={"/logout"} element={isUserAuthenticated()?<Logout />:<Login />} />
         </>
+        <Route path={"/my_orders"} element={<MyOrders />} />
         
 
         // Show only if user is not loggedin
