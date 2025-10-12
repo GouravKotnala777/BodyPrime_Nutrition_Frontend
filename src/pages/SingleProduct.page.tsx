@@ -10,6 +10,7 @@ import { addToCart, removeFromCart } from "../apis/cart.api";
 import { useCart } from "../contexts/CartContext";
 import pageNotFound from "../../public/page_not_found8.jpg";
 import HandlePageUIWithState from "../components/HandlePageUIWithState";
+import ImageSliderWithPreview from "../components/ImageSliderWithPreview.component";
 
 function SingleProduct() {
     const {productID} = useParams();
@@ -156,14 +157,8 @@ function SingleProduct() {
                     <div className="text-[0.8rem] flex">4.5 <RatingStars rating={4.5} outOf={5} /> (20,234)</div>
                 </div>
                 <p className="text-gray-700 font-semibold">{singleProduct?.brand} {singleProduct?.name} {singleProduct?.category} ({singleProduct?.flavor}, {singleProduct?.weight}) - Nitro-Tech Ultimate Muscle Building Formula with Whey Protein Isolate - 30g of Protein, 3g of Creatine & 6.8g of BCAA - Packaging May Vary</p>
-                <div className="w-full h-[45vh] bg-gray-100">
-                    {
-                        (singleProduct&&singleProduct.images&&singleProduct.images[0]) ?
-                        <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images[0]}`} className="h-full w-full" />
-                        :
-                        <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} className="h-full w-full" />
-                    }
-                </div>
+
+                <ImageSliderWithPreview singleProduct={singleProduct} />
 
                 {
                     isUserAdmin() &&
