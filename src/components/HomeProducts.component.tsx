@@ -6,6 +6,7 @@ import emptyStateImage from "../../public/empty_cart2.png";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import HandlePageUIWithState from "./HandlePageUIWithState";
+import { ButtonPrimary } from "./Button.component";
 
 //const dummyProducts:ProductTypes[] = [
 //    {_id:"1246891", brand:"brand1", category:"protein", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product1", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
@@ -23,19 +24,26 @@ function HomeProducts() {
     const navigate = useNavigate();
     const {isUserAdmin} = useUser();
     const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
+    const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
 
     async function getProductsHandler() {
-        setDataStatus({isLoading:true, isSuccess:false, error:""});
+        setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
         const data = await getProducts(skip);
-        
         if (data.success) {
-            setProducts((prev) => [...prev, ...data.jsonData]);
-            setSkip(skip+1);
-            setDataStatus({isLoading:false, isSuccess:true, error:""});
+            if (data.jsonData.length !== 0) {
+                setSkip(skip+1);
+                setProducts((prev) => [...prev, ...data.jsonData]);
+                setRefetchDataStatus({isLoading:false, isSuccess:true, error:""});
+            }
+            else{
+                setRefetchDataStatus({isLoading:false, isSuccess:false, error:"No more products"});
+            }
         }
         else{
+            setRefetchDataStatus({isLoading:false, isSuccess:false, error:data.message});
             setDataStatus({isLoading:false, isSuccess:false, error:data.message});
         }
+        return data;
     };
 
     function navigateToInventoryHandler() {
@@ -43,7 +51,16 @@ function HomeProducts() {
     };
 
     useEffect(() => {
-        getProductsHandler();
+        setDataStatus({isLoading:true, isSuccess:false, error:""});
+        getProductsHandler()
+        .then((data) => {
+            if (data.success) {
+                setDataStatus({isLoading:false, isSuccess:true, error:""});
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     }, []);
 
     
@@ -70,10 +87,12 @@ function HomeProducts() {
                     ))
                 }
 
-                <button
-                    className="bg-black text-white rounded-[8px] px-6 py-2 mx-auto block"
-                    onClick={getProductsHandler}
-                >Next</button>
+                <ButtonPrimary
+                    isLoading={refetchDataStatus.isLoading}
+                    isSuccess={refetchDataStatus.isSuccess}
+                    isDisabled={(refetchDataStatus.error !== "")}
+                    onClickHandler={getProductsHandler}
+                />
             </section>
         </HandlePageUIWithState>
     )

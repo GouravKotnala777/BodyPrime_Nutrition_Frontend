@@ -6,6 +6,7 @@ import { BiCamera } from "react-icons/bi";
 import { useLocation } from "react-router-dom";
 import emptyStateImage from "../../public/empty_cart2.png";
 import HandlePageUIWithState from "../components/HandlePageUIWithState";
+import { ButtonPrimary } from "../components/Button.component";
 
 type InventoryTabTypes = "all"|"add"|"update"|"tab4";
 
@@ -34,7 +35,7 @@ function Inventory() {
     const [createProductForm, setCreateProductForm] = useState<Omit<CreateProductFormTypes, "tag"|"warning">&{tag:string; warning:string;}>({name:"", brand:"", category:"other", price:0, size:0, weight:"", tag:"", flavor:"", warning:""});
     const [updateProductForm, setUpdateProductForm] = useState<Omit<UpdateProductFormTypes, "tag"|"warning"|"category">&{tag?:string; warning?:string; category?:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";}>({name:"", brand:"", price:0, size:0, weight:"", tag:"", flavor:"", warning:""});
     const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
-
+    const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
 
     function onChangeHandler(e:ChangeEvent<HTMLInputElement|HTMLSelectElement>) {
         setCreateProductForm({...createProductForm, [e.target.name]:e.target.value});
@@ -54,18 +55,23 @@ function Inventory() {
     };
 
     async function getProductsHandler() {
-        setDataStatus({isLoading:true, isSuccess:false, error:""});
+        setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
         const data = await getProducts(skip);
-        console.log({data});
-        
         if (data.success) {
-            setProducts((prev) => [...prev, ...data.jsonData]);
-            setSkip(skip+1);
-            setDataStatus({isLoading:false, isSuccess:true, error:""});
+            if (data.jsonData.length !== 0) {
+                setSkip(skip+1);
+                setProducts((prev) => [...prev, ...data.jsonData]);
+                setRefetchDataStatus({isLoading:false, isSuccess:true, error:""});
+            }
+            else{
+                setRefetchDataStatus({isLoading:false, isSuccess:false, error:"No more products"});
+            }
         }
         else{
+            setRefetchDataStatus({isLoading:false, isSuccess:false, error:data.message});
             setDataStatus({isLoading:false, isSuccess:false, error:data.message});
         }
+        return data;
     };
 
     async function updateProductHandler() {
@@ -113,7 +119,16 @@ function Inventory() {
     };
 
     useEffect(() => {
-        getProductsHandler();
+        setDataStatus({isLoading:true, isSuccess:false, error:""});
+        getProductsHandler()
+        .then((data) => {
+            if (data.success) {
+                setDataStatus({isLoading:false, isSuccess:true, error:""});
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     }, []);
 
     
@@ -149,8 +164,13 @@ function Inventory() {
                             </div>
                         ))
                     }
-                    <div className="border-2 w-full h-fit text-xl text-center font-semibold mt-8 mb-4">
-                        <button className="border-2 px-4 py-2 rounded-[8px] text-white bg-[#f06682bb]" onClick={getProductsHandler}>Next</button>
+                    <div className="w-full h-fit text-xl text-center font-semibold mt-8 mb-4">
+                        <ButtonPrimary
+                            isLoading={refetchDataStatus.isLoading}
+                            isSuccess={refetchDataStatus.isSuccess}
+                            isDisabled={(refetchDataStatus.error !== "")}
+                            onClickHandler={getProductsHandler}
+                        />
                     </div>
                 </section>
             </HandlePageUIWithState>
