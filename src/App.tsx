@@ -15,7 +15,7 @@ import MyProfile from './pages/MyProfile.page.tsx';
 import Logout from './pages/Logout.page.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.component.tsx';
 import Inventory from './pages/Inventory.page.tsx';
-import { getCart } from './apis/cart.api.ts';
+import { addToCart, getCart } from './apis/cart.api.ts';
 import { transformCartDataForRes } from './utils/functions.ts';
 import Address from './pages/Address.page.tsx';
 import Verification from './pages/Verification.page.tsx';
@@ -33,14 +33,11 @@ import MyOrders from './pages/MyOrders.tsx';
 
 function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
-  const {setCartData, fetchLocalCartProducts} = useCart();
+  const {setCartData, fetchLocalCartProducts, removeProductFromLocalCart, clearLocalCart} = useCart();
   const {setUser, isUserAuthenticated, isUserAdmin} = useUser();
 
   async function myProfileHandler() {
     const res = await myProfile();
-    //console.log({"res.json":res.jsonData});
-    //console.log({res});
-    
     if (res.success) {
       setUser(res.jsonData);
     }
@@ -48,7 +45,6 @@ function App() {
 
   async function getCartHandler() {
       const res = await getCart();
-
       if (res.success) {
         setCartData(transformCartDataForRes(res.jsonData).products);
       }
@@ -61,11 +57,27 @@ function App() {
 
   useEffect(() => {
     if (isUserAuthenticated()) {
-        getCartHandler();
+      const localCartData = fetchLocalCartProducts();
+
+      if (localCartData.length !== 0) {
+        localCartData.forEach(({_id, quantity}) => {
+          addToCart({productID:_id, quantity})
+          .then((data) => {
+            if (data.success) {
+              removeProductFromLocalCart({_id});
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+  
+        });
+        clearLocalCart(); // sayad ye pahle clear ho jaaye or local to server cart products translation baad me ho isliye mai isko setTimeout me rakhunga 
+      }
+      getCartHandler();
     }
     else{
-        fetchLocalCartProducts();
-        //setCartData(res);
+      fetchLocalCartProducts();
     }
 }, [isUserAuthenticated()]);
 

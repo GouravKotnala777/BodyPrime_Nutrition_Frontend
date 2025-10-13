@@ -6,9 +6,10 @@ interface CartContextPropTypes{
     cartData:LocalCartTypes[];
     setCartData:Dispatch<SetStateAction<LocalCartTypes[]>>
     addToLocalCart:(product:LocalCartTypes)=>void;
-    fetchLocalCartProducts:()=>void;
+    fetchLocalCartProducts:()=>LocalCartTypes[];
     removeProductFromLocalCart:({_id}:{_id:string;})=>void;
     changeLocalCartProductQuantity:(e:(MouseEvent<HTMLButtonElement>|ChangeEvent<HTMLInputElement>), productId:string)=>void;
+    clearLocalCart:()=>void;
     calculateTotalCartItems:()=>number;
     calculateTotalCartValue:()=>number;
 }
@@ -21,6 +22,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
     function fetchLocalCartProducts() {
         const cart:LocalCartTypes[] = JSON.parse(localStorage.getItem("cart")||"[]");
         setCartData(cart);
+        return cart;
     };
 
     function addToLocalCart({_id, name, brand, category, price, quantity, size, weight, flavor, images}:LocalCartTypes) {
@@ -111,6 +113,10 @@ export function CartProvider({children}:{children:ReactNode;}) {
         });
 
     };
+
+    function clearLocalCart() {
+        localStorage.clear();
+    };
     
 
 
@@ -130,7 +136,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
 
     
     return(
-        <CartContext.Provider value={{cartData, setCartData, fetchLocalCartProducts, addToLocalCart, removeProductFromLocalCart, changeLocalCartProductQuantity, calculateTotalCartItems, calculateTotalCartValue}}>
+        <CartContext.Provider value={{cartData, setCartData, fetchLocalCartProducts, addToLocalCart, removeProductFromLocalCart, changeLocalCartProductQuantity, clearLocalCart, calculateTotalCartItems, calculateTotalCartValue}}>
             {children}
         </CartContext.Provider>
     );
