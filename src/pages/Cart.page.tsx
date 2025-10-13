@@ -4,7 +4,6 @@ import { addToCart, removeFromCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
 import ImageWithFallback from "../components/ImageWithFallback.component";
 
-
 function Cart() {
     const {isUserAuthenticated} = useUser();
     const {cartData, setCartData, changeLocalCartProductQuantity, removeProductFromLocalCart, calculateTotalCartItems, calculateTotalCartValue} = useCart();
@@ -43,10 +42,23 @@ function Cart() {
     
     return(
         <section className="px-2">
-            <div className="my-2">
-                <div className="text-3xl"><span>Subtotal</span> <span className="font-semibold">{calculateTotalCartValue()}</span>₹</div>
-                <div><button className="w-full py-3 mt-2 rounded-4xl bg-yellow-300 text-xl" onClick={() => navigate("/address")}>Proceed to checkout ({calculateTotalCartItems()} items)</button></div>
-            </div>
+            {
+                calculateTotalCartItems() ?
+                    <div className="my-2">
+                        <div className="text-3xl"><span>Subtotal</span> <span className="font-semibold">{calculateTotalCartValue()}</span>₹</div>
+                        <div><button className="w-full py-3 mt-2 rounded-4xl bg-yellow-300 text-xl" onClick={() => navigate("/address")}>Proceed to checkout ({calculateTotalCartItems()} items)</button></div>
+                    </div>
+                    :
+                    <div>
+                        <img src="/empty_cart.jpg" alt="/empty_cart.jpg" />
+                        <div className="text-center">
+                            <button className="border-2 px-4 py-2 text-xl rounded-[8px] bg-gradient-to-r from-[#f44669] to-orange-500 text-white"
+                                onClick={() => navigate("/home")}
+                            >Buy Products</button>
+                        </div>
+                    </div>
+
+            }
             <div className="">
                 {
                     cartData.map((p) => (
