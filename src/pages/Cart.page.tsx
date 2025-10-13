@@ -102,7 +102,7 @@ function Cart() {
                                             removeFromCartHandler({productID:p._id, quantity:p.quantity});
                                         }
                                         else{
-                                            removeProductFromLocalCart({_id:p._id})
+                                            removeProductFromLocalCart({_id:p._id, quantity:1})
                                         }
                                     }}
                                 >Remove</button>

@@ -7,7 +7,7 @@ interface CartContextPropTypes{
     setCartData:Dispatch<SetStateAction<LocalCartTypes[]>>
     addToLocalCart:(product:LocalCartTypes)=>void;
     fetchLocalCartProducts:()=>LocalCartTypes[];
-    removeProductFromLocalCart:({_id}:{_id:string;})=>void;
+    removeProductFromLocalCart:({_id, quantity}:{_id:string; quantity:number;})=>void;
     changeLocalCartProductQuantity:(e:(MouseEvent<HTMLButtonElement>|ChangeEvent<HTMLInputElement>), productId:string)=>void;
     clearLocalCart:()=>void;
     calculateTotalCartItems:()=>number;
@@ -46,7 +46,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
         }
     };
 
-    function removeProductFromLocalCart({_id}:{_id:string}) {
+    function removeProductFromLocalCart({_id, quantity}:{_id:string; quantity:number;}) {
         
         setCartData((prev) => {
             const selectedProduct = prev.find((product) => product._id === _id);
@@ -56,9 +56,9 @@ export function CartProvider({children}:{children:ReactNode;}) {
             };
             
             let updatedCart;
-            if (selectedProduct.quantity > 1) {
+            if (selectedProduct.quantity > quantity) {
                 updatedCart = prev.map((product) => product._id === _id ?
-                {...product, quantity:product.quantity-1}
+                {...product, quantity:product.quantity-quantity}
                 :
                 product);
             }

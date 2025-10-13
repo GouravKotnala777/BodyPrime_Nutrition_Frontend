@@ -56,29 +56,25 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (isUserAuthenticated()) {
-      const localCartData = fetchLocalCartProducts();
-
-      if (localCartData.length !== 0) {
-        localCartData.forEach(({_id, quantity}) => {
-          addToCart({productID:_id, quantity})
-          .then((data) => {
-            if (data.success) {
-              removeProductFromLocalCart({_id});
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+    (async () => {
+      if (isUserAuthenticated()) {
+        const localCartData = fetchLocalCartProducts();
   
-        });
-        clearLocalCart(); // sayad ye pahle clear ho jaaye or local to server cart products translation baad me ho isliye mai isko setTimeout me rakhunga 
+        if (localCartData.length !== 0) {
+          for (const {_id, quantity} of localCartData) {
+              const data = await addToCart({productID:_id, quantity});
+              if (data.success) {
+                removeProductFromLocalCart({_id, quantity});
+              }
+          }
+          clearLocalCart();
+        }
+        getCartHandler();
       }
-      getCartHandler();
-    }
-    else{
-      fetchLocalCartProducts();
-    }
+      else{
+        fetchLocalCartProducts();
+      }
+    })();
 }, [isUserAuthenticated()]);
 
   return (
