@@ -8,7 +8,6 @@ import ReviewCard from "../components/ReviewCard.component";
 import { useUser } from "../contexts/UserContext";
 import { addToCart, removeFromCart } from "../apis/cart.api";
 import { useCart } from "../contexts/CartContext";
-import pageNotFound from "../../public/page_not_found8.jpg";
 import HandlePageUIWithState from "../components/HandlePageUIWithState";
 import ImageSliderWithPreview from "../components/ImageSliderWithPreview.component";
 
@@ -139,7 +138,7 @@ function SingleProduct() {
         <HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error}
             errorChildren={
                 <>
-                    <img src={pageNotFound} alt={pageNotFound} />
+                    <img src="/page_not_found8.jpg" alt="/page_not_found8.jpg" />
                     <p className="text-center">error reason : {dataStatus.error}</p>
                     <div className="text-center">
                         <button className="bg-[#dc7589] text-white text-[1.2rem] py-2 px-3 font-medium rounded-[8px] my-7" onClick={() => navigate("/home")}>Go Back Home</button>

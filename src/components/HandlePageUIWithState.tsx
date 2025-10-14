@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import Spinner from "./Spinner.component";
-import insternalServerErrorImage from "../../public/internal_server_error5.png";
 
 interface HandlePageUIWithStatePropTypes{
     isLoading:boolean;
@@ -18,7 +17,7 @@ function HandlePageUIWithState({isLoading, isSuccess, error, errorChildren, chil
             errorChildren
             :
             <>
-                <img src={insternalServerErrorImage} alt={insternalServerErrorImage} />
+                <img src="/internal_server_error5.png" alt="/internal_server_error5.png" />
                 <h1 className="text-center">{error}</h1>
             </>
     )

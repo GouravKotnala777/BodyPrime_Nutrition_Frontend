@@ -4,7 +4,6 @@ import { type ProductTypes, type CreateProductFormTypes, type UpdateProductFormT
 import { AiOutlineProduct } from "react-icons/ai";
 import { BiCamera } from "react-icons/bi";
 import { useLocation } from "react-router-dom";
-import emptyStateImage from "../../public/empty_cart2.png";
 import HandlePageUIWithState from "../components/HandlePageUIWithState";
 import { ButtonPrimary } from "../components/Button.component";
 
@@ -138,7 +137,7 @@ function Inventory() {
         {tab === "all" && (
             <HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error} errorChildren={
                 <>
-                    <img src={emptyStateImage} alt={emptyStateImage} />
+                    <img src="/empty_cart2.png" alt="/empty_cart2.png" />
                     <h1 className="text-2xl text-center font-bold text-[#f44769] py-1">No Product!</h1>
                     <p className="text-[1.1rem] text-center text-gray-400 font-semibold py-1/2">It looks like there is no product yet.</p>
                     <div className="text-center">

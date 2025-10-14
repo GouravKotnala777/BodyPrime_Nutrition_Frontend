@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { myOrders } from "../apis/order.api";
 import { type OrderTypes } from "../utils/types";
-import photo from "../../public/vite.svg";
+
 
 //const dummyOrders:OrderTypes[] = [
 //    {
@@ -113,7 +113,7 @@ function MyOrders() {
                                 {
                                     products.map((p) => (
                                         <span className="flex flex-col p-2 w-[100px] text-center">
-                                            <img src={photo} alt={photo} className="w-[80px]" />
+                                            <img src="/vite.svg" alt="/vite.svg" className="w-[80px]" />
                                             <span className="text-[1rem] font-semibold text-gray-800 w-[80px]">{p.name}</span>
                                             <span className="w-[80px]">₹{p.price} x {p.quantity}</span>
                                         </span>

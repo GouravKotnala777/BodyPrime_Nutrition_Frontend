@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { getProducts } from "../apis/product.api";
 import { type ProductTypes } from "../utils/types";
 import ProductCard from "./ProductCard.component";
-import emptyStateImage from "../../public/empty_cart2.png";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import HandlePageUIWithState from "./HandlePageUIWithState";
@@ -68,7 +67,7 @@ function HomeProducts() {
 
         return(
             <>
-                <img src={emptyStateImage} alt={emptyStateImage} />
+                <img src="/empty_cart2.png" alt="/empty_cart2.png" />
                 <h1 className="text-2xl text-center font-bold text-[#f44769] py-1">No Product!</h1>
                 <p className="text-[1.1rem] text-center text-gray-400 font-semibold py-1/2">It looks like there is no product yet.</p>
                 <div className="text-center">
