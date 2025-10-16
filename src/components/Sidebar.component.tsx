@@ -10,7 +10,7 @@ export interface SidebarPropTypes {
 };
 
 function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
-    const {calculateTotalCartItems} = useCart();
+    const {wishlistData, calculateTotalCartItems} = useCart();
     const {isUserAdmin} = useUser();
     
     return(
@@ -29,6 +29,10 @@ function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
                     <NavLink to="/my_orders" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>My Orders</NavLink>
                     <NavLink to="/register" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Register</NavLink>
                     <NavLink to="/login" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Login</NavLink>
+                    <NavLink to="/wishlist" className="nav_item font-semibold relative" onClick={() => setIsHamActive(false)}>
+                        <span>Wishlist</span>
+                        <span className="border-2 text-[12px] font-semibold w-[23px] h-[23px] grid place-items-center rounded-2xl absolute left-[58%] top-[0px] bg-[#b11433] text-white">{wishlistData.length}</span>
+                    </NavLink>
                     <NavLink to="/cart" className="nav_item font-semibold relative" onClick={() => setIsHamActive(false)}>
                         <span>Cart</span>
                         <span className="border-2 text-[12px] font-semibold w-[23px] h-[23px] grid place-items-center rounded-2xl absolute left-[58%] top-[0px] bg-[#b11433] text-white">{calculateTotalCartItems()}</span>

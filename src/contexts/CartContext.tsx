@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, type ChangeEvent, type Dispatch, type MouseEvent, type ReactNode, type SetStateAction } from "react";
-import type { LocalCartTypes } from "../utils/types";
+import type { LocalCartTypes, WishlistTypes } from "../utils/types";
 
 
 interface CartContextPropTypes{
     cartData:LocalCartTypes[];
+    wishlistData:WishlistTypes[];
     setCartData:Dispatch<SetStateAction<LocalCartTypes[]>>
+    setWishlistData:Dispatch<SetStateAction<WishlistTypes[]>>
     addToLocalCart:(product:LocalCartTypes)=>void;
     fetchLocalCartProducts:()=>LocalCartTypes[];
     removeProductFromLocalCart:({_id, quantity}:{_id:string; quantity:number;})=>void;
@@ -12,13 +14,19 @@ interface CartContextPropTypes{
     clearLocalCart:()=>void;
     calculateTotalCartItems:()=>number;
     calculateTotalCartValue:()=>number;
+    //getWishlistHandler:()=>Promise<{
+    //    success: boolean;
+    //    message: string;
+    //    jsonData: ProductTypes[];
+    //}>;
 }
 
 const CartContext = createContext<CartContextPropTypes|null>(null);
 
 export function CartProvider({children}:{children:ReactNode;}) {
     const [cartData, setCartData] = useState<LocalCartTypes[]>([]);
-    
+    const [wishlistData, setWishlistData] = useState<WishlistTypes[]>([]);
+
     function fetchLocalCartProducts() {
         const cart:LocalCartTypes[] = JSON.parse(localStorage.getItem("cart")||"[]");
         setCartData(cart);
@@ -136,7 +144,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
 
     
     return(
-        <CartContext.Provider value={{cartData, setCartData, fetchLocalCartProducts, addToLocalCart, removeProductFromLocalCart, changeLocalCartProductQuantity, clearLocalCart, calculateTotalCartItems, calculateTotalCartValue}}>
+        <CartContext.Provider value={{cartData, setCartData, wishlistData, setWishlistData, fetchLocalCartProducts, addToLocalCart, removeProductFromLocalCart, changeLocalCartProductQuantity, clearLocalCart, calculateTotalCartItems, calculateTotalCartValue}}>
             {children}
         </CartContext.Provider>
     );

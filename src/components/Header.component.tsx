@@ -26,6 +26,7 @@ function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
                 <NavLink to="/home" className="nav_item">Home</NavLink>
                 <NavLink to="/my_profile" className="nav_item">Profile</NavLink>
                 {isUserAdmin() && <NavLink to="/inventory" className="nav_item">Inventory</NavLink>}
+                <NavLink to="/wishlist" className="nav_item">Wishlist</NavLink>
                 <NavLink to="/my_orders" className="nav_item">My Orders</NavLink>
                 <NavLink to="/register" className="nav_item">Register</NavLink>
                 <NavLink to="/login" className="nav_item">Login</NavLink>

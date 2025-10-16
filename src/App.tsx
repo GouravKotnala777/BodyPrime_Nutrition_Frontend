@@ -21,6 +21,8 @@ import Address from './pages/Address.page.tsx';
 import Verification from './pages/Verification.page.tsx';
 import {Toaster} from "react-hot-toast";
 import MyOrders from './pages/MyOrders.tsx';
+import Wishlist from './pages/Wishlist.page.tsx';
+import { getWishlist } from './apis/wishlist.api.ts';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -33,7 +35,7 @@ import MyOrders from './pages/MyOrders.tsx';
 
 function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
-  const {setCartData, fetchLocalCartProducts, removeProductFromLocalCart, clearLocalCart} = useCart();
+  const {setCartData, fetchLocalCartProducts, removeProductFromLocalCart, clearLocalCart, setWishlistData} = useCart();
   const {setUser, isUserAuthenticated, isUserAdmin} = useUser();
 
   async function myProfileHandler() {
@@ -47,6 +49,14 @@ function App() {
       const res = await getCart();
       if (res.success) {
         setCartData(transformCartDataForRes(res.jsonData).products);
+      }
+  };
+
+  async function getWishlistHandler() {
+      const res = await getWishlist();
+
+      if (res.success) {
+        setWishlistData(res.jsonData);
       }
   };
   
@@ -70,6 +80,7 @@ function App() {
           clearLocalCart();
         }
         getCartHandler();
+        getWishlistHandler();
       }
       else{
         fetchLocalCartProducts();
@@ -98,6 +109,7 @@ function App() {
           <Route path={"/logout"} element={isUserAuthenticated()?<Logout />:<Login />} />
         </>
         <Route path={"/my_orders"} element={<MyOrders />} />
+        <Route path={"/wishlist"} element={<Wishlist />} />
         
 
         // Show only if user is not loggedin

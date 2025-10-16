@@ -67,6 +67,7 @@ export interface CartTypesFlatted {
   products: (Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">&{quantity: number;})[];
   totalPrice: number;
 };
+export type WishlistTypes = Omit<LocalCartTypes, "flavor"|"size"|"weight"|"quantity">
 export interface OrderTypes {
     _id:string;
     userID: string;

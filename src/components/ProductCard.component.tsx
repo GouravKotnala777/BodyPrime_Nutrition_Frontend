@@ -4,6 +4,8 @@ import { useCart } from "../contexts/CartContext";
 import { useUser } from "../contexts/UserContext";
 import { addToCart } from "../apis/cart.api";
 import ImageWithFallback from "./ImageWithFallback.component";
+import { GoHeartFill } from "react-icons/go";
+import { addToWishlist } from "../apis/wishlist.api";
 
 interface ProductCardPropTypes{
     productID:string;
@@ -19,7 +21,7 @@ interface ProductCardPropTypes{
 };
 
 function ProductCard({productID, name, brand, category, price, rating, numReviews, weight, flavor, images}:ProductCardPropTypes) {
-    const {cartData, addToLocalCart, setCartData} = useCart();
+    const {cartData, addToLocalCart, setCartData, wishlistData, setWishlistData} = useCart();
     const {isUserAuthenticated} = useUser();
 
     async function addToCartHandler() {
@@ -40,7 +42,31 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                 }
             });
         }
-    }
+    };
+
+    async function addToWishlistHandler() {
+        const selectedProduct = {_id:productID, name, brand, category, images, price}; // getting frop props
+        const res = await addToWishlist({productID});
+        // getting res from backend whose type is {success: boolean; message: string; jsonData: {productID: string; operation: 1 | -1;};}  here operation 1 represents addition of product and -1 removel product from wishlist
+        if (res.success) {
+            setWishlistData((prev) => {
+                if (res.jsonData.operation === 1) {
+                    return [...prev, selectedProduct];
+                }
+                else if (res.jsonData.operation === -1) {
+                    return prev.filter((p) => p._id !== res.jsonData.productID);
+                }
+                else{
+                    return prev;
+                }
+            })
+        }
+    };
+
+    function isAlreadyWishlisted() {
+        const isExist = wishlistData.some((p) => p._id === productID);
+        return isExist;
+    };
 
     return(
         <div className="border-[1px] border-gray-100 rounded-[8px] flex justify-between h-[55vh] items-center my-2">
@@ -64,16 +90,32 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                     <div className="flex">{rating} <RatingStars rating={rating} outOf={5} /> ({numReviews})</div>
                     <div className="text-[2rem] font-semibold flex gap-0.5"><span className="text-[1rem] font-normal">₹</span>{price}</div>
                     <div>Free delivery <span className="font-semibold">Thu, 11 Sept</span></div>
-                    <button className="bg-yellow-300 rounded-2xl w-full py-2 mt-auto" onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        if (isUserAuthenticated()) {
-                            addToCartHandler();
-                        }
-                        else{
-                            addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1, images});
-                        }
-                        }}>Add to cart</button>
+                    <div className="mt-auto flex flex-col gap-2">
+                        <button className="w-min" onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            console.log("Liked.....");
+                            addToWishlistHandler();
+                        }}><GoHeartFill
+                                className="
+                                    w-[2rem] h-[2rem] transition-transform duration-300
+                                    active:scale-115 active:text-pink-300
+                                "
+                                style={{
+                                    color:isAlreadyWishlisted()?"#f6339a":"#e1e1e1"
+                                }}
+                            /></button>
+                        <button className="bg-yellow-300 rounded-2xl py-2 w-full" onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            if (isUserAuthenticated()) {
+                                addToCartHandler();
+                            }
+                            else{
+                                addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1, images});
+                            }
+                            }}>Add to cart</button>
+                    </div>
                 </NavLink>
             </div>
         </div>
