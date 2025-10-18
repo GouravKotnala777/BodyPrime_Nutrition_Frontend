@@ -18,6 +18,21 @@ export async function getProducts(skip:number) {
     }
 };
 
+export async function searchProducts(searchQuery:string) {
+    try {
+        const data = await apiHandler<null, {names:ProductTypes[]; categories:ProductTypes[]; brands:ProductTypes[]; tags:ProductTypes[];}>({
+            endpoint:`/product/search_products?searchQuery=${searchQuery}`,
+            method:"GET",
+            contentType:"application/json"
+        });
+        return data;        
+    } catch (error) {
+        console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
+        throw error;
+    }
+};
+
 export async function getSingleProduct(productID:string) {
     try {
         const data = await apiHandler<null, ProductTypes>({
