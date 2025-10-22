@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { ProductTypes } from "../utils/types";
+import ImageWithFallback from "./ImageWithFallback.component";
 
 
 function ImageSliderWithPreview({singleProduct}:{singleProduct:ProductTypes|null}) {
@@ -24,6 +25,8 @@ function ImageSliderWithPreview({singleProduct}:{singleProduct:ProductTypes|null
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     const index = Number(entry.target.getAttribute("data-index"));
+                    console.log({index});
+                    
                     setVisibleIndex(index);
                 }
             });
@@ -46,7 +49,15 @@ function ImageSliderWithPreview({singleProduct}:{singleProduct:ProductTypes|null
                 {
                     (singleProduct&&singleProduct.images&&singleProduct.images[0]) ?
                         singleProduct.images.map((imageURL, index) => (
-                            <img key={index} data-index={index} src={`${import.meta.env.VITE_SERVER_URL}/api/v1${imageURL}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${imageURL}`} className="w-full h-full flex-shrink-0 snap-center" />
+                            <ImageWithFallback
+                                key={index}
+                                data-index={index}
+                                src={`${import.meta.env.VITE_SERVER_URL}/api/v1${imageURL}`}
+                                alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${imageURL}`}
+                                fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
+                                className="w-full h-full flex-shrink-0 snap-center"
+                            />
+                            //<img   />
                         ))
                         :
                         <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} className="h-full w-full" />
@@ -62,7 +73,11 @@ function ImageSliderWithPreview({singleProduct}:{singleProduct:ProductTypes|null
                             }}
                             onClick={()=>imgPreviewHandler(index)}
                         >
-                            <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${imgURL}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${imgURL}`} />
+                            <ImageWithFallback
+                                src={`${import.meta.env.VITE_SERVER_URL}/api/v1${imgURL}`}
+                                alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${imgURL}`}
+                                fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
+                            />
                         </div>
                     ))
                 }

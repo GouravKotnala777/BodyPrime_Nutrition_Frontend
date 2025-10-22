@@ -5,9 +5,13 @@ interface ImageWithFallbackPropTypes{
     alt?:string;
     fallbackSrc:string;
     className?:string;
+    "data-index"?:number;
 };
 
-function ImageWithFallback({src, alt, fallbackSrc, className}:ImageWithFallbackPropTypes) {
+function ImageWithFallback({src, alt, fallbackSrc, className, "data-index":dataIndex}:ImageWithFallbackPropTypes) {
+
+    //console.log({src, alt, fallbackSrc, className});
+    
 
     function onErrorHandler(e:SyntheticEvent<HTMLImageElement>) {
         const target = e.currentTarget;
@@ -15,7 +19,7 @@ function ImageWithFallback({src, alt, fallbackSrc, className}:ImageWithFallbackP
         target.onerror = null;
     };
     return(
-        <img src={src} alt={alt} onError={onErrorHandler} className={`w-full ${className}`} />
+        <img src={src} data-index={dataIndex} alt={alt} onError={onErrorHandler} className={`w-full ${className}`} />
     )
 };
 
