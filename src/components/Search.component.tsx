@@ -1,9 +1,9 @@
 import { useEffect, useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
-import { FcCancel } from "react-icons/fc";
 import { NavLink } from "react-router-dom";
 import { searchProducts } from "../apis/product.api";
 import type { ProductTypes } from "../utils/types";
 import List from "./List.component";
+import { TbCancel } from "react-icons/tb";
 
 interface SearchPropTypes{
     setIsSearchActive:Dispatch<SetStateAction<boolean>>;
@@ -27,6 +27,8 @@ function Search({setIsSearchActive}:SearchPropTypes) {
 
     function hideSearchHandler(){
         setIsSearchActive(false);
+        //setSearchQuery("");
+        //setSearchedData({names:[], brands:[], categories:[], tags:[]});
     };
 
     useEffect(() => {
@@ -41,11 +43,11 @@ function Search({setIsSearchActive}:SearchPropTypes) {
     return(
         <section className="px-2 py-8">
           <div className="flex">
-            <input type="text" name="searchQuery" placeholder="search name / brand / category"
-              className="border-2 px-4 py-2 text-xl w-full rounded-l-[8px]"
+            <input type="text" autoFocus name="searchQuery" placeholder="search name / brand / category"
+              className="border-2 border-[#f44669] border-r-0 px-4 py-2 text-xl w-full rounded-l-[8px]"
               onChange={onChangeHandler}
             />
-            <button className="p-2 rounded-r-[8px]" onClick={() => setIsSearchActive(false)}><FcCancel /></button>
+            <button className="border-2 border-[#f44669] border-l-0 rounded-r-[8px] w-[50px] bg-[#f4466960]" onClick={hideSearchHandler}><TbCancel className="mx-auto" /></button>
           </div>
           <div className="mt-4">
             <List searchField="name" searchQuery={searchQuery} data={searchedData.names} hideSearchHandler={hideSearchHandler} />
