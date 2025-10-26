@@ -7,6 +7,8 @@ import { useUser } from "../contexts/UserContext";
 export interface SidebarPropTypes {
     isHamActive:boolean;
     setIsHamActive:Dispatch<SetStateAction<boolean>>;
+    isSearchActive:boolean;
+    setIsSearchActive:Dispatch<SetStateAction<boolean>>;
 };
 
 function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {

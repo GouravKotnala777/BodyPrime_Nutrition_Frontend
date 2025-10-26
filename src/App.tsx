@@ -23,6 +23,8 @@ import {Toaster} from "react-hot-toast";
 import MyOrders from './pages/MyOrders.tsx';
 import Wishlist from './pages/Wishlist.page.tsx';
 import { getWishlist } from './apis/wishlist.api.ts';
+import Search from './components/Search.component.tsx';
+import SearchedProducts from './pages/SearchedProducts.page.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -34,6 +36,7 @@ import { getWishlist } from './apis/wishlist.api.ts';
 //};
 
 function App() {
+  const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
   const {setCartData, fetchLocalCartProducts, removeProductFromLocalCart, clearLocalCart, setWishlistData} = useCart();
   const {setUser, isUserAuthenticated, isUserAdmin} = useUser();
@@ -88,14 +91,22 @@ function App() {
     })();
 }, [isUserAuthenticated()]);
 
+  if (isSearchActive) {
+    return(
+      <BrowserRouter>
+        <Search setIsSearchActive={setIsSearchActive} />
+      </BrowserRouter>
+    )
+  }
   return (
     <BrowserRouter>
-    <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} />
-    <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} />
+    <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />
+    <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />
     <main className="border-2 border-red-500">
       <Toaster />
       <Routes>
         <Route path={"/home"} element={<Home />} />
+        <Route path={"/searched_products/:searchField/:searchQuery"} element={<SearchedProducts />} />
         <Route path={"/single_product/:productID"} element={<SingleProduct />} />
         <Route path={"/cart"} element={<Cart />} />
         <Route path={"/address"} element={<Address />} />

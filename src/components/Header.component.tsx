@@ -6,8 +6,9 @@ import { FiShoppingCart } from 'react-icons/fi';
 import { useCart } from '../contexts/CartContext';
 import { useUser } from '../contexts/UserContext';
 import ImageWithFallback from './ImageWithFallback.component';
+import { BiSearch } from "react-icons/bi";
 
-function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
+function Header({isHamActive, setIsHamActive, setIsSearchActive}:SidebarPropTypes) {
     const {calculateTotalCartItems} = useCart();
     const {loggedInUserName, isUserAuthenticated, isUserAdmin} = useUser();
     return(
@@ -32,6 +33,9 @@ function Header({isHamActive, setIsHamActive}:SidebarPropTypes) {
                 <NavLink to="/login" className="nav_item">Login</NavLink>
                 <NavLink to="/cart" className="nav_item">Cart</NavLink>
                 </nav>
+            </section>
+            <section className="mobile_nav ml-auto items-center hidden relative w-[30px] h-[30px]">
+                <BiSearch className="absolute text-3xl bottom-0 left-0" onClick={() => setIsSearchActive(true)} />
             </section>
             <section className="mobile_nav ml-auto items-center hidden">
                 <NavLink to="/cart" className="relative w-[50px] h-[30px]">
