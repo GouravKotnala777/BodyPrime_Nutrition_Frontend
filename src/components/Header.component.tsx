@@ -13,12 +13,13 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive}:SidebarPropType
     const {loggedInUserName, isUserAuthenticated, isUserAdmin} = useUser();
     return(
         <header 
-            className="border-2 border-green-400 header flex justify-between gap-10 items-center h-[10vh] px-3"
+            className="header flex justify-between gap-10 items-center h-[10vh] px-3"
         >
             <section className="logo_section flex items-center gap-6">
-                
-                <ImageWithFallback src="/vite.svg" alt="/vite.svg" fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_user.png`} className="w-[40px] h-[40px]" />
-                <NavLink to="/my_profile" className="text-xl font-semibold text-white">{isUserAuthenticated()?loggedInUserName():"Login"}</NavLink>
+                <NavLink to={"/home"}>
+                    <ImageWithFallback src="/vite.svg" alt="/vite.svg" fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_user.png`} className="w-[40px] h-[40px]" />
+                </NavLink>
+                <NavLink to={isUserAuthenticated()?"/my_profile":"/login"} className="text-xl font-semibold text-white">{isUserAuthenticated()?loggedInUserName():"Login"}</NavLink>
             </section>
             <section
                 className="nav_section block"

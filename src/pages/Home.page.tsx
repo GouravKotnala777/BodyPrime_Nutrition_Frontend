@@ -5,7 +5,6 @@ function Home() {
     
     return(
         <section>
-            <h1>This is Home Page</h1>
             <HomeProducts />
         </section>
     )

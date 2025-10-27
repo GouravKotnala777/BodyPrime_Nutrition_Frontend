@@ -15,7 +15,10 @@ function Login() {
 
     async function onClickHandler() {
         const res = await login(formData);
-        setUser(res.jsonData);
+        if (res.success && res.message === "login successfull") {
+            setUser(res.jsonData);
+            window.location.href = "/home";
+        }
         console.log(res);
     };
 

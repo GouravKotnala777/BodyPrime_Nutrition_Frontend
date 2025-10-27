@@ -102,7 +102,7 @@ function App() {
     <BrowserRouter>
     <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />
     <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />
-    <main className="border-2 border-red-500">
+    <main>
       <Toaster />
       <Routes>
         <Route path={"/home"} element={<Home />} />
@@ -116,7 +116,7 @@ function App() {
 
         // Show only if user is loggedin
         <>
-          <Route path={"/my_profile"} element={isUserAuthenticated()?<MyProfile />:<Login />} />
+          <Route path={"/my_profile"} element={<MyProfile />} />
           <Route path={"/logout"} element={isUserAuthenticated()?<Logout />:<Login />} />
         </>
         <Route path={"/my_orders"} element={<MyOrders />} />

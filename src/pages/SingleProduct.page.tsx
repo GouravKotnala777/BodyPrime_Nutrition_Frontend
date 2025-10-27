@@ -10,6 +10,7 @@ import { addToCart, removeFromCart } from "../apis/cart.api";
 import { useCart } from "../contexts/CartContext";
 import HandlePageUIWithState from "../components/HandlePageUIWithState";
 import ImageSliderWithPreview from "../components/ImageSliderWithPreview.component";
+import ImageWithFallback from "../components/ImageWithFallback.component";
 
 function SingleProduct() {
     const {productID} = useParams();
@@ -147,21 +148,28 @@ function SingleProduct() {
             }
         >
             <section>
-                <div className="flex justify-between items-center py-2 bg-[#f4476a24]">
-                    <div><img src="/vite.svg" alt="/vite.svg" /></div>
+                <div className="flex justify-between items-center py-2 px-2 bg-[#f4476a24]">
+                    <div>
+                        <ImageWithFallback
+                            src={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images}`}
+                            alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images}`}
+                            fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
+                            className="w-[50px] h-[50px]"
+                        />
+                    </div>
                     <div className="flex flex-col">
                         <span className="text-[1rem] font-semibold">Company Name</span>
                         <span className="text-[0.9rem]">Brand name</span>
                     </div>
                     <div className="text-[0.8rem] flex">4.5 <RatingStars rating={4.5} outOf={5} /> (20,234)</div>
                 </div>
-                <p className="text-gray-700 font-semibold">{singleProduct?.brand} {singleProduct?.name} {singleProduct?.category} ({singleProduct?.flavor}, {singleProduct?.weight}) - Nitro-Tech Ultimate Muscle Building Formula with Whey Protein Isolate - 30g of Protein, 3g of Creatine & 6.8g of BCAA - Packaging May Vary</p>
+                <p className="text-gray-700 px-2 font-semibold">{singleProduct?.brand} {singleProduct?.name} {singleProduct?.category} ({singleProduct?.flavor}, {singleProduct?.weight}) - Nitro-Tech Ultimate Muscle Building Formula with Whey Protein Isolate - 30g of Protein, 3g of Creatine & 6.8g of BCAA - Packaging May Vary</p>
 
                 <ImageSliderWithPreview singleProduct={singleProduct} />
 
                 {
                     isUserAdmin() &&
-                    <div className="border-[1px] border-gray-100 my-2 py-4">
+                    <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                         <div className="text-[1.3rem]">
                             <span>Add Images</span><span className="font-semibold">Milk Chocolate</span>
                         </div>
@@ -172,7 +180,7 @@ function SingleProduct() {
                     </div>
                 }
 
-                <div>
+                <div className="px-2">
                     {
                         quantityInCart ?
                         <div className="border-2 flex justify-between items-center w-60 mx-auto rounded-2xl">
@@ -187,7 +195,7 @@ function SingleProduct() {
                 </div>
 
 
-                <div className="border-[1px] border-gray-900 my-2 py-4">
+                <div className="border-[1px] border-gray-900 my-2 px-2 py-4">
                     <div className="text-[1.3rem]">
                         <span>Flavor Name: </span><span className="font-semibold">Milk Chocolate</span>
                     </div>
@@ -199,7 +207,7 @@ function SingleProduct() {
                         }
                     </div>
                 </div>
-                <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                     <div className="text-[1.3rem]">
                         <span>Size: </span><span className="font-semibold">2Kg (Pack of 1)</span>
                     </div>
@@ -211,10 +219,10 @@ function SingleProduct() {
                         }
                     </div>
                 </div>
-                <div>
+                <div className="px-2">
                     <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100">See Similar Items</button>
                 </div>
-                <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                     <div className="flex text-5xl justify-around">
                         {
                             [1,2,3,4,5].map((num) => (
@@ -229,7 +237,7 @@ function SingleProduct() {
                         <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100" onClick={createReviewHandler}>Submit</button>
                     </div>
                 </div>
-                <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                     <div className="text-[1.3rem]">
                         <span>Measurement</span><span className="font-semibold"></span>
                     </div>
@@ -252,7 +260,7 @@ function SingleProduct() {
                         </div>
                     </div>
                 </div>
-                <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                     <div className="text-[1.3rem] font-semibold">
                         <span>Safety and product resources</span><span className="font-semibold"></span>
                     </div>
@@ -260,7 +268,7 @@ function SingleProduct() {
                         <p>As the Food and Drug Administration (FDA) advises, dietary supplements can support your overall health but may also have powerful effects on the body. It’s important to read labels carefully, exercise caution, and consult your healthcare professional before taking any supplement. Side effects are more likely if supplements are taken in high doses, as substitutes for prescribed medications, or in combination with multiple supplements. If you experience severe side effects, discontinue use immediately and seek medical attention.</p>
                     </div>
                 </div>
-                <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                     <div className="text-[1.3rem] font-semibold">
                         <span>LEGAL DESCLAIMER</span><span className="font-semibold"></span>
                     </div>
@@ -268,7 +276,7 @@ function SingleProduct() {
                         <p>Some states prohibit the sale of products intended for weight loss or muscle building to individuals under age 18. Check your local laws prior to purchase.</p>
                     </div>
                 </div>
-                <div className="border-[1px] border-gray-100 my-2 py-4">
+                <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                     <div className="text-[1.3rem] font-semibold">
                         <span>Top Reviews</span><span className="font-semibold"></span>
                     </div>

@@ -1,33 +1,43 @@
+import { NavLink } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
+import ImageWithFallback from "../components/ImageWithFallback.component";
 
 
 function Wishlist() {
     const {wishlistData} = useCart();
     
-
-
     return(
-        <section className="border-2">
+        <section>
             {
-                wishlistData.map(({_id, name, brand, category}) => (
-                    <div className="border-2 border-red-400 flex" key={_id}>
-                        <div className="border-2 flex-1/3">
-                            <img src="/vite.svg" alt="/vite.svg"
-                                className="w-full"
+                wishlistData.map(({_id, name, brand, category, price, images}) => (
+                    <NavLink to={`/single_product/${_id}`} className="border-b-1 border-gray-200 flex justify-between px-2 py-6 mt-8" key={_id}>
+                        <div className="w-[30%]">
+                            <ImageWithFallback
+                                src={`${import.meta.env.VITE_SERVER_URL}/api/v1${images[0]}`}
+                                alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${images[0]}`}
+                                fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
                             />
                         </div>
-                        <div className="border-2 flex-1/2">
-                            <div className="border-2 border-green-500 text-[1.1rem] font-semibold
+                        <div className="w-[60%]">
+                            <div className="text-[1.1rem] font-semibold
                                 overflow-hidden 
                                 text-ellipsis 
                                 [display:-webkit-box] 
                                 [-webkit-line-clamp:3] 
                                 [-webkit-box-orient:vertical]
                             ">{name} {brand} Beginer's {category}, No Added Sugar, Faster Muscle Recovery & Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veritatis, veniam.</div>
-
-                            <button className="bg-yellow-300 rounded-2xl py-2 w-full">Tranfer to Cart</button>
+                            <div className="text-2xl">{price}<span className="font-light">₹</span></div>
+                            <button
+                                className="bg-yellow-300 rounded-2xl py-2 w-full mt-4"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    console.log("transfered");
+                                    
+                                }}
+                            >Tranfer to Cart</button>
                         </div>
-                    </div>
+                    </NavLink>
                 ))
             }
         </section>

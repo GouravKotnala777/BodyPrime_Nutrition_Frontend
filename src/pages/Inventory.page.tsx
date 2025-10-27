@@ -6,6 +6,7 @@ import { BiCamera } from "react-icons/bi";
 import { useLocation } from "react-router-dom";
 import HandlePageUIWithState from "../components/HandlePageUIWithState";
 import { ButtonPrimary } from "../components/Button.component";
+import ImageWithFallback from "../components/ImageWithFallback.component";
 
 type InventoryTabTypes = "all"|"add"|"update"|"tab4";
 
@@ -145,19 +146,21 @@ function Inventory() {
                     </div>
                 </>
             }>
-                <section className="border-2 border-blue-600 flex flex-wrap justify-around gap-4 h-[80vh] overflow-scroll">
+                <section className="flex flex-wrap justify-around gap-4 h-[80vh] overflow-scroll px-2 py-4">
                     {
                         products.map((p) => (
-                            <div key={p._id} className="border-2 w-[110px] h-[160px]" onClick={() => {
+                            <div key={p._id} className="border-1 border-gray-300 w-[110px] h-[160px]" onClick={() => {
                                 setSelectedProduct(p);
                                 setTab("update");
                             }}>
-                                <div className="border-2 h-[85%]">
-                                    <img src={p.images[0]?`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`:`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
-                                        alt={p.images[0]?`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`:`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
+                                <div className="h-[85%]">
+                                    <ImageWithFallback
+                                        src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`}
+                                        alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`}
+                                        fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
                                     />
                                 </div>
-                                <div className="border-2 text-center h-[15%]">
+                                <div className="text-center h-[15%]">
                                     <h3>₹ {p.price}/-</h3>
                                 </div>
                             </div>
@@ -178,15 +181,15 @@ function Inventory() {
         
         {tab === "add" && (
             <>
-                <section className="border-2 border-green-500 px-2 h-[80vh] overflow-scroll">
+                <section className="px-2 h-[80vh] overflow-scroll">
                     <div className="text-center text-[1.5rem] font-semibold">
                         <h1>Create New Product</h1>
                     </div>
                     <div className="flex flex-col gap-2 text-[1.2rem] mt-4">
                         <input type="text" name="name" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder="Product Name" onChange={onChangeHandler} />
                         <input type="text" name="brand" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder="Brand" onChange={onChangeHandler} />
-                        <select name="category" className="px-5 py-2" onChange={onChangeHandler}>
-                            <option value="protein" disabled>--select--</option>
+                        <select name="category" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeHandler}>
+                            <option value="null" disabled>--select category--</option>
                             <option value="protein">protein</option>
                             <option value="pre-workout">pre-workout</option>
                             <option value="vitamins">vitamins</option>
@@ -211,7 +214,7 @@ function Inventory() {
         
         {tab === "update" && (
             <>
-                <section className="border-2 border-green-500 px-2 h-[80vh] overflow-scroll">
+                <section className="px-2 h-[80vh] overflow-scroll">
                     {/*<pre>{JSON.stringify(selectedProduct, null, `\t`)}</pre>*/}
                     <div className="text-center text-[1.5rem] font-semibold">
                         <h1>Update Existing Product</h1>
@@ -234,8 +237,8 @@ function Inventory() {
                     <div className="flex flex-col gap-2 text-[1.2rem] mt-4">
                         <input type="text" name="name" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.name||"Product name"} onChange={onChangeUpdateHandler} />
                         <input type="text" name="brand" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" placeholder={selectedProduct?.brand||"Product brand"} onChange={onChangeUpdateHandler} />
-                        <select name="category" className="px-5 py-2" defaultValue={selectedProduct?.category} onChange={onChangeUpdateHandler}>
-                            <option value="null" disabled>--select--</option>
+                        <select name="category" className="px-5 py-2 text-gray-500" defaultValue={selectedProduct?.category} onChange={onChangeUpdateHandler}>
+                            <option value="null" disabled>--select category--</option>
                             <option value="protein">protein</option>
                             <option value="pre-workout">pre-workout</option>
                             <option value="vitamins">vitamins</option>
@@ -266,7 +269,7 @@ function Inventory() {
         )}
         
         
-        <section className="border-2 border-blue-800 text-center fixed left-0 bottom-0 w-full flex justify-around h-[10vh] py-2 bg-white">
+        <section className="text-center fixed left-0 bottom-0 w-full flex justify-around h-[10vh] py-2 bg-[#f4466940]">
             <div className="flex flex-col items-center w-[6rem]" onClick={() => setTab("all")}>
                 <AiOutlineProduct className="tab_icon text-3xl px-1 rounded-[10px]" style={{
                     backgroundColor:tab==="all"?"#f06682bb":"white"

@@ -57,7 +57,6 @@ function ImageSliderWithPreview({singleProduct}:{singleProduct:ProductTypes|null
                                 fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
                                 className="w-full h-full flex-shrink-0 snap-center"
                             />
-                            //<img   />
                         ))
                         :
                         <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} className="h-full w-full" />
