@@ -15,7 +15,7 @@ function ReviewCard({productID, userID, ...review}:ReviewTypesPopulated) {
             </div>
             <div className="flex">
                 <RatingStars rating={review.rating} outOf={5} />
-                <span className="text-orange-400 font-semibold">Verified Purchase</span>
+                &nbsp;&nbsp;&nbsp; <span className="text-orange-400 font-semibold">{review.isVerifiedPurchase&&"Verified Purchase"}</span>
             </div>
             <div className="flex flex-col text-gray-500">
                 <span>{reviewActionDate}</span>

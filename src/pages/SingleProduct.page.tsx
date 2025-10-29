@@ -304,7 +304,16 @@ function SingleProduct() {
                     <div className="text-[1rem] w-full flex flex-col gap-2">
                         {
                             allReviews.map(({productID, userID, ...review}) => (
-                                <ReviewCard key={productID.name} productID={productID} userID={userID} rating={review.rating} comment={review.comment} createdAt={review.createdAt} updatedAt={review.updatedAt} />
+                                <ReviewCard
+                                    key={productID.name}
+                                    productID={productID}
+                                    userID={userID}
+                                    rating={review.rating}
+                                    comment={review.comment}
+                                    isVerifiedPurchase={review.isVerifiedPurchase}
+                                    createdAt={review.createdAt}
+                                    updatedAt={review.updatedAt}
+                                />
                             ))
                         }
                     </div>

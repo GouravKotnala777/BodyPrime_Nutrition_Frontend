@@ -155,10 +155,11 @@ export interface ReviewTypes {
     userID:string;
     rating:number;
     comment?:string;
+    isVerifiedPurchase:boolean;
     createdAt:string;
     updatedAt:string;
 };
-export type ReviewTypesPopulated = Pick<ReviewTypes, "rating"|"comment"|"createdAt"|"updatedAt"> & {
+export type ReviewTypesPopulated = Pick<ReviewTypes, "rating"|"comment"|"isVerifiedPurchase"|"createdAt"|"updatedAt"> & {
     productID:Pick<ProductTypes, "name"|"flavor"|"size"|"weight">;
     userID:Pick<UserTypes, "name">;
 };
