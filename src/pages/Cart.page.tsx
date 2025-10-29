@@ -3,41 +3,61 @@ import { useCart } from "../contexts/CartContext";
 import { addToCart, removeFromCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
 import ImageWithFallback from "../components/ImageWithFallback.component";
+import { useState } from "react";
+import Spinner from "../components/Spinner.component";
 
 function Cart() {
     const {isUserAuthenticated} = useUser();
     const {cartData, setCartData, changeLocalCartProductQuantity, removeProductFromLocalCart, calculateTotalCartItems, calculateTotalCartValue} = useCart();
+    const [targetedProduct, setTargetedProduct] = useState<string>("");
     const navigate = useNavigate();
 
     async function addToCartHandler({productID, quantity}:{productID:string; quantity:number;}) {
-        const res = await addToCart({productID, quantity});
-
-        const selectedProduct = cartData.find((p) => p._id === res.jsonData.products._id);
-
-        if (!selectedProduct) return Error("selectedProduct not found");
-
-        if (res.jsonData.quantity < 10) {
-            setCartData(cartData.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p));
-        } else {
-            return Error("Cannot add more than 10 products");
+        try {
+            setTargetedProduct(productID);
+            const res = await addToCart({productID, quantity});
+    
+            const selectedProduct = cartData.find((p) => p._id === res.jsonData.products._id);
+    
+            if (!selectedProduct) return Error("selectedProduct not found");
+    
+            if (res.jsonData.quantity < 10) {
+                setCartData(cartData.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p));
+            } else {
+                return Error("Cannot add more than 10 products");
+            }
+            console.log(res);
+        } catch (error) {
+            console.log(error);
         }
-        console.log(res);
+        finally{
+            setTargetedProduct("");
+        }
     };
 
     async function removeFromCartHandler({productID, quantity}:{productID:string; quantity:number;}) {
-        const res = await removeFromCart({productID, quantity});
-
-        const selectedProduct = cartData.find((p) => p._id === res.jsonData.products);
-
-        if (!selectedProduct) return Error("selectedProduct not found");
-        if (res.jsonData.quantity < 1) {
-            setCartData(cartData.filter(p => p._id !== res.jsonData.products));
+        try {
+            setTargetedProduct(productID);
+            
+            const res = await removeFromCart({productID, quantity});
+    
+            const selectedProduct = cartData.find((p) => p._id === res.jsonData.products);
+    
+            if (!selectedProduct) return Error("selectedProduct not found");
+            if (res.jsonData.quantity < 1) {
+                setCartData(cartData.filter(p => p._id !== res.jsonData.products));
+            }
+            else{
+                selectedProduct.quantity = res.jsonData.quantity;
+                setCartData(cartData.map(p => p._id === res.jsonData.products?{...p, quantity:res.jsonData.quantity}:p));
+                "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
+            }
+        } catch (error) {
+            console.log(error);
         }
-        else{
-            selectedProduct.quantity = res.jsonData.quantity;
-            setCartData(cartData.map(p => p._id === res.jsonData.products?{...p, quantity:res.jsonData.quantity}:p));
-            "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
-        }        
+        finally{
+            setTargetedProduct("");
+        }
     };
     
     return(
@@ -89,7 +109,7 @@ function Cart() {
 
                             <div className="flex justify-between items-center gap-4 mt-2">
                                 <div className="flex justify-around items-center border-[1px] border-green-500 py-1 rounded-[4px] flex-1/2">
-                                    <button className="text-3xl" name="-1" onClick={(e) => {
+                                    <button className="text-3xl" name="-1" disabled={targetedProduct===p._id} style={{opacity:(targetedProduct===p._id)?0.2:1}} onClick={(e) => {
                                         if (isUserAuthenticated()) {
                                             removeFromCartHandler({productID:p._id, quantity:1});
                                         }
@@ -97,8 +117,8 @@ function Cart() {
                                             changeLocalCartProductQuantity(e, p._id);
                                         }
                                     }}>-</button>
-                                    <span className="text-xl w-1/3 text-center">{p.quantity.toString()}</span>
-                                    <button className="text-3xl" name="1" onClick={(e) => {
+                                    <span className="text-xl w-1/3 text-center">{targetedProduct===p._id?<Spinner width="20px" />:p.quantity.toString()}</span>
+                                    <button className="text-3xl" name="1" disabled={targetedProduct===p._id} style={{opacity:(targetedProduct===p._id)?0.2:1}} onClick={(e) => {
                                         if (isUserAuthenticated()) {
                                             addToCartHandler({productID:p._id, quantity:1});
                                         }

@@ -2,18 +2,29 @@ import { useState, type ChangeEvent } from "react";
 import { NavLink } from "react-router-dom";
 import { type RegisterFormTypes } from "../utils/types";
 import { register } from "../apis/user.api";
+import Spinner from "../components/Spinner.component";
 
 
 function Register() {
     const [formData, setFormData] = useState<RegisterFormTypes>({name:"", email:"", mobile:"", gender:"male", password:""});
+    const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
 
     function onChangeHandler(e:ChangeEvent<HTMLInputElement|HTMLSelectElement>) {
         setFormData({...formData, [e.target.name]:e.target.value});        
     };
     async function onClickHandler() {
-        const res = await register(formData);
-
-        console.log(res);
+        try {
+            setIsProcessing(true);
+            const res = await register(formData);
+    
+            console.log(res);
+        } catch (error) {
+            console.log(error);
+        }
+        finally{
+            setIsProcessing(false);
+        }
     };
 
     return(
@@ -40,7 +51,7 @@ function Register() {
                 </select>
             </label>
 
-            <button className="p-2 bg-black text-white px-8 rounded-[8px]" onClick={onClickHandler}>Register</button>
+            <button className="p-2 bg-black text-white px-8 rounded-[8px]" onClick={onClickHandler}>{isProcessing?<Spinner color="white" width="20px" />:"Register"}</button>
 
             <section className="w-full">
             <div className="flex justify-between items-center">

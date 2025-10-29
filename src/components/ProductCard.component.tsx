@@ -6,6 +6,8 @@ import { addToCart } from "../apis/cart.api";
 import ImageWithFallback from "./ImageWithFallback.component";
 import { GoHeartFill } from "react-icons/go";
 import { addToWishlist } from "../apis/wishlist.api";
+import { useState } from "react";
+import Spinner from "./Spinner.component";
 
 interface ProductCardPropTypes{
     productID:string;
@@ -23,24 +25,34 @@ interface ProductCardPropTypes{
 function ProductCard({productID, name, brand, category, price, rating, numReviews, weight, flavor, images}:ProductCardPropTypes) {
     const {cartData, addToLocalCart, setCartData, wishlistData, setWishlistData} = useCart();
     const {isUserAuthenticated} = useUser();
+    const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
 
     async function addToCartHandler() {
-        const res = await addToCart({productID, quantity:1});
-
-        if (cartData.length === 0) {
-            setCartData([{...res.jsonData.products, quantity:res.jsonData.quantity}]);
+        try {
+            setIsCartMutating(true);
+            const res = await addToCart({productID, quantity:1});
+    
+            if (cartData.length === 0) {
+                setCartData([{...res.jsonData.products, quantity:res.jsonData.quantity}]);
+            }
+            else{
+                setCartData((prev) => {
+                    const findResult = prev.find(p => p._id === res.jsonData.products._id);
+    
+                    if (findResult) {
+                        return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p);
+                    }
+                    else{
+                        return [...prev, {...res.jsonData.products, quantity:res.jsonData.quantity}];
+                    }
+                });
+            }
+        } catch (error) {
+            console.log("failed to mutate cart");
+            console.log(error);
         }
-        else{
-            setCartData((prev) => {
-                const findResult = prev.find(p => p._id === res.jsonData.products._id);
-
-                if (findResult) {
-                    return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p);
-                }
-                else{
-                    return [...prev, {...res.jsonData.products, quantity:res.jsonData.quantity}];
-                }
-            });
+        finally{
+            setIsCartMutating(false);
         }
     };
 
@@ -114,7 +126,7 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                             else{
                                 addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1, images});
                             }
-                            }}>Add to cart</button>
+                            }}>{isCartMutating?<Spinner />:"Add to cart"}</button>
                     </div>
                 </NavLink>
             </div>

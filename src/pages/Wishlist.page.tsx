@@ -3,15 +3,19 @@ import { useCart } from "../contexts/CartContext";
 import ImageWithFallback from "../components/ImageWithFallback.component";
 import { addToCart } from "../apis/cart.api";
 import { addToWishlist } from "../apis/wishlist.api";
+import { useState } from "react";
+import Spinner from "../components/Spinner.component";
 
 
 function Wishlist() {
     const {wishlistData, setWishlistData, setCartData} = useCart();
+    const [targetedProduct, setTargetedProduct] = useState<string>("");
     const navigate = useNavigate();
     //const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:false, isSuccess:true, error:""});
 
     async function transferProductToCartHandler({productID}:{productID:string;}) {
         try {
+            setTargetedProduct(productID);
             const res = await addToCart({productID, quantity:1});
 
             console.log({ATC:res});
@@ -42,6 +46,9 @@ function Wishlist() {
         } catch (error) {
             console.log(error);
             throw Error("FFFFFFFFFFFFFFFFFFFFFFFFFF")            
+        }
+        finally{
+            setTargetedProduct("");
         }
     };
 
@@ -101,13 +108,14 @@ function Wishlist() {
                             <div className="text-2xl">{price}<span className="font-light">₹</span></div>
                             <button
                                 className="bg-yellow-300 rounded-2xl py-2 w-full mt-4"
+                                disabled={targetedProduct === _id}
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
                                     console.log("transfered");
                                     transferProductToCartHandler({productID:_id})
                                 }}
-                            >Tranfer to Cart</button>
+                            >{(targetedProduct===_id)?<Spinner width="20px" />:"Tranfer to Cart"}</button>
                         </div>
                     </NavLink>
                 ))

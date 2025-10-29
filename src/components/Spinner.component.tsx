@@ -8,6 +8,7 @@ interface SpinnerPropTypes{
     text?:string;
     fontSize?:string;
     fontWeight?:fontWeightType;
+    color?:string;
 };
 const FONT_WEIGHT:Record<fontWeightType, number> = {
     light:100,
@@ -17,7 +18,7 @@ const FONT_WEIGHT:Record<fontWeightType, number> = {
     extrabold:800
 };
 
-function Spinner({width, thickness, type, text, fontSize, fontWeight}:SpinnerPropTypes) {
+function Spinner({width, thickness, type, text, fontSize, fontWeight, color}:SpinnerPropTypes) {
 
     return(
         <div className="spinner_cont relative" style={{
@@ -31,7 +32,8 @@ function Spinner({width, thickness, type, text, fontSize, fontWeight}:SpinnerPro
                     borderTop:thickness?`${thickness} solid transparent`:"2px solid transparent",
                     ...(type==="secondary"&&{
                         borderBottom:thickness?`${thickness} solid transparent`:"2px solid transparent"
-                    })
+                    }),
+                    ...(color&&{borderColor:color, borderTopColor:"black"})
                 }}
             >
             </div>

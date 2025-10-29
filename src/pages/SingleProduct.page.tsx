@@ -11,6 +11,7 @@ import { useCart } from "../contexts/CartContext";
 import HandlePageUIWithState from "../components/HandlePageUIWithState";
 import ImageSliderWithPreview from "../components/ImageSliderWithPreview.component";
 import ImageWithFallback from "../components/ImageWithFallback.component";
+import Spinner from "../components/Spinner.component";
 
 function SingleProduct() {
     const {productID} = useParams();
@@ -24,6 +25,8 @@ function SingleProduct() {
     const {cartData, setCartData} = useCart();
     const navigate = useNavigate();
     const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
+    const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
+    const [isReviewMutating, setIsReviewMutating] = useState<boolean>(false);
 
 
     async function getSingleProductHandler() {
@@ -44,14 +47,16 @@ function SingleProduct() {
     };
 
     async function createReviewHandler() {
+        setIsReviewMutating(true);
         if (!productID) return;
-
+        
         console.log({productID, rating, comment});
         
-
+        
         const res = await createReview({productID, rating, comment});
-
+        
         console.log(res);
+        setIsReviewMutating(false);
     };
 
     async function onChangeHandler(e:ChangeEvent<HTMLInputElement>) {
@@ -85,43 +90,59 @@ function SingleProduct() {
     };
 
     async function addToCartHandler() {
-        if (!productID) throw Error("productID not found");
-
-        const res = await addToCart({productID, quantity:1});
-
-        if (cartData.length === 0) {
-            setCartData([{...res.jsonData.products, quantity:res.jsonData.quantity}]);
+        try {
+            setIsCartMutating(true);
+            if (!productID) throw Error("productID not found");
+    
+            const res = await addToCart({productID, quantity:1});
+    
+            if (cartData.length === 0) {
+                setCartData([{...res.jsonData.products, quantity:res.jsonData.quantity}]);
+            }
+            else{
+                setCartData((prev) => {
+                    const findResult = prev.find(p => p._id === res.jsonData.products._id);
+    
+                    if (findResult) {
+                        return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p);
+                    }
+                    else{
+                        return [...prev, {...res.jsonData.products, quantity:res.jsonData.quantity}];
+                    }
+                });
+            }
+        } catch (error) {
+            console.log(error);
         }
-        else{
-            setCartData((prev) => {
-                const findResult = prev.find(p => p._id === res.jsonData.products._id);
-
-                if (findResult) {
-                    return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p);
-                }
-                else{
-                    return [...prev, {...res.jsonData.products, quantity:res.jsonData.quantity}];
-                }
-            });
+        finally{
+            setIsCartMutating(false);            
         }
     };
 
     async function removeFromCartHandler() {
-        if (!productID) throw Error("productID not found");
-
-        const res = await removeFromCart({productID, quantity:1});
-
-        const selectedProduct = cartData.find((p) => p._id === res.jsonData.products);
-
-        if (!selectedProduct) return Error("selectedProduct not found");
-        if (res.jsonData.quantity < 1) {
-            setCartData(cartData.filter(p => p._id !== res.jsonData.products));
+        try {
+            setIsCartMutating(true);
+            if (!productID) throw Error("productID not found");
+    
+            const res = await removeFromCart({productID, quantity:1});
+    
+            const selectedProduct = cartData.find((p) => p._id === res.jsonData.products);
+    
+            if (!selectedProduct) return Error("selectedProduct not found");
+            if (res.jsonData.quantity < 1) {
+                setCartData(cartData.filter(p => p._id !== res.jsonData.products));
+            }
+            else{
+                selectedProduct.quantity = res.jsonData.quantity;
+                setCartData(cartData.map(p => p._id === res.jsonData.products?{...p, quantity:res.jsonData.quantity}:p));
+                "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
+            }
+        } catch (error) {
+            
         }
-        else{
-            selectedProduct.quantity = res.jsonData.quantity;
-            setCartData(cartData.map(p => p._id === res.jsonData.products?{...p, quantity:res.jsonData.quantity}:p));
-            "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
-        }        
+        finally{
+            setIsCartMutating(false);
+        }
     };
     
 
@@ -184,12 +205,12 @@ function SingleProduct() {
                     {
                         quantityInCart ?
                         <div className="border-2 flex justify-between items-center w-60 mx-auto rounded-2xl">
-                            <button className="text-3xl font-semibold w-[4rem] h-[3rem]" onClick={removeFromCartHandler}>-</button>
-                            <span className="text-xl">{quantityInCart}</span>
-                            <button className="text-3xl font-semibold w-[4rem] h-[3rem]" onClick={addToCartHandler}>+</button>
+                            <button className="text-3xl font-semibold w-[4rem] h-[3rem]" disabled={isCartMutating} style={{opacity:isCartMutating?0.2:1}} onClick={removeFromCartHandler}>-</button>
+                            <span className="text-xl">{isCartMutating?<Spinner width="20px" />:quantityInCart}</span>
+                            <button className="text-3xl font-semibold w-[4rem] h-[3rem]" disabled={isCartMutating} style={{opacity:isCartMutating?0.2:1}} onClick={addToCartHandler}>+</button>
                         </div>
                         :
-                        <button className="w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100 bg-yellow-300" onClick={addToCartHandler}>Add to cart</button>
+                        <button className="w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100 bg-yellow-300" onClick={addToCartHandler}>{isCartMutating?<Spinner width="20px" />:"Add to cart"}</button>
 
                     }
                 </div>
@@ -234,7 +255,7 @@ function SingleProduct() {
                         <textarea rows={5} className="w-full" placeholder="Comment...(optional)" onChange={(e) => setComment(e.target.value)}></textarea>
                     </div>
                     <div className="mt-4">
-                        <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100" onClick={createReviewHandler}>Submit</button>
+                        <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100" disabled={isReviewMutating} onClick={createReviewHandler}>{isReviewMutating?<Spinner width="20px" />:"Submit"}</button>
                     </div>
                 </div>
                 <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
