@@ -25,6 +25,7 @@ import Wishlist from './pages/Wishlist.page.tsx';
 import { getWishlist } from './apis/wishlist.api.ts';
 import Search from './components/Search.component.tsx';
 import SearchedProducts from './pages/SearchedProducts.page.tsx';
+import Delivery from './pages/Delivery.page.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -136,6 +137,7 @@ function App() {
 
         // Show only for admin
         <Route path={"/inventory"} element={<ProtectedRoute children={<Inventory />} isUserAuthenticated={isUserAuthenticated()} isUserAdmin={isUserAdmin()} />} />
+        <Route path={"/delivery"} element={<ProtectedRoute children={<Delivery />} isUserAuthenticated={isUserAuthenticated()} isUserAdmin={isUserAdmin()} />} />
 
 
 

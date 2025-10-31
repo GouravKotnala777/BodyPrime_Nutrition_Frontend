@@ -67,7 +67,8 @@ export interface CartTypesFlatted {
   products: (Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">&{quantity: number;})[];
   totalPrice: number;
 };
-export type WishlistTypes = Omit<LocalCartTypes, "flavor"|"size"|"weight"|"quantity">
+export type WishlistTypes = Omit<LocalCartTypes, "flavor"|"size"|"weight"|"quantity">;
+export type OrderStatusTypes =  "pending" | "processing" | "shipped" | "delivered" | "cancelled";
 export interface OrderTypes {
     _id:string;
     userID: string;
@@ -97,14 +98,21 @@ export interface OrderTypes {
         discount: number;
         totalPrice: number;
     };
-    orderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+    orderStatus:OrderStatusTypes;
     deliveredAt?: Date;
+    otp?:string;
+    otpExpiryTime:Date|null;
     createdAt: Date;
     updatedAt: Date;
 };
 export interface OrderTypesPopulates {
     _id:string;
-    userID: string;
+    userID:{
+        _id:string;
+        name:string;
+        email:string;
+        mobile:string;
+    };
     products: {
         productID: Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"size">;
         name:string;
@@ -133,6 +141,8 @@ export interface OrderTypesPopulates {
     };
     orderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
     deliveredAt?: Date;
+    otp?:string;
+    otpExpiryTime:Date|null;
     createdAt: Date;
     updatedAt: Date;
 };
