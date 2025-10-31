@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import HandlePageUIWithState from "../components/HandlePageUIWithState";
-import { type OrderStatusTypes, type OrderTypes, type ProductTypes } from "../utils/types";
-import { getProducts } from "../apis/product.api";
-import ImageWithFallback from "../components/ImageWithFallback.component";
-import { ButtonPrimary } from "../components/Button.component";
+import { type OrderStatusTypes, type OrderTypes } from "../utils/types";
 import { allOrders, sendDeliveryConfirmation, verifyDeliveryConfirmation } from "../apis/order.api";
 import { AiOutlineProduct } from "react-icons/ai";
 import { CiLocationOn } from "react-icons/ci";
@@ -11,10 +8,9 @@ import { BiCalendarEvent, BiPhone } from "react-icons/bi";
 
 
 function Delivery() {
-    const [products, setProducts] = useState<ProductTypes[]>([]);
     const [allOrdersData, setAllOrdersData] = useState<{pending:OrderTypes[], processing:OrderTypes[], shipped:OrderTypes[], delivered:OrderTypes[], cancelled:OrderTypes[]}>({pending:[], processing:[], shipped:[], delivered:[], cancelled:[]});
     const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
-    const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
+    //const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     const [tab, setTab] = useState<OrderStatusTypes>("pending");
     const [otp, setOtp] = useState<string>("");
     const [a, setA] = useState<boolean>(false);
@@ -28,7 +24,6 @@ function Delivery() {
         
         console.log({res1:res});
         setDataStatus({isLoading:false, isSuccess:true, error:""});
-        setRefetchDataStatus({isLoading:false, isSuccess:true, error:""});
         
         if (res.success) {
             setAllOrdersData(res.jsonData);
