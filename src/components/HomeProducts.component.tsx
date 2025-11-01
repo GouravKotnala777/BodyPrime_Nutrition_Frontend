@@ -17,7 +17,7 @@ import { ButtonPrimary } from "./Button.component";
 //];
 
 
-function HomeProducts() {
+export function HomeProducts() {
     const [skip, setSkip] = useState<number>(0);
     const [products, setProducts] = useState<ProductTypes[]>([]);
     const navigate = useNavigate();
@@ -97,4 +97,100 @@ function HomeProducts() {
     )
 };
 
-export default HomeProducts;
+export function BestSellers() {
+    const [skip, setSkip] = useState<number>(0);
+    const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
+    const [bestSellers, setBestSellers] = useState<ProductTypes[]>([]);
+    //const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
+    
+
+    async function getBestSellersHandler() {
+        try {
+            setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
+            const res = await getProducts(skip, "soldCount", "");
+
+            if (res.success) {
+                setBestSellers((prev) => [...prev, ...res.jsonData]);
+                setRefetchDataStatus({isLoading:false, isSuccess:true, error:""});
+                setSkip(skip+1);
+            }
+            else{
+                setRefetchDataStatus({isLoading:false, isSuccess:false, error:res.message});
+            }
+        } catch (error) {
+            console.log(error);
+            setRefetchDataStatus({isLoading:false, isSuccess:false, error:error as string});
+            throw Error(error as string);
+        }
+    };
+
+    useEffect(() => {
+        getBestSellersHandler();
+    }, []);
+
+    return(
+        <section>
+            {
+                bestSellers.map((p) => (
+                    <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
+                ))
+            }
+
+            <ButtonPrimary
+                isLoading={refetchDataStatus.isLoading}
+                isSuccess={refetchDataStatus.isSuccess}
+                isDisabled={(refetchDataStatus.error !== "")}
+                onClickHandler={getBestSellersHandler}
+            />
+        </section>
+    )
+};
+
+export function FeatureProducts() {
+    const [skip, setSkip] = useState<number>(0);
+    const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
+    const [featureProducts, setFeatureProducts] = useState<ProductTypes[]>([]);
+    //const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
+    
+
+    async function getBestSellersHandler() {
+        try {
+            setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
+            const res = await getProducts(skip, "createdAt", "");
+
+            if (res.success) {
+                setFeatureProducts((prev) => [...prev, ...res.jsonData]);
+                setRefetchDataStatus({isLoading:false, isSuccess:true, error:""});
+                setSkip(skip+1);
+            }
+            else{
+                setRefetchDataStatus({isLoading:false, isSuccess:false, error:res.message});
+            }
+        } catch (error) {
+            console.log(error);
+            setRefetchDataStatus({isLoading:false, isSuccess:false, error:error as string});
+            throw Error(error as string);
+        }
+    };
+
+    useEffect(() => {
+        getBestSellersHandler();
+    }, []);
+
+    return(
+        <section>
+            {
+                featureProducts.map((p) => (
+                    <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
+                ))
+            }
+
+            <ButtonPrimary
+                isLoading={refetchDataStatus.isLoading}
+                isSuccess={refetchDataStatus.isSuccess}
+                isDisabled={(refetchDataStatus.error !== "")}
+                onClickHandler={getBestSellersHandler}
+            />
+        </section>
+    )
+};

@@ -3,7 +3,7 @@ import type { CreateProductFormTypes, ProductTypes, UpdateProductFormTypes } fro
 
 
 
-export async function getProducts(skip:number, searchField:"name"|"category"|"brand"|"soldCount"|"returnCount"|""="", searchQuery:string|""="") {
+export async function getProducts(skip:number, searchField:"name"|"category"|"brand"|"soldCount"|"returnCount"|"createdAt"|""="", searchQuery:string|""="") {
     try {
         const data = await apiHandler<null, ProductTypes[]>({
             endpoint:`/product/get_products?skip=${skip}&searchField=${searchField}&searchQuery=${searchQuery}`,
