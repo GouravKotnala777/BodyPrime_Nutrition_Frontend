@@ -33,6 +33,21 @@ export async function searchProducts(searchQuery:string) {
     }
 };
 
+export async function getSimilarProducts({brand, category}:{brand?:string; category?:string;}) {
+    try {
+        const data = await apiHandler<null, ProductTypes[]>({
+            endpoint:`/product/get_similar_products?brand=${brand}&category=${category}`,
+            method:"GET",
+            contentType:"application/json"
+        });
+        return data;        
+    } catch (error) {
+        console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
+        throw error;
+    }
+};
+
 export async function getSingleProduct(productID:string) {
     try {
         const data = await apiHandler<null, ProductTypes>({

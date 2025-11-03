@@ -1,3 +1,4 @@
+import { IoIosStar, IoIosStarHalf, IoIosStarOutline } from "react-icons/io";
 
 
 function RatingStars({rating, outOf}:{rating:number; outOf:number;}) {
@@ -6,18 +7,18 @@ function RatingStars({rating, outOf}:{rating:number; outOf:number;}) {
     const emptyStar = outOf - fullStars - (hasHalf?1:0);
 
     return(
-        <div className="flex">
+        <div className="flex text-[1.4rem] text-yellow-500">
             {
                 Array.from({length:fullStars}).map((_, index) => (
-                    <span key={index}>⭐</span>
+                    <span key={index}><IoIosStar /></span>
                 ))
             }
             {
-                hasHalf && <span>💫</span>
+                hasHalf && <span><IoIosStarHalf /></span>
             }
             {
                 Array.from({length:emptyStar}).map((_, index) => (
-                    <span key={index}>⭕</span>
+                    <span key={index}><IoIosStarOutline /></span>
                 ))
             }
 

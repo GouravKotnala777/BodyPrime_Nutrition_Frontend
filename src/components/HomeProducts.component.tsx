@@ -130,18 +130,21 @@ export function BestSellers() {
 
     return(
         <section>
+            {bestSellers.length !== 0 && <h1 className="text-2xl font-semibold text-white mt-10 p-2 bg-gradient-to-br from-[#f44669] to-[#ff7f50]">Best Sellers</h1>}
             {
                 bestSellers.map((p) => (
                     <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
                 ))
             }
+            {bestSellers.length !== 0 &&
+                <ButtonPrimary
+                    isLoading={refetchDataStatus.isLoading}
+                    isSuccess={refetchDataStatus.isSuccess}
+                    isDisabled={(refetchDataStatus.error !== "")}
+                    onClickHandler={getBestSellersHandler}
+                />
+            }
 
-            <ButtonPrimary
-                isLoading={refetchDataStatus.isLoading}
-                isSuccess={refetchDataStatus.isSuccess}
-                isDisabled={(refetchDataStatus.error !== "")}
-                onClickHandler={getBestSellersHandler}
-            />
         </section>
     )
 };
@@ -179,18 +182,22 @@ export function FeatureProducts() {
 
     return(
         <section>
+            {featureProducts.length !== 0 && <h1 className="text-2xl font-semibold text-white mt-10 p-2 bg-gradient-to-br from-[#f44669] to-[#ff7f50]">Feature Products</h1>}
             {
                 featureProducts.map((p) => (
                     <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
                 ))
             }
 
-            <ButtonPrimary
-                isLoading={refetchDataStatus.isLoading}
-                isSuccess={refetchDataStatus.isSuccess}
-                isDisabled={(refetchDataStatus.error !== "")}
-                onClickHandler={getBestSellersHandler}
-            />
+            {
+                featureProducts.length !== 0 &&
+                    <ButtonPrimary
+                        isLoading={refetchDataStatus.isLoading}
+                        isSuccess={refetchDataStatus.isSuccess}
+                        isDisabled={(refetchDataStatus.error !== "")}
+                        onClickHandler={getBestSellersHandler}
+                    />
+            }
         </section>
     )
 };

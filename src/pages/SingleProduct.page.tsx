@@ -1,6 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom"
-import { addImages, getSingleProduct } from "../apis/product.api";
+import { addImages, getSimilarProducts, getSingleProduct } from "../apis/product.api";
 import { type ProductTypes, type ReviewTypesPopulated } from "../utils/types";
 import RatingStars from "../components/RatingStars.component";
 import { getReviews, createReview } from "../apis/review.api";
@@ -27,7 +27,7 @@ function SingleProduct() {
     const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
     const [isReviewMutating, setIsReviewMutating] = useState<boolean>(false);
-
+    const [variantProducts, setVariantProducts] = useState<ProductTypes[]>([]);
 
     async function getSingleProductHandler() {
         setDataStatus({isLoading:true, isSuccess:false, error:""});
@@ -144,12 +144,27 @@ function SingleProduct() {
             setIsCartMutating(false);
         }
     };
+
+    async function getProductsVariant() {
+        if (!singleProduct?.brand || !singleProduct.category) return;
+
+        const res = await getSimilarProducts({brand:singleProduct?.brand, category:singleProduct?.category});
+
+        if (res.success) {
+            setVariantProducts(res.jsonData);
+            console.log({reso:res});
+        }
+    };
     
 
     useEffect(() => {
         getSingleProductHandler();
         getReviewsHandler();
     }, []);
+    
+    useEffect(() => {
+        getProductsVariant();
+    }, [singleProduct])
     
     useEffect(() => {
         const findResult = cartData.find(p => p._id === singleProduct?._id);
@@ -258,6 +273,31 @@ function SingleProduct() {
                         <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100" disabled={isReviewMutating} onClick={createReviewHandler}>{isReviewMutating?<Spinner width="20px" />:"Submit"}</button>
                     </div>
                 </div>
+
+                <div className="flex gap-4 overflow-x-scroll px-4 py-2">
+                    {
+                        variantProducts.map((p) => (
+                            <div className="border-1 border-gray-200 flex flex-col p-2 rounded-[4px]">
+                                <div className="w-35 h-35">
+                                    <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`} fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} />
+                                </div>
+                                <div className="text-center">
+                                    <h4>{p.name}</h4>
+                                    <p>{p.flavor}</p>
+                                    <p>
+                                        <span className="text-xl font-semibold">{p.price}</span>
+                                        <span className="text-[0.9rem]">₹</span>
+                                    </p>
+                                </div>
+                            </div>
+                        ))
+                    }
+
+                </div>
+
+
+
+
                 <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                     <div className="text-[1.3rem]">
                         <span>Measurement</span><span className="font-semibold"></span>
