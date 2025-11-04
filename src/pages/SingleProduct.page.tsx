@@ -12,6 +12,8 @@ import HandlePageUIWithState from "../components/HandlePageUIWithState";
 import ImageSliderWithPreview from "../components/ImageSliderWithPreview.component";
 import ImageWithFallback from "../components/ImageWithFallback.component";
 import Spinner from "../components/Spinner.component";
+import ProductsSlider from "../components/ProductsSlider.component";
+import { capitalizeString } from "../utils/functions";
 
 function SingleProduct() {
     const {productID} = useParams();
@@ -28,6 +30,8 @@ function SingleProduct() {
     const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
     const [isReviewMutating, setIsReviewMutating] = useState<boolean>(false);
     const [variantProducts, setVariantProducts] = useState<ProductTypes[]>([]);
+    const [sameBrandProducts, setSameBrandProducts] = useState<ProductTypes[]>([]);
+    const [sameCategoryProducts, setSameCategoryProducts] = useState<ProductTypes[]>([]);
 
     async function getSingleProductHandler() {
         setDataStatus({isLoading:true, isSuccess:false, error:""});
@@ -146,12 +150,32 @@ function SingleProduct() {
     };
 
     async function getProductsVariant() {
-        if (!singleProduct?.brand || !singleProduct.category) return;
+        if (!singleProduct?.brand || !singleProduct?.category) return;
 
-        const res = await getSimilarProducts({brand:singleProduct?.brand, category:singleProduct?.category});
+        const res = await getSimilarProducts({excludeProductID:singleProduct._id, brand:singleProduct?.brand, category:singleProduct?.category});
 
         if (res.success) {
             setVariantProducts(res.jsonData);
+            console.log({reso:res});
+        }
+    };
+    async function getProductsWithSameBrand() {
+        if (!singleProduct?.brand) return;
+
+        const res = await getSimilarProducts({excludeProductID:singleProduct._id, brand:singleProduct?.brand});
+
+        if (res.success) {
+            setSameBrandProducts(res.jsonData);
+            console.log({reso:res});
+        }
+    };
+    async function getProductsWithOfCategory() {
+        if (!singleProduct?.category) return;
+
+        const res = await getSimilarProducts({excludeProductID:singleProduct._id, category:singleProduct?.category});
+
+        if (res.success) {
+            setSameCategoryProducts(res.jsonData);
             console.log({reso:res});
         }
     };
@@ -164,6 +188,8 @@ function SingleProduct() {
     
     useEffect(() => {
         getProductsVariant();
+        getProductsWithSameBrand();
+        getProductsWithOfCategory();
     }, [singleProduct])
     
     useEffect(() => {
@@ -274,26 +300,14 @@ function SingleProduct() {
                     </div>
                 </div>
 
-                <div className="flex gap-4 overflow-x-scroll px-4 py-2">
-                    {
-                        variantProducts.map((p) => (
-                            <div className="border-1 border-gray-200 flex flex-col p-2 rounded-[4px]">
-                                <div className="w-35 h-35">
-                                    <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`} fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} />
-                                </div>
-                                <div className="text-center">
-                                    <h4>{p.name}</h4>
-                                    <p>{p.flavor}</p>
-                                    <p>
-                                        <span className="text-xl font-semibold">{p.price}</span>
-                                        <span className="text-[0.9rem]">₹</span>
-                                    </p>
-                                </div>
-                            </div>
-                        ))
-                    }
 
-                </div>
+                {/*Products with same brands and categories*/}
+                <ProductsSlider heading="Other variants" products={variantProducts} />
+                {/*Products with same brand*/}
+                <ProductsSlider heading={`Other products of ${singleProduct?.brand}`} products={sameBrandProducts} />
+                {/*Products with same brand*/}
+                <ProductsSlider heading={`${capitalizeString(singleProduct?.category)} from other brands`} products={sameCategoryProducts} />
+
 
 
 

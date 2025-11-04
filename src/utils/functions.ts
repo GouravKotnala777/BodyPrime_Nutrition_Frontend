@@ -66,3 +66,8 @@ export function toastHandler({success, message}:{success:boolean; message:string
         });
     }
 };
+
+export const capitalizeString = (str?:string) => {
+    if (!str) return "word is undefined";
+    return str.charAt(0).toUpperCase()+str.slice(1);
+};

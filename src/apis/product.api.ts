@@ -33,10 +33,10 @@ export async function searchProducts(searchQuery:string) {
     }
 };
 
-export async function getSimilarProducts({brand, category}:{brand?:string; category?:string;}) {
+export async function getSimilarProducts({excludeProductID, brand, category}:{excludeProductID?:string; brand?:string; category?:string;}) {
     try {
         const data = await apiHandler<null, ProductTypes[]>({
-            endpoint:`/product/get_similar_products?brand=${brand}&category=${category}`,
+            endpoint:`/product/get_similar_products?excludeProductID=${excludeProductID}&brand=${brand}&category=${category}`,
             method:"GET",
             contentType:"application/json"
         });
