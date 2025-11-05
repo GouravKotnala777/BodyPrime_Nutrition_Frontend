@@ -1,23 +1,37 @@
 //import viteLogo from '/vite.svg';
 import { NavLink } from "react-router-dom";
 import "../styles/components/header.component.css";
-import type { SidebarPropTypes } from './Sidebar.component';
 import { FiShoppingCart } from 'react-icons/fi';
 import { useCart } from '../contexts/CartContext';
 import { useUser } from '../contexts/UserContext';
 import ImageWithFallback from './ImageWithFallback.component';
 import { BiSearch } from "react-icons/bi";
+import type { Dispatch, SetStateAction } from "react";
 
-function Header({isHamActive, setIsHamActive, setIsSearchActive}:SidebarPropTypes) {
+
+
+export interface HeaderPropTypes {
+    isHamActive:boolean;
+    setIsHamActive:Dispatch<SetStateAction<boolean>>;
+    isSearchActive:boolean;
+    setIsSearchActive:Dispatch<SetStateAction<boolean>>;
+    isHeaderVisible:boolean;
+};
+
+function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible}:HeaderPropTypes) {
     const {calculateTotalCartItems} = useCart();
     const {loggedInUserName, isUserAuthenticated, isUserAdmin} = useUser();
+
     return(
-        <header 
-            className="header flex justify-between gap-10 items-center h-[10vh] px-3"
+        <header
+            className="fixed w-full top-0 left-0 header flex justify-between gap-10 items-center h-[9vh] px-3 transition-transform duration-300 ease-in-out"
+            style={{
+                transform:isHeaderVisible?"translateY(0%)":"translateY(-101%)"
+            }}
         >
-            <section className="logo_section flex items-center gap-6">
+            <section className="logo_section flex items-center gap-4">
                 <NavLink to={"/home"}>
-                    <ImageWithFallback src="/vite.svg" alt="/vite.svg" fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_user.png`} className="w-[40px] h-[40px]" />
+                    <ImageWithFallback src="/logo.png" alt="/logo.png" fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_user.png`} className="w-[55px] h-[55px]" />
                 </NavLink>
                 <NavLink to={isUserAuthenticated()?"/my_profile":"/login"} className="text-xl font-semibold text-white">{isUserAuthenticated()?loggedInUserName():"Login"}</NavLink>
             </section>
@@ -35,25 +49,27 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive}:SidebarPropType
                 <NavLink to="/cart" className="nav_item">Cart</NavLink>
                 </nav>
             </section>
-            <section className="mobile_nav ml-auto items-center hidden relative w-[30px] h-[30px]">
-                <BiSearch className="absolute text-3xl bottom-0 left-0" onClick={() => setIsSearchActive(true)} />
-            </section>
-            <section className="mobile_nav ml-auto items-center hidden">
-                <NavLink to="/cart" className="relative w-[50px] h-[30px]">
-                    <FiShoppingCart className="absolute text-3xl bottom-0 left-0" />
-                    <span className="text-[12px] font-semibold w-[23px] h-[23px] grid place-items-center rounded-2xl absolute right-[9px] top-[-8px] bg-white text-[#b11433]">{calculateTotalCartItems()}</span>
-                </NavLink>
-            </section>
-            <section className="ham_section hidden w-[30px] h-[30px] relative">
-                <div className="w-full h-full flex flex-col justify-between">
-                    <div className="border-2"></div>
-                    <div className="border-2"></div>
-                    <div className="border-2"></div>
-                </div>
-                <input type="checkbox" name="" id=""
-                    className="absolute top-0 left-0 w-full h-full opacity-0"
-                    onClick={() => setIsHamActive(!isHamActive)}
-                />
+            <section className="mobile_nav hidden items-center justify-end gap-8">
+                <section className="relative w-[22px] h-[22px]">
+                    <BiSearch className="absolute text-3xl bottom-0 left-0" onClick={() => setIsSearchActive(true)} />
+                </section>
+                <section>
+                    <NavLink to="/cart" className="relative w-[45px] h-[30px]">
+                        <FiShoppingCart className="text-3xl" />
+                        <span className="text-[11px] font-semibold w-[20px] h-[20px] grid place-items-center rounded-2xl absolute right-[-8px] top-[-8px] bg-white text-[#b11433]">{calculateTotalCartItems()}</span>
+                    </NavLink>
+                </section>
+                <section className="ham_section w-[22px] h-[22px] relative">
+                    <div className="w-full h-full flex flex-col justify-between">
+                        <div className="border-b-[3px]"></div>
+                        <div className="border-b-[3px]"></div>
+                        <div className="border-b-[3px]"></div>
+                    </div>
+                    <input type="checkbox" name="" id=""
+                        className="absolute top-0 left-0 w-full h-full opacity-0"
+                        onClick={() => setIsHamActive(!isHamActive)}
+                    />
+                </section>
             </section>
         </header>
     )

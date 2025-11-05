@@ -41,6 +41,8 @@ function App() {
   const [isHamActive, setIsHamActive] = useState<boolean>(false);
   const {setCartData, fetchLocalCartProducts, removeProductFromLocalCart, clearLocalCart, setWishlistData} = useCart();
   const {setUser, isUserAuthenticated, isUserAdmin} = useUser();
+  const [isHeaderVisible, setIsHeaderVisible] = useState<boolean>(true);
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
 
   async function myProfileHandler() {
     const res = await myProfile();
@@ -63,6 +65,25 @@ function App() {
         setWishlistData(res.jsonData);
       }
   };
+
+  function headerShowHideHandler() {
+    const currentScrollY = window.scrollY;
+    
+    if (currentScrollY > lastScrollY) {
+      setIsHeaderVisible(false);
+    }
+    else{
+      setIsHeaderVisible(true);
+    }
+    
+    setLastScrollY(currentScrollY);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", headerShowHideHandler);
+
+    return() => window.removeEventListener("scroll", headerShowHideHandler);
+  }, [lastScrollY]);
   
   useEffect(() => {
     myProfileHandler();
@@ -101,9 +122,9 @@ function App() {
   }
   return (
     <BrowserRouter>
-    <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />
+    <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} isHeaderVisible={isHeaderVisible} />
     <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />
-    <main>
+    <main className="mt-[60px]">
       <Toaster />
       <Routes>
         <Route path={"/home"} element={<Home />} />
