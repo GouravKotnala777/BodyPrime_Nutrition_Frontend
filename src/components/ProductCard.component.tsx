@@ -5,7 +5,6 @@ import { useUser } from "../contexts/UserContext";
 import { addToCart } from "../apis/cart.api";
 import ImageWithFallback from "./ImageWithFallback.component";
 import { GoHeartFill } from "react-icons/go";
-import { addToWishlist } from "../apis/wishlist.api";
 import { useState } from "react";
 import Spinner from "./Spinner.component";
 
@@ -23,7 +22,7 @@ interface ProductCardPropTypes{
 };
 
 function ProductCard({productID, name, brand, category, price, rating, numReviews, weight, flavor, images}:ProductCardPropTypes) {
-    const {cartData, addToLocalCart, setCartData, wishlistData, setWishlistData} = useCart();
+    const {cartData, addToLocalCart, setCartData, wishlistData} = useCart();
     const {isUserAuthenticated} = useUser();
     const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
 
@@ -56,24 +55,24 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
         }
     };
 
-    async function addToWishlistHandler() {
-        const selectedProduct = {_id:productID, name, brand, category, images, price}; // getting frop props
-        const res = await addToWishlist({productID});
-        // getting res from backend whose type is {success: boolean; message: string; jsonData: {productID: string; operation: 1 | -1;};}  here operation 1 represents addition of product and -1 removel product from wishlist
-        if (res.success) {
-            setWishlistData((prev) => {
-                if (res.jsonData.operation === 1) {
-                    return [...prev, selectedProduct];
-                }
-                else if (res.jsonData.operation === -1) {
-                    return prev.filter((p) => p._id !== res.jsonData.productID);
-                }
-                else{
-                    return prev;
-                }
-            })
-        }
-    };
+    //async function addToWishlistHandler() {
+    //    //const selectedProduct = {_id:productID, name, brand, category, images, price}; // getting frop props
+    //    //const res = await addToWishlist({productID});
+    //    //// getting res from backend whose type is {success: boolean; message: string; jsonData: {productID: string; operation: 1 | -1;};}  here operation 1 represents addition of product and -1 removel product from wishlist
+    //    //if (res.success) {
+    //    //    setWishlistData((prev) => {
+    //    //        if (res.jsonData.operation === 1) {
+    //    //            return [...prev, selectedProduct];
+    //    //        }
+    //    //        else if (res.jsonData.operation === -1) {
+    //    //            return prev.filter((p) => p._id !== res.jsonData.productID);
+    //    //        }
+    //    //        else{
+    //    //            return prev;
+    //    //        }
+    //    //    })
+    //    //}
+    //};
 
     function isAlreadyWishlisted() {
         const isExist = wishlistData.some((p) => p._id === productID);
@@ -103,11 +102,10 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                     <div className="text-[2rem] font-semibold flex gap-0.5"><span className="text-[1rem] font-normal">₹</span>{price}</div>
                     <div>Free delivery <span className="font-semibold">Thu, 11 Sept</span></div>
                     <div className="mt-auto flex flex-col gap-2">
-                        <button className="w-min" onClick={(e) => {
-                            e.stopPropagation();
+                        <button className="w-min" data-set={JSON.stringify({_id:productID, name, brand, category, images, price})} onClick={(e) => {
+                            //e.stopPropagation();
                             e.preventDefault();
-                            console.log("Liked.....");
-                            addToWishlistHandler();
+                            //addToWishlistHandler();
                         }}><GoHeartFill
                                 className="
                                     w-[2rem] h-[2rem] transition-transform duration-300

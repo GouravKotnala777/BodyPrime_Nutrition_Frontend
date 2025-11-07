@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { getProducts } from "../apis/product.api";
 import { type ProductTypes } from "../utils/types";
 import ProductCard from "./ProductCard.component";
@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import HandlePageUIWithState from "./HandlePageUIWithState";
 import { ButtonPrimary } from "./Button.component";
+import { addToWishlist } from "../apis/wishlist.api";
+import { useCart } from "../contexts/CartContext";
 
 //const dummyProducts:ProductTypes[] = [
 //    {_id:"1246891", brand:"brand1", category:"protein", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product1", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
@@ -21,6 +23,7 @@ export function HomeProducts() {
     const [skip, setSkip] = useState<number>(0);
     const [products, setProducts] = useState<ProductTypes[]>([]);
     const navigate = useNavigate();
+    const {setWishlistData} = useCart();
     const {isUserAdmin} = useUser();
     const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
@@ -61,6 +64,31 @@ export function HomeProducts() {
             console.log(err);
         });
     }, []);
+    
+    async function addToWishlistHandler(e:MouseEvent<HTMLElement>) {
+        const stringyfiedElem = (e.target as HTMLElement).parentElement?.parentElement?.getAttribute("data-set");
+
+        if (!stringyfiedElem) throw Error("nothing will happen because productID is undefined");
+        const parsedElem = JSON.parse(stringyfiedElem||"{}");
+
+
+        const selectedProduct = parsedElem as {_id:string; name:string; brand:string; category:ProductTypes["category"]; images:string[]; price:number;};
+        const res = await addToWishlist({productID:selectedProduct._id});
+        // getting res from backend whose type is {success: boolean; message: string; jsonData: {productID: string; operation: 1 | -1;};}  here operation 1 represents addition of product and -1 removel product from wishlist
+        if (res.success) {
+            setWishlistData((prev) => {
+                if (res.jsonData.operation === 1) {
+                    return [...prev, selectedProduct];
+                }
+                else if (res.jsonData.operation === -1) {
+                    return prev.filter((p) => p._id !== res.jsonData.productID);
+                }
+                else{
+                    return prev;
+                }
+            })
+        }
+    }
 
     
     if (dataStatus.isSuccess && products.length === 0 && isUserAdmin()) {
@@ -79,7 +107,7 @@ export function HomeProducts() {
 
     return(
         <HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error}>
-            <section>
+            <section className="border-2" onClick={(e) => addToWishlistHandler(e)}>
                 {
                     products.map((p) => (
                         <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
