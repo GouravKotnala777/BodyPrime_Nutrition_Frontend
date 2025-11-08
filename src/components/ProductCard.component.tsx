@@ -1,78 +1,30 @@
 import { NavLink } from "react-router-dom";
 import RatingStars from "./RatingStars.component";
 import { useCart } from "../contexts/CartContext";
-import { useUser } from "../contexts/UserContext";
-import { addToCart } from "../apis/cart.api";
 import ImageWithFallback from "./ImageWithFallback.component";
 import { GoHeartFill } from "react-icons/go";
-import { useState } from "react";
 import Spinner from "./Spinner.component";
+import { buttonNames } from "../utils/constants";
 
 interface ProductCardPropTypes{
-    productID:string;
-    name:string;
-    brand:string;
-    category:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";
-    price:number;
-    rating:number;
-    numReviews:number;
-    weight:string;
-    flavor?:string;
-    images:string[];
+    product:{
+        _id:string;
+        name:string;
+        brand:string;
+        category:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";
+        price:number;
+        rating:number;
+        numReviews:number;
+        weight:string;
+        flavor?:string;
+        images:string[];
+    };
+    isCartMutating:boolean;
 };
 
-function ProductCard({productID, name, brand, category, price, rating, numReviews, weight, flavor, images}:ProductCardPropTypes) {
-    const {cartData, addToLocalCart, setCartData, wishlistData} = useCart();
-    const {isUserAuthenticated} = useUser();
-    const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
-
-    async function addToCartHandler() {
-        try {
-            setIsCartMutating(true);
-            const res = await addToCart({productID, quantity:1});
-    
-            if (cartData.length === 0) {
-                setCartData([{...res.jsonData.products, quantity:res.jsonData.quantity}]);
-            }
-            else{
-                setCartData((prev) => {
-                    const findResult = prev.find(p => p._id === res.jsonData.products._id);
-    
-                    if (findResult) {
-                        return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p);
-                    }
-                    else{
-                        return [...prev, {...res.jsonData.products, quantity:res.jsonData.quantity}];
-                    }
-                });
-            }
-        } catch (error) {
-            console.log("failed to mutate cart");
-            console.log(error);
-        }
-        finally{
-            setIsCartMutating(false);
-        }
-    };
-
-    //async function addToWishlistHandler() {
-    //    //const selectedProduct = {_id:productID, name, brand, category, images, price}; // getting frop props
-    //    //const res = await addToWishlist({productID});
-    //    //// getting res from backend whose type is {success: boolean; message: string; jsonData: {productID: string; operation: 1 | -1;};}  here operation 1 represents addition of product and -1 removel product from wishlist
-    //    //if (res.success) {
-    //    //    setWishlistData((prev) => {
-    //    //        if (res.jsonData.operation === 1) {
-    //    //            return [...prev, selectedProduct];
-    //    //        }
-    //    //        else if (res.jsonData.operation === -1) {
-    //    //            return prev.filter((p) => p._id !== res.jsonData.productID);
-    //    //        }
-    //    //        else{
-    //    //            return prev;
-    //    //        }
-    //    //    })
-    //    //}
-    //};
+function ProductCard({product, isCartMutating}:ProductCardPropTypes) {
+    const {wishlistData} = useCart();
+    const {_id:productID, name, brand, category, price, rating, numReviews, weight, flavor, images} = product;
 
     function isAlreadyWishlisted() {
         const isExist = wishlistData.some((p) => p._id === productID);
@@ -93,7 +45,7 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                         [display:-webkit-box] 
                         [-webkit-line-clamp:3] 
                         [-webkit-box-orient:vertical]
-                    ">{name} {brand} Beginer's {category}, No Added Sugar, Faster Muscle Recovery & Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veritatis, veniam.</div>
+                    ">{name} {brand} Beginer's {category}, {flavor} No Added Sugar, Faster Muscle Recovery & Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veritatis, veniam.</div>
                     <div className="bg-gray-100 w-fit rounded-[4px] text-[0.9rem] px-2 mt-2">{weight} (Pack of 1)</div>
                 </NavLink>
                 <div>Options: <NavLink to={"/patoni"} className="underline underline-offset-2 text-blue-700">2 flavours</NavLink>, <NavLink to={"/patoni"} className="underline underline-offset-2 text-blue-700">4 sizes</NavLink></div>
@@ -102,7 +54,7 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                     <div className="text-[2rem] font-semibold flex gap-0.5"><span className="text-[1rem] font-normal">₹</span>{price}</div>
                     <div>Free delivery <span className="font-semibold">Thu, 11 Sept</span></div>
                     <div className="mt-auto flex flex-col gap-2">
-                        <button className="w-min" data-set={JSON.stringify({_id:productID, name, brand, category, images, price})} onClick={(e) => {
+                        <button className="w-min" name={buttonNames.addToWishlistHandler} data-set={JSON.stringify({_id:productID, name, brand, category, images, price})} onClick={(e) => {
                             //e.stopPropagation();
                             e.preventDefault();
                             //addToWishlistHandler();
@@ -115,15 +67,15 @@ function ProductCard({productID, name, brand, category, price, rating, numReview
                                     color:isAlreadyWishlisted()?"#f6339a":"#e1e1e1"
                                 }}
                             /></button>
-                        <button className="bg-yellow-300 rounded-2xl py-2 w-full" onClick={(e) => {
-                            e.stopPropagation();
+                        <button className="bg-yellow-300 rounded-2xl py-2 w-full" name={buttonNames.addToCartHandler} onClick={(e) => {
+                            //e.stopPropagation();
                             e.preventDefault();
-                            if (isUserAuthenticated()) {
-                                addToCartHandler();
-                            }
-                            else{
-                                addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1, images});
-                            }
+                            //if (isUserAuthenticated()) {
+                            //    addToCartHandler();
+                            //}
+                            //else{
+                            //    addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1, images});
+                            //}
                             }}>{isCartMutating?<Spinner />:"Add to cart"}</button>
                     </div>
                 </NavLink>

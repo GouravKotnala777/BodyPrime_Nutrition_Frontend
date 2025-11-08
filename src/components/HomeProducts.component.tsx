@@ -1,4 +1,4 @@
-import { useEffect, useState, type MouseEvent } from "react";
+import { useEffect, useState } from "react";
 import { getProducts } from "../apis/product.api";
 import { type ProductTypes } from "../utils/types";
 import ProductCard from "./ProductCard.component";
@@ -6,8 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import HandlePageUIWithState from "./HandlePageUIWithState";
 import { ButtonPrimary } from "./Button.component";
-import { addToWishlist } from "../apis/wishlist.api";
-import { useCart } from "../contexts/CartContext";
 
 //const dummyProducts:ProductTypes[] = [
 //    {_id:"1246891", brand:"brand1", category:"protein", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product1", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
@@ -19,14 +17,14 @@ import { useCart } from "../contexts/CartContext";
 //];
 
 
-export function HomeProducts() {
+export function HomeProducts({isCartMutating}:{isCartMutating:boolean;}) {
     const [skip, setSkip] = useState<number>(0);
     const [products, setProducts] = useState<ProductTypes[]>([]);
     const navigate = useNavigate();
-    const {setWishlistData} = useCart();
     const {isUserAdmin} = useUser();
     const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
+
 
     async function getProductsHandler() {
         setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
@@ -65,30 +63,73 @@ export function HomeProducts() {
         });
     }, []);
     
-    async function addToWishlistHandler(e:MouseEvent<HTMLElement>) {
-        const stringyfiedElem = (e.target as HTMLElement).parentElement?.parentElement?.getAttribute("data-set");
+    //async function addToWishlistHandler(selectedProduct:{_id:string; name:string; brand:string; category:ProductTypes["category"]; images:string[]; price:number;}) {
+    //    const res = await addToWishlist({productID:selectedProduct._id});
+    //    if (res.success) {
+    //        setWishlistData((prev) => {
+    //            if (res.jsonData.operation === 1) {
+    //                return [...prev, selectedProduct];
+    //            }
+    //            else if (res.jsonData.operation === -1) {
+    //                return prev.filter((p) => p._id !== res.jsonData.productID);
+    //            }
+    //            else{
+    //                return prev;
+    //            }
+    //        })
+    //    }
+    //};
 
-        if (!stringyfiedElem) throw Error("nothing will happen because productID is undefined");
-        const parsedElem = JSON.parse(stringyfiedElem||"{}");
+    //async function addToCartHandler({productID}:{productID:string}) {
+    //    try {
+    //        setIsCartMutating(true);
+    //        const res = await addToCart({productID, quantity:1});
+    
+    //        if (cartData.length === 0) {
+    //            setCartData([{...res.jsonData.products, quantity:res.jsonData.quantity}]);
+    //        }
+    //        else{
+    //            setCartData((prev) => {
+    //                const findResult = prev.find(p => p._id === res.jsonData.products._id);
+    
+    //                if (findResult) {
+    //                    return prev.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p);
+    //                }
+    //                else{
+    //                    return [...prev, {...res.jsonData.products, quantity:res.jsonData.quantity}];
+    //                }
+    //            });
+    //        }
+    //    } catch (error) {
+    //        console.log("failed to mutate cart");
+    //        console.log(error);
+    //    }
+    //    finally{
+    //        setIsCartMutating(false);
+    //    }
+    //};
 
+    //async function onClickEventHandler(e:MouseEvent<HTMLElement>) {
+    //    const buttonData = (e.target as HTMLElement).parentElement?.parentElement?.getAttribute("data-set");
+    //    const buttonName = (e.target as HTMLElement).parentElement?.parentElement?.getAttribute("name") as (keyof(typeof buttonNames));
 
-        const selectedProduct = parsedElem as {_id:string; name:string; brand:string; category:ProductTypes["category"]; images:string[]; price:number;};
-        const res = await addToWishlist({productID:selectedProduct._id});
-        // getting res from backend whose type is {success: boolean; message: string; jsonData: {productID: string; operation: 1 | -1;};}  here operation 1 represents addition of product and -1 removel product from wishlist
-        if (res.success) {
-            setWishlistData((prev) => {
-                if (res.jsonData.operation === 1) {
-                    return [...prev, selectedProduct];
-                }
-                else if (res.jsonData.operation === -1) {
-                    return prev.filter((p) => p._id !== res.jsonData.productID);
-                }
-                else{
-                    return prev;
-                }
-            })
-        }
-    }
+    //    if (!buttonData) throw Error("nothing will happen because buttonData is undefined");
+    //    const parsedData = JSON.parse(buttonData);
+    //    if (!parsedData?._id) throw Error("nothing will happen because productID is undefined");
+
+    //    if (buttonName === "addToCartHandler") {
+    //        if (isUserAuthenticated()) {
+    //            addToCartHandler({productID:parsedData});
+    //        }
+    //        else{
+    //            addToLocalCart(parsedData);
+    //        }
+    //    }
+    //    else if(buttonName === "addToWishlistHandler"){
+    //        addToWishlistHandler(parsedData);
+    //    }
+        
+    //}
 
     
     if (dataStatus.isSuccess && products.length === 0 && isUserAdmin()) {
@@ -107,10 +148,11 @@ export function HomeProducts() {
 
     return(
         <HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error}>
-            <section className="border-2" onClick={(e) => addToWishlistHandler(e)}>
+            <section className="border-2">
                 {
                     products.map((p) => (
-                        <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
+                        <ProductCard key={p._id} product={p} isCartMutating={isCartMutating} />
+                        //<ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
                     ))
                 }
 
@@ -125,10 +167,11 @@ export function HomeProducts() {
     )
 };
 
-export function BestSellers() {
+export function BestSellers({isCartMutating}:{isCartMutating:boolean;}) {
     const [skip, setSkip] = useState<number>(0);
     const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     const [bestSellers, setBestSellers] = useState<ProductTypes[]>([]);
+    //const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
     //const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     
 
@@ -161,7 +204,7 @@ export function BestSellers() {
             {bestSellers.length !== 0 && <h1 className="text-2xl font-semibold text-white mt-10 p-2 bg-gradient-to-br from-[#f44669] to-[#ff7f50]">Best Sellers</h1>}
             {
                 bestSellers.map((p) => (
-                    <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
+                    <ProductCard key={p._id} product={p} isCartMutating={isCartMutating} />
                 ))
             }
             {bestSellers.length !== 0 &&
@@ -177,10 +220,11 @@ export function BestSellers() {
     )
 };
 
-export function FeatureProducts() {
+export function FeatureProducts({isCartMutating}:{isCartMutating:boolean;}) {
     const [skip, setSkip] = useState<number>(0);
     const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     const [featureProducts, setFeatureProducts] = useState<ProductTypes[]>([]);
+    //const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
     //const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     
 
@@ -213,7 +257,7 @@ export function FeatureProducts() {
             {featureProducts.length !== 0 && <h1 className="text-2xl font-semibold text-white mt-10 p-2 bg-gradient-to-br from-[#f44669] to-[#ff7f50]">Feature Products</h1>}
             {
                 featureProducts.map((p) => (
-                    <ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
+                    <ProductCard key={p._id} product={p} isCartMutating={isCartMutating} />
                 ))
             }
 
