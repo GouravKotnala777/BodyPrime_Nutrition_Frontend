@@ -54,10 +54,11 @@ function ProductCard({product, isCartMutating}:ProductCardPropTypes) {
                     <div className="text-[2rem] font-semibold flex gap-0.5"><span className="text-[1rem] font-normal">₹</span>{price}</div>
                     <div>Free delivery <span className="font-semibold">Thu, 11 Sept</span></div>
                     <div className="mt-auto flex flex-col gap-2">
-                        <button className="w-min" name={buttonNames.addToWishlistHandler} data-set={JSON.stringify({_id:productID, name, brand, category, images, price})} onClick={(e) => {
-                            //e.stopPropagation();
-                            e.preventDefault();
-                            //addToWishlistHandler();
+                        <button className="w-min"
+                            name={buttonNames.addToWishlistHandler}
+                            data-set={JSON.stringify({_id:productID, name, brand, category, images, price})}
+                            onClick={(e) => {
+                                e.preventDefault();
                         }}><GoHeartFill
                                 className="
                                     w-[2rem] h-[2rem] transition-transform duration-300
@@ -67,16 +68,18 @@ function ProductCard({product, isCartMutating}:ProductCardPropTypes) {
                                     color:isAlreadyWishlisted()?"#f6339a":"#e1e1e1"
                                 }}
                             /></button>
-                        <button className="bg-yellow-300 rounded-2xl py-2 w-full" name={buttonNames.addToCartHandler} onClick={(e) => {
-                            //e.stopPropagation();
-                            e.preventDefault();
-                            //if (isUserAuthenticated()) {
-                            //    addToCartHandler();
-                            //}
-                            //else{
-                            //    addToLocalCart({_id:productID, name, brand, category, price, size:0, weight, flavor, quantity:1, images});
-                            //}
-                            }}>{isCartMutating?<Spinner />:"Add to cart"}</button>
+                        <button className="bg-yellow-300 rounded-2xl py-2 w-full"
+                            name={buttonNames.addToCartHandler}
+                            data-set={JSON.stringify({_id:productID, name, brand, category, images, price})}
+                            onClick={(e) => {
+                                e.preventDefault();
+                            }}>
+                            <span className="only_for_same_btn_level">
+                                <span className="only_for_same_btn_level">
+                                    {isCartMutating?<Spinner />:"Add to cart"}
+                                </span>
+                            </span>
+                        </button>
                     </div>
                 </NavLink>
             </div>

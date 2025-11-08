@@ -17,7 +17,7 @@ import { ButtonPrimary } from "./Button.component";
 //];
 
 
-export function HomeProducts({isCartMutating}:{isCartMutating:boolean;}) {
+export function HomeProducts({selectedProduct}:{selectedProduct:string|null;}) {
     const [skip, setSkip] = useState<number>(0);
     const [products, setProducts] = useState<ProductTypes[]>([]);
     const navigate = useNavigate();
@@ -148,10 +148,10 @@ export function HomeProducts({isCartMutating}:{isCartMutating:boolean;}) {
 
     return(
         <HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error}>
-            <section className="border-2">
+            <section>
                 {
                     products.map((p) => (
-                        <ProductCard key={p._id} product={p} isCartMutating={isCartMutating} />
+                        <ProductCard key={p._id} product={p} isCartMutating={selectedProduct === p._id} />
                         //<ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
                     ))
                 }
@@ -167,7 +167,7 @@ export function HomeProducts({isCartMutating}:{isCartMutating:boolean;}) {
     )
 };
 
-export function BestSellers({isCartMutating}:{isCartMutating:boolean;}) {
+export function BestSellers({selectedProduct}:{selectedProduct:string|null;}) {
     const [skip, setSkip] = useState<number>(0);
     const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     const [bestSellers, setBestSellers] = useState<ProductTypes[]>([]);
@@ -204,7 +204,7 @@ export function BestSellers({isCartMutating}:{isCartMutating:boolean;}) {
             {bestSellers.length !== 0 && <h1 className="text-2xl font-semibold text-white mt-10 p-2 bg-gradient-to-br from-[#f44669] to-[#ff7f50]">Best Sellers</h1>}
             {
                 bestSellers.map((p) => (
-                    <ProductCard key={p._id} product={p} isCartMutating={isCartMutating} />
+                    <ProductCard key={p._id} product={p} isCartMutating={selectedProduct === p._id} />
                 ))
             }
             {bestSellers.length !== 0 &&
@@ -220,7 +220,7 @@ export function BestSellers({isCartMutating}:{isCartMutating:boolean;}) {
     )
 };
 
-export function FeatureProducts({isCartMutating}:{isCartMutating:boolean;}) {
+export function FeatureProducts({selectedProduct}:{selectedProduct:string|null;}) {
     const [skip, setSkip] = useState<number>(0);
     const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     const [featureProducts, setFeatureProducts] = useState<ProductTypes[]>([]);
@@ -257,7 +257,7 @@ export function FeatureProducts({isCartMutating}:{isCartMutating:boolean;}) {
             {featureProducts.length !== 0 && <h1 className="text-2xl font-semibold text-white mt-10 p-2 bg-gradient-to-br from-[#f44669] to-[#ff7f50]">Feature Products</h1>}
             {
                 featureProducts.map((p) => (
-                    <ProductCard key={p._id} product={p} isCartMutating={isCartMutating} />
+                    <ProductCard key={p._id} product={p} isCartMutating={selectedProduct === p._id} />
                 ))
             }
 

@@ -5,15 +5,16 @@ import { useCart } from "../contexts/CartContext";
 import { useUser } from "../contexts/UserContext";
 import { addToCart } from "../apis/cart.api";
 import type { buttonNames } from "../utils/constants";
-import type { ProductTypes } from "../utils/types";
+import type { LocalCartTypes, ProductTypes } from "../utils/types";
 
 
 function Home() {
     const {cartData, setCartData, setWishlistData, addToLocalCart} = useCart();
     const {isUserAuthenticated} = useUser();
-    const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
+    //const [isCartMutating, setIsCartMutating] = useState<boolean>(false);
+    const [selectedProduct, setSelectedProduct] = useState<string|null>(null);
 
-
+    // ------------  addToWishlistHandler, addToCartHandler and onClickEventHandlers are redeclared at SearchedProducts.page.tsx
     async function addToWishlistHandler(selectedProduct:{_id:string; name:string; brand:string; category:ProductTypes["category"]; images:string[]; price:number;}) {
         const res = await addToWishlist({productID:selectedProduct._id});
         if (res.success) {
@@ -30,10 +31,9 @@ function Home() {
             })
         }
     };
-
     async function addToCartHandler({productID}:{productID:string}) {
         try {
-            setIsCartMutating(true);
+            setSelectedProduct(productID);
             const res = await addToCart({productID, quantity:1});
     
             if (cartData.length === 0) {
@@ -56,21 +56,20 @@ function Home() {
             console.log(error);
         }
         finally{
-            setIsCartMutating(false);
+            setSelectedProduct(null);
         }
     };
-
     async function onClickEventHandlers(e:MouseEvent<HTMLElement>) {
         const buttonData = (e.target as HTMLElement).parentElement?.parentElement?.getAttribute("data-set");
         const buttonName = (e.target as HTMLElement).parentElement?.parentElement?.getAttribute("name") as (keyof(typeof buttonNames));
 
         if (!buttonData) throw Error("nothing will happen because buttonData is undefined");
-        const parsedData = JSON.parse(buttonData);
+        const parsedData = JSON.parse(buttonData) as LocalCartTypes;
         if (!parsedData?._id) throw Error("nothing will happen because productID is undefined");
 
         if (buttonName === "addToCartHandler") {
             if (isUserAuthenticated()) {
-                addToCartHandler({productID:parsedData});
+                addToCartHandler({productID:parsedData._id});
             }
             else{
                 addToLocalCart(parsedData);
@@ -80,17 +79,18 @@ function Home() {
             addToWishlistHandler(parsedData);
         }
         
-    }
+    };
+    // ------------
     
     return(
         <section onClick={onClickEventHandlers}>
-            <HomeProducts isCartMutating={isCartMutating} />
+            <HomeProducts selectedProduct={selectedProduct} />
 
             
-            <BestSellers isCartMutating={isCartMutating} />
+            <BestSellers selectedProduct={selectedProduct} />
 
             
-            <FeatureProducts isCartMutating={isCartMutating} />
+            <FeatureProducts selectedProduct={selectedProduct} />
         </section>
     )
 };
