@@ -24,7 +24,7 @@ function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
             }}
         >
             <section className="side_nav_section h-full w-[80%] top-0 left-0 absolute bg-white">
-                <nav className="side_nav_nav h-full flex flex-col gap-15 pt-25 text-center text-xl">
+                <nav className="side_nav_nav h-full flex flex-col gap-15 pt-25 pb-10 text-center text-xl overflow-y-scroll">
                     <NavLink to="/home" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Home</NavLink>
                     <NavLink to="/my_profile" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Profile</NavLink>
                     {isUserAdmin()&&<NavLink to="/inventory" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Inventory</NavLink>}

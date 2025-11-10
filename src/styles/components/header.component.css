@@ -4,6 +4,7 @@
 }
 .sidebar_aside{
     background-color:rgba(0,0,0,0.78);
+    z-index: 2;
 }
 
 @media screen and (width <= 700px) {
