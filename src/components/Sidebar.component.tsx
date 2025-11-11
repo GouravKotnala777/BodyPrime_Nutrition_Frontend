@@ -13,7 +13,7 @@ export interface SidebarPropTypes {
 
 function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
     const {wishlistData, calculateTotalCartItems} = useCart();
-    const {isUserAdmin} = useUser();
+    const {isUserAuthenticated, isUserAdmin} = useUser();
     
     return(
         <aside
@@ -27,10 +27,22 @@ function Sidebar({isHamActive, setIsHamActive}:SidebarPropTypes) {
                 <nav className="side_nav_nav h-full flex flex-col gap-15 pt-25 pb-10 text-center text-xl overflow-y-scroll">
                     <NavLink to="/home" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Home</NavLink>
                     <NavLink to="/my_profile" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Profile</NavLink>
-                    {isUserAdmin()&&<NavLink to="/inventory" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Inventory</NavLink>}
-                    <NavLink to="/my_orders" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>My Orders</NavLink>
-                    <NavLink to="/register" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Register</NavLink>
-                    <NavLink to="/login" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Login</NavLink>
+                    {
+                        isUserAdmin() &&
+                        <>
+                            <NavLink to="/inventory" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Inventory</NavLink>
+                            <NavLink to="/delivery" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Delivery</NavLink>
+                        </>
+                    }
+
+                    {
+                        !isUserAuthenticated() &&
+                            <>
+                                <NavLink to="/my_orders" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>My Orders</NavLink>
+                                <NavLink to="/register" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Register</NavLink>
+                                <NavLink to="/login" className="nav_item font-semibold" onClick={() => setIsHamActive(false)}>Login</NavLink>
+                            </>
+                    }
                     <NavLink to="/wishlist" className="nav_item font-semibold relative" onClick={() => setIsHamActive(false)}>
                         <span>Wishlist</span>
                         <span className="border-2 text-[12px] font-semibold w-[23px] h-[23px] grid place-items-center rounded-2xl absolute left-[58%] top-[0px] bg-[#b11433] text-white">{wishlistData.length}</span>

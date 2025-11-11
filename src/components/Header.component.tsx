@@ -44,8 +44,17 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                 {isUserAdmin() && <NavLink to="/inventory" className="nav_item">Inventory</NavLink>}
                 <NavLink to="/wishlist" className="nav_item">Wishlist</NavLink>
                 <NavLink to="/my_orders" className="nav_item">My Orders</NavLink>
-                <NavLink to="/register" className="nav_item">Register</NavLink>
-                <NavLink to="/login" className="nav_item">Login</NavLink>
+                {
+                    isUserAdmin() &&
+                        <NavLink to="/delivery" className="nav_item">Delivery</NavLink>
+                }
+                {
+                    !isUserAuthenticated() &&
+                    <>
+                        <NavLink to="/register" className="nav_item">Register</NavLink>
+                        <NavLink to="/login" className="nav_item">Login</NavLink>
+                    </>
+                }
                 <NavLink to="/cart" className="nav_item">Cart</NavLink>
                 </nav>
             </section>

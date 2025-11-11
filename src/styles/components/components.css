@@ -11,7 +11,11 @@
     }
 }
 
-
+/*@media screen and (width <= 700px) {
+    .product_card{
+        border:2px solid red;
+    }
+}*/
 
 @keyframes blink {
     0%{

@@ -129,7 +129,7 @@ function App() {
     <BrowserRouter>
     <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} isHeaderVisible={isHeaderVisible} />
     <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />
-    <main className="mt-[60px]">
+    <main className="mt-[60px] max-w-[400px] mx-auto">
       <Toaster />
       <Routes>
         <Route path={"/home"} element={<Home />} />
