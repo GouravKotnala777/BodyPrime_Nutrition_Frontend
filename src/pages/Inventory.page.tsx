@@ -54,9 +54,9 @@ function Inventory() {
         console.log(res);
     };
 
-    async function getProductsHandler() {
+    async function getProductsHandler(signal?:AbortSignal) {
         setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
-        const data = await getProducts(skip);
+        const data = await getProducts(skip, "", "", signal);
         if (data.success) {
             if (data.jsonData.length !== 0) {
                 setSkip(skip+1);
@@ -119,8 +119,12 @@ function Inventory() {
     };
 
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+
         setDataStatus({isLoading:true, isSuccess:false, error:""});
-        getProductsHandler()
+        getProductsHandler(signal)
         .then((data) => {
             if (data.success) {
                 setDataStatus({isLoading:false, isSuccess:true, error:""});
@@ -129,6 +133,8 @@ function Inventory() {
         .catch((err) => {
             console.log(err);
         });
+
+        return() => {controller.abort()}
     }, []);
 
     
@@ -171,7 +177,7 @@ function Inventory() {
                             isLoading={refetchDataStatus.isLoading}
                             isSuccess={refetchDataStatus.isSuccess}
                             isDisabled={(refetchDataStatus.error !== "")}
-                            onClickHandler={getProductsHandler}
+                            onClickHandler={() => getProductsHandler()}
                         />
                     </div>
                 </section>

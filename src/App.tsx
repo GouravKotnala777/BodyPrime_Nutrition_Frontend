@@ -44,8 +44,8 @@ function App() {
   const [isHeaderVisible, setIsHeaderVisible] = useState<boolean>(true);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
 
-  async function myProfileHandler() {
-    const res = await myProfile();
+  async function myProfileHandler(signal?:AbortSignal) {
+    const res = await myProfile(signal);
     if (res.success) {
       setUser(res.jsonData);
     }
@@ -86,8 +86,13 @@ function App() {
   }, [lastScrollY]);
   
   useEffect(() => {
-    myProfileHandler();
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    myProfileHandler(signal);
     //setUser(dummyUser);
+
+    return() => {controller.abort()}
   }, []);
 
   useEffect(() => {

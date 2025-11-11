@@ -36,12 +36,13 @@ export async function register(formData:RegisterFormTypes) {
         throw error;
     }
 };
-export async function myProfile() {
+export async function myProfile(signal?:AbortSignal) {
     try {
         const data = await apiHandler<null, UserTypes|null>({
             endpoint:"/user/my_profile",
             method:"GET",
-            contentType:"application/json"
+            contentType:"application/json",
+            ...(signal&&{signal})
         });
         if (!data.success) {
             toastHandler(data);
@@ -49,6 +50,10 @@ export async function myProfile() {
         return data;
     } catch (error) {
         console.log(error);
+        if (error instanceof DOMException && error.name === "AbortError") {
+            console.log("request aborted...");
+            throw error;
+        }
         toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }

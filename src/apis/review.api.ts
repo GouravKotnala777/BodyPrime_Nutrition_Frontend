@@ -20,16 +20,21 @@ export async function createReview({productID, rating, comment}:CreateReviewBody
         throw error;
     }
 };
-export async function getReviews({productID}:{productID:string;}) {
+export async function getReviews({productID, signal}:{productID:string; signal?:AbortSignal;}) {
     try {
         const data = await apiHandler<null, ReviewTypesPopulated[]>({
             endpoint:`/review/get_reviews/${productID}`,
             method:"GET",
-            contentType:"application/json"
+            contentType:"application/json",
+            ...(signal&&{signal})
         });
         return data;        
     } catch (error) {
         console.log(error);
+        if (error instanceof DOMException && error.name === "AbortError") {
+            console.log("request aborted...");
+            throw error;
+        }
         toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }

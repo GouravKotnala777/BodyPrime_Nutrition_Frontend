@@ -33,11 +33,11 @@ function SingleProduct() {
     const [sameBrandProducts, setSameBrandProducts] = useState<ProductTypes[]>([]);
     const [sameCategoryProducts, setSameCategoryProducts] = useState<ProductTypes[]>([]);
 
-    async function getSingleProductHandler() {
+    async function getSingleProductHandler(signal?:AbortSignal) {
         setDataStatus({isLoading:true, isSuccess:false, error:""});
         if (!productID) return;
         
-        const res = await getSingleProduct(productID);
+        const res = await getSingleProduct(productID, signal);
         console.log({res});
 
         if (res.success) {
@@ -85,10 +85,10 @@ function SingleProduct() {
         console.log({res});
         
     };
-    async function getReviewsHandler() {
+    async function getReviewsHandler(signal?:AbortSignal) {
         if (!productID) throw new Error("productID is not defiend");
 
-        const res = await getReviews({productID});
+        const res = await getReviews({productID, signal});
         setAllReviews(res.jsonData);
         console.log(res);
     };
@@ -182,8 +182,13 @@ function SingleProduct() {
     
 
     useEffect(() => {
-        getSingleProductHandler();
-        getReviewsHandler();
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        getSingleProductHandler(signal);
+        getReviewsHandler(signal);
+
+        return() => {controller.abort();}
     }, []);
     
     useEffect(() => {

@@ -167,7 +167,7 @@ export function HomeProducts({selectedProduct}:{selectedProduct:string|null;}) {
                     isLoading={refetchDataStatus.isLoading}
                     isSuccess={refetchDataStatus.isSuccess}
                     isDisabled={(refetchDataStatus.error !== "")}
-                    onClickHandler={getProductsHandler}
+                    onClickHandler={() => getProductsHandler()}
                 />
             </section>
         </HandlePageUIWithState>
@@ -224,7 +224,7 @@ export function BestSellers({selectedProduct}:{selectedProduct:string|null;}) {
                     isLoading={refetchDataStatus.isLoading}
                     isSuccess={refetchDataStatus.isSuccess}
                     isDisabled={(refetchDataStatus.error !== "")}
-                    onClickHandler={getBestSellersHandler}
+                    onClickHandler={() => getBestSellersHandler()}
                 />
             }
 
@@ -284,7 +284,7 @@ export function FeatureProducts({selectedProduct}:{selectedProduct:string|null;}
                         isLoading={refetchDataStatus.isLoading}
                         isSuccess={refetchDataStatus.isSuccess}
                         isDisabled={(refetchDataStatus.error !== "")}
-                        onClickHandler={getBestSellersHandler}
+                        onClickHandler={() => getBestSellersHandler()}
                     />
             }
         </section>

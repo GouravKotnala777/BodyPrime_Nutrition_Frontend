@@ -34,11 +34,11 @@ function SearchedProducts() {
     const {cartData, setCartData, addToLocalCart, setWishlistData} = useCart();
 
 
-    async function getProductsHandler() {
+    async function getProductsHandler(signal?:AbortSignal) {
         console.log({[searchField as string]:searchQuery});
         
         setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
-        const data = await getProducts(skip, searchField as "name"|"brand"|"category", searchQuery);
+        const data = await getProducts(skip, searchField as "name"|"brand"|"category", searchQuery, signal);
         if (data.success) {
             if (data.jsonData.length !== 0) {
                 setSkip(skip+1);
@@ -62,8 +62,11 @@ function SearchedProducts() {
 
     
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         setDataStatus({isLoading:true, isSuccess:false, error:""});
-        getProductsHandler()
+        getProductsHandler(signal)
         .then((data) => {
             if (data.success) {
                 setDataStatus({isLoading:false, isSuccess:true, error:""});
@@ -72,6 +75,8 @@ function SearchedProducts() {
         .catch((err) => {
             console.log(err);
         });
+
+        return() => {controller.abort()}
     }, []);
 
 
@@ -171,7 +176,7 @@ function SearchedProducts() {
                     isLoading={refetchDataStatus.isLoading}
                     isSuccess={refetchDataStatus.isSuccess}
                     isDisabled={(refetchDataStatus.error !== "")}
-                    onClickHandler={getProductsHandler}
+                    onClickHandler={() => getProductsHandler()}
                 />
             </section>
         </HandlePageUIWithState>
