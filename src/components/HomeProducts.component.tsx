@@ -26,9 +26,9 @@ export function HomeProducts({selectedProduct}:{selectedProduct:string|null;}) {
     const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
 
 
-    async function getProductsHandler() {
+    async function getProductsHandler(signal?:AbortSignal) {
         setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
-        const data = await getProducts(skip);
+        const data = await getProducts(skip, "", "", signal);
         if (data.success) {
             if (data.jsonData.length !== 0) {
                 setSkip(skip+1);
@@ -51,8 +51,11 @@ export function HomeProducts({selectedProduct}:{selectedProduct:string|null;}) {
     };
 
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         setDataStatus({isLoading:true, isSuccess:false, error:""});
-        getProductsHandler()
+        getProductsHandler(signal)
         .then((data) => {
             if (data.success) {
                 setDataStatus({isLoading:false, isSuccess:true, error:""});
@@ -61,6 +64,10 @@ export function HomeProducts({selectedProduct}:{selectedProduct:string|null;}) {
         .catch((err) => {
             console.log(err);
         });
+
+        return () => {
+            controller.abort();
+        }
     }, []);
     
     //async function addToWishlistHandler(selectedProduct:{_id:string; name:string; brand:string; category:ProductTypes["category"]; images:string[]; price:number;}) {
@@ -175,10 +182,10 @@ export function BestSellers({selectedProduct}:{selectedProduct:string|null;}) {
     //const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     
 
-    async function getBestSellersHandler() {
+    async function getBestSellersHandler(signal?:AbortSignal) {
         try {
             setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
-            const res = await getProducts(skip, "soldCount", "");
+            const res = await getProducts(skip, "soldCount", "", signal);
 
             if (res.success) {
                 setBestSellers((prev) => [...prev, ...res.jsonData]);
@@ -196,7 +203,12 @@ export function BestSellers({selectedProduct}:{selectedProduct:string|null;}) {
     };
 
     useEffect(() => {
-        getBestSellersHandler();
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        getBestSellersHandler(signal);
+
+        return() => {controller.abort()}
     }, []);
 
     return(
@@ -228,10 +240,10 @@ export function FeatureProducts({selectedProduct}:{selectedProduct:string|null;}
     //const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     
 
-    async function getBestSellersHandler() {
+    async function getBestSellersHandler(signal?:AbortSignal) {
         try {
             setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
-            const res = await getProducts(skip, "createdAt", "");
+            const res = await getProducts(skip, "createdAt", "", signal);
 
             if (res.success) {
                 setFeatureProducts((prev) => [...prev, ...res.jsonData]);
@@ -249,7 +261,12 @@ export function FeatureProducts({selectedProduct}:{selectedProduct:string|null;}
     };
 
     useEffect(() => {
-        getBestSellersHandler();
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        getBestSellersHandler(signal);
+
+        return() => {controller.abort()}
     }, []);
 
     return(

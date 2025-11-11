@@ -3,16 +3,21 @@ import type { CreateProductFormTypes, ProductTypes, UpdateProductFormTypes } fro
 
 
 
-export async function getProducts(skip:number, searchField:"name"|"category"|"brand"|"soldCount"|"returnCount"|"createdAt"|""="", searchQuery:string|""="") {
+export async function getProducts(skip:number, searchField:"name"|"category"|"brand"|"soldCount"|"returnCount"|"createdAt"|""="", searchQuery:string|""="", signal?:AbortSignal) {
     try {
         const data = await apiHandler<null, ProductTypes[]>({
             endpoint:`/product/get_products?skip=${skip}&searchField=${searchField}&searchQuery=${searchQuery}`,
             method:"GET",
-            contentType:"application/json"
+            contentType:"application/json",
+            signal
         });
         return data;        
     } catch (error) {
         console.log(error);
+        if (error instanceof DOMException && error.name === "AbortError") {
+            console.log("request aborted...");
+            throw error;
+        }
         toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }

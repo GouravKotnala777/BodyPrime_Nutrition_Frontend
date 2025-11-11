@@ -6,9 +6,10 @@ interface APIHandlerTypes<BodyType> {
     method:"GET"|"POST"|"PUT"|"DELETE";
     contentType?:"application/json";
     body?:BodyType|FormData;
+    signal?:AbortSignal;
 };
 
-export async function apiHandler <BodyType, JsonResType>({endpoint, method, contentType, body}:APIHandlerTypes<BodyType>) {
+export async function apiHandler <BodyType, JsonResType>({endpoint, method, contentType, body, signal}:APIHandlerTypes<BodyType>) {
     try {
         const isFormData = body instanceof FormData;
         const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/v1${endpoint}`, {
@@ -19,6 +20,7 @@ export async function apiHandler <BodyType, JsonResType>({endpoint, method, cont
                 }
             }),
             credentials:"include",
+            ...(signal&&{signal}),
             body:isFormData?body:JSON.stringify(body)
         });
 
