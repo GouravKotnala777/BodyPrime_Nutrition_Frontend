@@ -72,7 +72,7 @@ function Home() {
                 addToCartHandler({productID:parsedData._id});
             }
             else{
-                addToLocalCart(parsedData);
+                addToLocalCart({...parsedData, quantity:1});
             }
         }
         else if(buttonName === "addToWishlistHandler"){
