@@ -19,7 +19,7 @@ export interface HeaderPropTypes {
 };
 
 function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible}:HeaderPropTypes) {
-    const {calculateTotalCartItems} = useCart();
+    const {calculateTotalCartItems, wishlistData} = useCart();
     const {loggedInUserName, isUserAuthenticated, isUserAdmin} = useUser();
 
     return(
@@ -42,7 +42,10 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                 <NavLink to="/home" className="nav_item">Home</NavLink>
                 <NavLink to="/my_profile" className="nav_item">Profile</NavLink>
                 {isUserAdmin() && <NavLink to="/inventory" className="nav_item">Inventory</NavLink>}
-                <NavLink to="/wishlist" className="nav_item">Wishlist</NavLink>
+                <NavLink to="/wishlist" className="relative nav_item">
+                    <span>Wishlist</span>
+                    <span className="text-[10px] font-semibold w-[18px] h-[18px] grid place-items-center rounded-2xl absolute right-[-11px] top-[-11px] bg-white text-[#b11433]">{wishlistData.length}</span>
+                </NavLink>
                 <NavLink to="/my_orders" className="nav_item">My Orders</NavLink>
                 {
                     isUserAdmin() &&
@@ -55,7 +58,10 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                         <NavLink to="/login" className="nav_item">Login</NavLink>
                     </>
                 }
-                <NavLink to="/cart" className="nav_item">Cart</NavLink>
+                <NavLink to="/cart" className="relative nav_item">
+                    <span>Cart</span>
+                    <span className="text-[10px] font-semibold w-[18px] h-[18px] grid place-items-center rounded-2xl absolute right-[-11px] top-[-11px] bg-white text-[#b11433]">{calculateTotalCartItems()}</span>
+                </NavLink>
                 </nav>
             </section>
             <section className="mobile_nav hidden items-center justify-end gap-8">
