@@ -26,6 +26,7 @@ import { getWishlist } from './apis/wishlist.api.ts';
 import Search from './components/Search.component.tsx';
 import SearchedProducts from './pages/SearchedProducts.page.tsx';
 import Delivery from './pages/Delivery.page.tsx';
+import Landing from './pages/Landing.page.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -129,9 +130,10 @@ function App() {
     <BrowserRouter>
     <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} isHeaderVisible={isHeaderVisible} />
     <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />
-    <main className="mt-[60px] max-w-[400px] mx-auto">
+    <main className="max-w-3xl mt-[60px] mx-auto">
       <Toaster />
       <Routes>
+        <Route path={"/"} element={<Landing />} />
         <Route path={"/home"} element={<Home />} />
         <Route path={"/searched_products/:searchField/:searchQuery"} element={<SearchedProducts />} />
         <Route path={"/single_product/:productID"} element={<SingleProduct />} />
