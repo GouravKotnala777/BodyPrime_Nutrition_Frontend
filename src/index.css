@@ -22,3 +22,8 @@ body {
     font-size: 16px;
   }
 }
+@media screen and (width <= 450px) {
+  :root {
+    font-size: 14px;
+  }
+}

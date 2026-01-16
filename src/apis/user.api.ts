@@ -12,11 +12,11 @@ export async function login(formData:LoginFormTypes) {
             body:formData
         });
 
-        toastHandler(data);
+        //toastHandler(data);
         return data;
     } catch (error) {
         console.log(error);
-        toastHandler({success:false, message:new Error(error as string).message});
+        //toastHandler({success:false, message:new Error(error as string).message});
         throw error;
     }
 };
@@ -45,7 +45,7 @@ export async function myProfile(signal?:AbortSignal) {
             ...(signal&&{signal})
         });
         if (!data.success) {
-            toastHandler(data);
+            //toastHandler(data);
         }
         return data;
     } catch (error) {
