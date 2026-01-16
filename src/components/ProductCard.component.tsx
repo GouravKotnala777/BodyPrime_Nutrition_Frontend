@@ -68,14 +68,14 @@ function ProductCard({product, isCartMutating}:ProductCardPropTypes) {
                                     color:isAlreadyWishlisted()?"#f6339a":"#e1e1e1"
                                 }}
                             /></button>
-                        <button className="bg-yellow-300 rounded-2xl py-2 w-full"
+                        <button className="bg-yellow-300 rounded-2xl w-full overflow-hidden"
                             name={buttonNames.addToCartHandler}
                             data-set={JSON.stringify({_id:productID, name, brand, category, images, price})}
                             onClick={(e) => {
                                 e.preventDefault();
                             }}>
-                            <span className="only_for_same_btn_level">
-                                <span className="only_for_same_btn_level">
+                            <span className="only_for_same_btn_level w-full h-full inline-block">
+                                <span className="only_for_same_btn_level w-full h-full inline-block py-2">
                                     {isCartMutating?<Spinner />:"Add to cart"}
                                 </span>
                             </span>
