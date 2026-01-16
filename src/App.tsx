@@ -146,10 +146,10 @@ function App() {
         // Show only if user is loggedin
         <>
           <Route path={"/my_profile"} element={<MyProfile />} />
+          <Route path={"/wishlist"} element={isUserAuthenticated()?<Wishlist />:<Login />} />
           <Route path={"/logout"} element={isUserAuthenticated()?<Logout />:<Login />} />
         </>
         <Route path={"/my_orders"} element={<MyOrders />} />
-        <Route path={"/wishlist"} element={<Wishlist />} />
         
 
         // Show only if user is not loggedin
