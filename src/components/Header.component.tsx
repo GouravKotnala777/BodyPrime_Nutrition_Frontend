@@ -6,15 +6,15 @@ import { useCart } from '../contexts/CartContext';
 import { useUser } from '../contexts/UserContext';
 import ImageWithFallback from './ImageWithFallback.component';
 import { BiCart, BiSearch, BiUser } from "react-icons/bi";
-import { useState, type ChangeEvent, type Dispatch, type MouseEvent, type SetStateAction } from "react";
+import { useEffect, useState, type ChangeEvent, type Dispatch, type MouseEvent, type SetStateAction } from "react";
 import { BsArrowDown, BsArrowDownShort, BsArrowRight } from "react-icons/bs";
 import { CgArrowDown } from "react-icons/cg";
+import { getProducts } from "../apis/product.api";
+import type { ProductTypes } from "../utils/types";
 
 
 
 export interface HeaderPropTypes {
-    isHamActive:boolean;
-    setIsHamActive:Dispatch<SetStateAction<boolean>>;
     isSearchActive:boolean;
     setIsSearchActive:Dispatch<SetStateAction<boolean>>;
     isHeaderVisible:boolean;
@@ -25,14 +25,13 @@ const productsBy = {
     brands:["asdkajsdlka", "asdasd asdasd", "sakdjasldk asd asdas", "askdlajsd asdkl", "asas asdasdasdad", "asdasdasds adasdasasd"]
 };
 
-function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible}:HeaderPropTypes) {
+function Header({setIsSearchActive, isHeaderVisible}:HeaderPropTypes) {
     const {calculateTotalCartItems, wishlistData} = useCart();
-    const {loggedInUserName, isUserAuthenticated, isUserAdmin} = useUser();
+    const {loggedInUserName, isUserAuthenticated, userData, isUserAdmin} = useUser();
     const [searchQry, setSearchQry] = useState<string>("");
-    const [isSearchInputFocused, setIsSearchInputFocused] = useState<boolean>(false);
-    const [isCartDialogOpen, setIsCartDialogOpen] = useState<boolean>(false);
     const [isHamburgerSideBarOpen, setIsHamburgerSideBarOpen] = useState<boolean>(false);
     const [isSearchBarSuggessionsOpen, setIsSearchBarSuggessionsOpen] = useState<boolean>(false);
+    const [bestSellers, setBestSellers] = useState<ProductTypes[]>([]);
 
     const [selectedTab, setSelectedTab] = useState<"categories"|"brands">("categories");
 
@@ -62,6 +61,24 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
         document.body.style.overflow = isHamburgerSideBarOpen ? "auto" : "hidden";
         setIsHamburgerSideBarOpen(!isHamburgerSideBarOpen);
     };
+    async function getBestSellersHandler(signal?:AbortSignal) {
+        try {
+            const res = await getProducts(0, "soldCount", "", signal);
+
+            if (res.success) {
+                console.log(res.jsonData);
+                
+                setBestSellers(res.jsonData);
+            }
+        } catch (error) {
+            console.log(error);
+            throw Error(error as string);
+        }
+    };
+
+    useEffect(() => {
+        getBestSellersHandler();
+    }, []);
     
 
     return(
@@ -150,17 +167,17 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                             <div className="text-lg font-semibold text-gray-800">Trending Products</div>
                             <NavLink to="####" className="text-sm text-primary-400 my-2 underline underline-offset-2">See All</NavLink>
                         </div>
-                        <div className="flex gap-3 overflow-x-hidden">
+                        <div className="flex gap-3 overflow-x-scroll">
                             {
-                                [1,2,3,4].map((item, index) => (
-                                    <div key={index} className="w-30 rounded-md overflow-hidden cursor-pointer hover:bg-primary-100 group">
+                                bestSellers.map((product, index) => (
+                                    <div key={index} className="w-30 rounded-md cursor-pointer hover:bg-primary-100 group">
                                         <div className="bg-gray-50 p-2">
-                                            <img src="vite.svg" alt="" className="w-full mx-auto group-hover:scale-110 transition-transform ease-in-out duration-300" />
+                                            <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} className="w-50 mx-auto group-hover:scale-110 transition-transform ease-in-out duration-300" />
                                         </div>
                                         <div className="border border-gray-100 border-t-transparent px-2 pt-0 pb-2 rounded-b-sm">
-                                            <div className="text-xs font-semibold line-clamp-2 mt-2">MuscleBlaze Biozyme Performance Whey, 4.4gram, Lorem ipsum, dolor sit Dicta id omnis a cumque ducimus laboriosam? Atque minus ut pariatur! Iste ea iure earum recusandae dolor.</div>
+                                            <div className="text-xs font-semibold line-clamp-2 mt-2">{product.name}</div>
                                             <div className="flex gap-2 font-semibold text-sm mt-1">
-                                                <div className="text-gray-800">₹7799</div>
+                                                <div className="text-gray-800">{product.price}</div>
                                                 <div className="text-gray-500 line-through">₹9699</div>
                                             </div>
                                         </div>
@@ -176,13 +193,15 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
             <div className="flex items-center gap-0 sm:gap-4">
                 <div className="hidden p-2 xs:flex items-center gap-1 text-gray-800 hover:bg-primary-300/50 rounded-md cursor-default font-semibold relative group">
                     {/*<BiUser />*/}
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" class="size-9 bg-primary-200 font-semibold p-2 text-primary-800 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-9 bg-primary-200 font-semibold p-2 text-primary-800 rounded-full">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                     </svg>
 
-                    <span>Login</span>
+                    <span>
+                        {isUserAuthenticated()?"Account":"Login"}
+                    </span>
 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" class="size-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                     </svg>
 
@@ -190,20 +209,33 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                     {/* account navigation dialog */}
                     <div className="border border-gray-200 hidden absolute right-0 top-full flex-col p-3 gap-3 sm:p-4 sm:gap-4 rounded-lg bg-white group-hover:flex">
                         {/* profile access*/}
-                        <div className="border border-gray-200 flex items-center gap-4 rounded-md p-3 hover:bg-primary-100">
-                            <div className="w-15 h-15 grid place-items-center rounded-full bg-primary-100/50">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.8" stroke="currentColor" class="size-10 bg-primary-200 font-semibold p-2 text-primary-800 rounded-full">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                                </svg>
+                        <NavLink to={isUserAuthenticated()?"/my_profile":"/login"} className="border border-gray-200 flex gap-4 rounded-md hover:bg-primary-100">
+                            <div className="p-3">
+                                <div className="w-15 h-15 grid place-items-center rounded-full bg-primary-100/50 p-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.6" stroke="currentColor" className="size-full bg-primary-200 font-semibold p-3 text-primary-800 rounded-full">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                    </svg>
+                                </div>
                             </div>
-                            <NavLink to={isUserAuthenticated()?"/my_profile":"/login"} className="flex items-center w-70">
+                            <div className="flex items-center w-70 p-3">
                                 <div className="flex-1">
-                                    <div className="text-gray-700 text-lg font-semibold">Hello!</div>
-                                    <div className="text-primary-500">Login or Signup</div>
+                                    <div className="text-gray-700 text-lg font-semibold">
+                                        <span>Hello! {isUserAuthenticated()&&loggedInUserName()}</span>
+                                    </div>
+
+                                    {
+                                        isUserAuthenticated() ?
+                                            <div className="w-full max-w-58 ">
+                                                <div className="text-gray-400 font-normal truncate">gouravkotnala777@gmail.com</div>
+                                                <div className="text-gray-400 font-normal">8882732859</div>
+                                            </div>
+                                            :
+                                            <div className="text-primary-500">Login or Signup</div>
+                                    }
                                 </div>
                                 <div><BsArrowRight /></div>
-                            </NavLink>
-                        </div>
+                            </div>
+                        </NavLink>
 
                         {/* orders, address, location access*/}
                         <div className="flex justify-between">
@@ -241,7 +273,8 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
 
                         {/* wallet, wishlist, settings... access*/}
                         <div className="border border-gray-200 rounded-md overflow-hidden">
-                            <NavLink to="####" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                            {/* wallet */}
+                            {/*<NavLink to="####" className="flex items-center gap-2 p-3 hover:bg-primary-100">
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
@@ -249,6 +282,15 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                                     </svg>
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Wallet</div>
+                            </NavLink>*/}
+                            <NavLink to="/cart" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                    </svg>
+                                </div>
+                                <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Cart</div>
+                                <div className="text-primary-500/80 bg-primary-100/50 w-6 h-6 rounded-full text-center content-center text-sm">{calculateTotalCartItems()}</div>
                             </NavLink>
                             <NavLink to="/wishlist" className="flex items-center gap-2 p-3 hover:bg-primary-100">
                                 <div>
@@ -257,8 +299,9 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                                     </svg>
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Wishlist</div>
+                                <div className="text-primary-500/80 bg-primary-100/50 w-6 h-6 rounded-full text-center content-center text-sm">{wishlistData.length}</div>
                             </NavLink>
-                            <NavLink to="####" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                            <NavLink to="/authenticity" className="flex items-center gap-2 p-3 hover:bg-primary-100">
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
@@ -298,13 +341,15 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
 
                 </div>
                 <div className="border border-primary-800/50 hidden xs:block h-6"></div>
-                <div className="p-2 sm:p-3 flex items-center gap-1 text-gray-800 hover:bg-primary-300/50 rounded-md cursor-default font-semibold">
+                <NavLink to="/cart" className="p-2 sm:p-3 flex items-center gap-1 text-gray-800 hover:bg-primary-300/50 rounded-md cursor-default font-semibold relative">
+                    <div className="absolute -top-0.5 left-4 text-primary-800 bg-primary-200 h-5 w-5 grid place-items-center rounded-full text-xs">{calculateTotalCartItems()}</div>
+                        
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                     </svg>
 
                     <span>Cart</span>
-                </div>
+                </NavLink>
 
             </div>
 
@@ -314,19 +359,26 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
             <div className={`h-screen flex fixed gap-0.5 sm:gap-2 top-0 ${isHamburgerSideBarOpen?"left-0":"-left-[150%]"} transition-all ease-in-out duration-300`}>
                 {/* hamburger sidebar content */}
                 <div className="flex flex-col bg-white">
-                    <div className="text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200">
-                        <span>Login/Register</span> <BsArrowRight />
-                    </div>
+                    {
+                        isUserAuthenticated() ?
+                            <div className="text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200">
+                                <span>{loggedInUserName()}</span>
+                            </div>
+                            :
+                            <NavLink to="/login" className="text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200">
+                                <span>Login/Register</span> <BsArrowRight />
+                            </NavLink>
+                    }
                     <div className="grid grid-cols-3 text-sm sm:text-md">
-                        <div className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-1.5 hover:bg-primary-100">
+                        <NavLink to="/my_profile" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                                 </svg>
                             </div>
                             <div>My Account</div>
-                        </div>
-                        <NavLink to="/my_orders" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-1.5 hover:bg-primary-100">
+                        </NavLink>
+                        <NavLink to="/my_orders" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path d="M15 12h-5"/>
@@ -337,7 +389,7 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                             </div>
                             <div>Your Orders</div>
                         </NavLink>
-                        <NavLink to="/cart" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-1.5 hover:bg-primary-100">
+                        <NavLink to="/cart" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
@@ -345,7 +397,7 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                             </div>
                             <div>Your Cart</div>
                         </NavLink>
-                        <NavLink to="####" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-1.5 hover:bg-primary-100">
+                        <NavLink to="/authenticity" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
@@ -354,7 +406,7 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                             </div>
                             <div>Authenticity</div>
                         </NavLink>
-                        <NavLink to="/####" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-1.5 hover:bg-primary-100">
+                        <NavLink to="/####" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
@@ -365,7 +417,7 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                             </div>
                             <div>Offers</div>
                         </NavLink>
-                        <NavLink to="/support" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-1.5 hover:bg-primary-100">
+                        <NavLink to="/support" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/>
@@ -382,14 +434,7 @@ function Header({isHamActive, setIsHamActive, setIsSearchActive, isHeaderVisible
                     <div className="flex-1 overflow-x-hidden overflow-y-scroll text-sm sm:text-md">
                         {
                             productsBy[selectedTab].map((iter, ind) => (
-                                <div key={ind} className="flex items-center gap-2 p-3 hover:bg-primary-100">
-                                    <div>O</div><div className="text-gray-500 text-shadow-xs text-shadow-gray-100">{iter}</div>
-                                </div>
-                            ))
-                        }
-                        {
-                            productsBy[selectedTab].map((iter, ind) => (
-                                <div key={ind} className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                                <div key={ind} className="flex items-center gap-2 p-3 hover:bg-primary-100 cursor-pointer">
                                     <div>O</div><div className="text-gray-500 text-shadow-xs text-shadow-gray-100">{iter}</div>
                                 </div>
                             ))
