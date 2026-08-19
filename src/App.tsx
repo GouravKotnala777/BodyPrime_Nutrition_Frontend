@@ -4,7 +4,6 @@ import Home from './pages/Home.page';
 import Login from './pages/Login.page.tsx';
 import Register from './pages/Register.page.tsx';
 import Header from './components/Header.component';
-import Sidebar from './components/Sidebar.component';
 import { useEffect, useState } from 'react';
 import Cart from './pages/Cart.page.tsx';
 import SingleProduct from './pages/SingleProduct.page.tsx';
@@ -23,10 +22,10 @@ import {Toaster} from "react-hot-toast";
 import MyOrders from './pages/MyOrders.tsx';
 import Wishlist from './pages/Wishlist.page.tsx';
 import { getWishlist } from './apis/wishlist.api.ts';
-import Search from './components/Search.component.tsx';
 import SearchedProducts from './pages/SearchedProducts.page.tsx';
 import Delivery from './pages/Delivery.page.tsx';
 import Landing from './pages/Landing.page.tsx';
+import Authenticity from './pages/Authenticity.page.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -38,8 +37,6 @@ import Landing from './pages/Landing.page.tsx';
 //};
 
 function App() {
-  const [isSearchActive, setIsSearchActive] = useState<boolean>(false);
-  const [isHamActive, setIsHamActive] = useState<boolean>(false);
   const {setCartData, fetchLocalCartProducts, removeProductFromLocalCart, clearLocalCart, setWishlistData} = useCart();
   const {setUser, isUserAuthenticated, isUserAdmin} = useUser();
   const [isHeaderVisible, setIsHeaderVisible] = useState<boolean>(true);
@@ -55,6 +52,8 @@ function App() {
   async function getCartHandler() {
       const res = await getCart();
       if (res.success) {
+        console.log(res.jsonData);
+        
         setCartData(transformCartDataForRes(res.jsonData).products);
       }
   };
@@ -119,18 +118,12 @@ function App() {
     })();
 }, [isUserAuthenticated()]);
 
-  if (isSearchActive) {
-    return(
-      <BrowserRouter>
-        <Search setIsSearchActive={setIsSearchActive} />
-      </BrowserRouter>
-    )
-  }
   return (
     <BrowserRouter>
-    <Header isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} isHeaderVisible={isHeaderVisible} />
-    <Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />
-    <main className="max-w-3xl mt-[60px] mx-auto">
+    <Header isHeaderVisible={isHeaderVisible} />
+    {/*<Sidebar isHamActive={isHamActive} setIsHamActive={setIsHamActive} isSearchActive={isSearchActive} setIsSearchActive={setIsSearchActive} />*/}
+    <main className="mt-[60px]">
+    {/*<main className="max-w-3xl mt-[60px] mx-auto">*/}
       <Toaster />
       <Routes>
         <Route path={"/"} element={<Landing />} />
@@ -139,11 +132,12 @@ function App() {
         <Route path={"/single_product/:productID"} element={<SingleProduct />} />
         <Route path={"/cart"} element={<Cart />} />
         <Route path={"/address"} element={<Address />} />
+        <Route path={"/authenticity"} element={<Authenticity />} />
 
 
 
 
-        // Show only if user is loggedin
+        {/* Show only if user is loggedin */}
         <>
           <Route path={"/my_profile"} element={<MyProfile />} />
           <Route path={"/wishlist"} element={isUserAuthenticated()?<Wishlist />:<Login />} />
@@ -152,7 +146,7 @@ function App() {
         <Route path={"/my_orders"} element={<MyOrders />} />
         
 
-        // Show only if user is not loggedin
+        {/* Show only if user is not loggedin */}
         {
           !isUserAuthenticated() &&
             <>
@@ -163,7 +157,7 @@ function App() {
         }
 
 
-        // Show only for admin
+        {/* Show only for admin */}
         <Route path={"/inventory"} element={<ProtectedRoute children={<Inventory />} isUserAuthenticated={isUserAuthenticated()} isUserAdmin={isUserAdmin()} />} />
         <Route path={"/delivery"} element={<ProtectedRoute children={<Delivery />} isUserAuthenticated={isUserAuthenticated()} isUserAdmin={isUserAdmin()} />} />
 
