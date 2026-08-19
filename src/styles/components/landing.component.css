@@ -1,0 +1,11 @@
+.flag {
+  animation: wave 3s ease-in-out infinite;
+  transform-origin: left center;
+  filter: drop-shadow(0 0 6px #0003);
+}
+
+@keyframes wave {
+  0% { transform: translateX(-50%) perspective(600px) rotateY(0deg); }
+  50% { transform: translateX(-50%) perspective(600px) rotateY(25deg); }
+  100% { transform: translateX(-50%) perspective(600px) rotateY(0deg); }
+}
