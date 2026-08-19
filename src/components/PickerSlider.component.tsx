@@ -39,7 +39,8 @@ function PickerScroller({items, onSelect, onMouseEnter, onMouseLeave}:PickerScro
 
         const difference = parentCenter-selectedVideoLeft-selectedVideoCenter;
 
-        if (selectedVideo.left > 0) {
+        
+        if (selectedVideo.left+selectedVideo.width > 0) {
             setTranslatedScrollable((prev) => prev+difference);
         }
 
@@ -69,7 +70,7 @@ function PickerScroller({items, onSelect, onMouseEnter, onMouseLeave}:PickerScro
                                 items.map((item, index) => (
                                     <div key={index}
                                         className="
-                                            border border-gray-200 scale-90 hover:scale-85 basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5 shrink-0 overflow-hidden transition-all duration-300 ease-in-out rounded-xl"
+                                            border border-gray-200 scale-85 hover:scale-90 basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5 shrink-0 overflow-hidden transition-all duration-300 ease-in-out rounded-xl"
                                         onClick={(e) => {
                                             const {left, width} = (e.target as HTMLDivElement).getBoundingClientRect();
                                             setSelectedVideo({index, left, width});

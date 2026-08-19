@@ -9,7 +9,7 @@ function Marquee({marqueeElements, gap="10px"}:MarqueePropTypes) {
     
 
     return(
-        <div className="relative max-w-5xl mx-auto overflow-x-scroll">
+        <div className="relative max-w-5xl mx-auto overflow-x-hidden fog-x">
             <div className="marquee-scrollable border border-gray-200 flex w-max"
                 style={{
                     gap

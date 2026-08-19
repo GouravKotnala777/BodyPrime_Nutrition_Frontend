@@ -35,7 +35,9 @@ function Why() {
                 backgroundImage:'url(../patterns/hexagons.svg)'
             }}
         >
-            <h1 className="text-gray-700 text-3xl font-bold mb-6">Why BodyPrime Nutrition</h1>
+            <div className="text-lg sm:text-2xl text-gray-800 font-bold text-center pb-5 sm:pb-10">
+                <div>Why BodyPrime Nutrition</div>
+            </div>
             <div className="flex gap-2 flex-wrap justify-around items-center flex-row"
                 onMouseMove={onCardHover}
                 onMouseLeave={onCardLeave}

@@ -9,7 +9,7 @@ function ProductsSlider({heading, products}:{heading:string; products:ProductTyp
     
     return(
         <>
-            <h1 className="text-2xl font-semibold text-white mt-10 p-2 bg-gradient-to-br from-[#f44669] to-[#ff7f50]">{heading}</h1>
+            <h1 className="text-2xl font-semibold text-white mt-10 p-2 bg-gradient-to-br from-primary-500 to-[#ff7f50]">{heading}</h1>
             <div className="flex gap-4 overflow-x-scroll px-4 py-2">
                 {
                     products.map((p) => (
