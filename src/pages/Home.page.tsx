@@ -83,7 +83,7 @@ function Home() {
     // ------------
     
     return(
-        <section onClick={onClickEventHandlers}>
+        <section onClick={onClickEventHandlers} className="max-w-4xl mx-auto">
             <HomeProducts selectedProduct={selectedProduct} />
 
             

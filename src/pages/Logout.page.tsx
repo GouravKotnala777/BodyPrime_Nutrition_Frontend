@@ -12,16 +12,16 @@ function Logout() {
     };
     
     return(
-        <section className="border-2 border-violet-600 flex flex-col items-center gap-10 my-10">
-            <div className="text-2xl font-semibold">
-                <h1>Logout Page</h1>
+        <section className="max-w-2xl mx-auto flex flex-col items-center gap-10 my-10">
+            <div className="text-lg sm:text-2xl text-gray-800 font-bold text-center py-2 sm:py-4">
+                <div>Logout Page</div>
             </div>
-            <div className="border-2 flex flex-col w-full gap-10">
-                <div className="border-2 flex gap-2 text-xl mx-auto">
+            <div className="flex flex-col w-full gap-10">
+                <div className="flex gap-2 text-xl mx-auto">
                     <input name="confirmation" type="checkbox" className="w-[1.2rem]" />
-                    <p className="border-2">Do your really want to logout?</p>
+                    <p className="">Do your really want to logout?</p>
                 </div>
-                <button className="text-xl bg-[#f44769] text-white py-2 rounded-2xl font-semibold" onClick={logoutHandler}>Logout</button>
+                <button className="text-xl bg-primary-400 text-white py-2 rounded-2xl font-semibold hover:opacity-80" onClick={logoutHandler}>Logout</button>
 
             </div>
         </section>

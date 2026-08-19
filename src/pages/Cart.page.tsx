@@ -61,7 +61,7 @@ function Cart() {
     };
     
     return(
-        <section className="px-2">
+        <section className="max-w-2xl mx-auto px-2">
             {
                 calculateTotalCartItems() ?
                     <div className="my-2">
@@ -70,11 +70,11 @@ function Cart() {
                     </div>
                     :
                     <div>
-                        <img src="/empty_cart.jpg" alt="/empty_cart.jpg" />
+                        <img src="/empty_cart.jpg" alt="/empty_cart.jpg" className="w-[70%] min-w-70 mx-auto" />
                         <div className="text-center">
-                            <button className="border-2 px-4 py-2 text-xl rounded-[8px] bg-gradient-to-r from-[#f44669] to-orange-500 text-white"
+                            <button className="border-2 px-4 py-2 text-xl rounded-[8px] bg-gradient-to-r from-primary-400 to-orange-500 text-white hover:opacity-80"
                                 onClick={() => navigate("/home")}
-                            >Buy Products</button>
+                            >Continue Shopping</button>
                         </div>
                     </div>
 

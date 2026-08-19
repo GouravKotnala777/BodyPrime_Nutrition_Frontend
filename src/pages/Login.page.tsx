@@ -34,7 +34,7 @@ function Login() {
     };
 
     return(
-        <section className="login_section flex flex-col items-center gap-10 p-10">
+        <section className="max-w-2xl mx-auto flex flex-col items-center gap-10 p-10">
             <h1 className="text-4xl font-bold">Login Page</h1>
             <label>
                 <input type="text" name="email" placeholder="Email" className="p-2 bg-amber-100" onChange={onChangeHandler} />

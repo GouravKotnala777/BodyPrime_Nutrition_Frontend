@@ -63,22 +63,22 @@ function Wishlist() {
     
 
     if (wishlistData.length === 0) return(
-        <div className="text-center pt-10">
+        <div className="text-center pt-10 max-w-2xl mx-auto">
             <img src="/empty_wishlist.webp" alt="/empty_wishlist.webp"
                 className="w-[50%] mx-auto"
             />
-            <h3 className="text-2xl text-[#f44669] font-semibold my-4">No Products</h3>
+            <h3 className="text-2xl text-primary-400 font-semibold my-4">No Products</h3>
             <p className="text-xl text-gray-500 my-2">seems like you have not liked anything yet.</p>
             <div className="text-center my-8">
-                <button className="border-2 px-4 py-2 text-xl rounded-[8px] bg-gradient-to-r from-[#f44669] to-orange-500 text-white"
+                <button className="border-2 px-4 py-2 text-xl rounded-[8px] bg-gradient-to-r from-primary-400 to-orange-500 text-white cursor-pointer hover:opacity-80"
                     onClick={() => navigate("/home")}
-                >Buy Products</button>
+                >Continue Shopping</button>
             </div>
         </div>
     )
     
     return(
-        <section>
+        <section className="max-w-2xl mx-auto">
             {
                 wishlistData.map(({_id, name, brand, category, price, images}) => (
                     <NavLink to={`/single_product/${_id}`} className="border-b-1 border-gray-200 flex justify-between items-center px-2 py-6" key={_id}>

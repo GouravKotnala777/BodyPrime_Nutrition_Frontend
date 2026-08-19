@@ -14,6 +14,7 @@ import ImageWithFallback from "../components/ImageWithFallback.component";
 import Spinner from "../components/Spinner.component";
 import ProductsSlider from "../components/ProductsSlider.component";
 import { capitalizeString } from "../utils/functions";
+import { BiSolidStar, BiStar } from "react-icons/bi";
 
 function SingleProduct() {
     const {productID} = useParams();
@@ -214,23 +215,25 @@ function SingleProduct() {
                 </>
             }
         >
-            <section>
+            <section className="max-w-2xl mx-auto">
                 <div className="flex justify-between items-center py-2 px-2 bg-[#f4476a24]">
-                    <div>
-                        <ImageWithFallback
-                            src={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images}`}
-                            alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images}`}
-                            fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
-                            className="w-[50px] h-[50px]"
-                        />
+                    <div className="flex items-center gap-5">
+                        <div>
+                            <ImageWithFallback
+                                src={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images}`}
+                                alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images}`}
+                                fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
+                                className="w-[50px] h-[50px]"
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-[1rem] font-semibold">{singleProduct?.brand}</span>
+                            <span className="text-[0.9rem]">{singleProduct?.name}</span>
+                        </div>
                     </div>
-                    <div className="flex flex-col">
-                        <span className="text-[1rem] font-semibold">Company Name</span>
-                        <span className="text-[0.9rem]">Brand name</span>
-                    </div>
-                    <div className="text-[0.8rem] flex">4.5 <RatingStars rating={4.5} outOf={5} /> (20,234)</div>
+                    <div className="text-[1rem] flex gap-2"><span>{singleProduct?.rating}</span> <RatingStars rating={singleProduct?.rating||0} outOf={5} /> ({singleProduct?.numReviews})</div>
                 </div>
-                <p className="text-gray-700 px-2 font-semibold">{singleProduct?.brand} {singleProduct?.name} {singleProduct?.category} ({singleProduct?.flavor}, {singleProduct?.weight}) - Nitro-Tech Ultimate Muscle Building Formula with Whey Protein Isolate - 30g of Protein, 3g of Creatine & 6.8g of BCAA - Packaging May Vary</p>
+                <p className="text-gray-700 px-2 font-semibold">{singleProduct?.brand} {singleProduct?.name} {singleProduct?.category} ({singleProduct?.flavor}, {singleProduct?.weight}) - {singleProduct?.description}</p>
 
                 <ImageSliderWithPreview singleProduct={singleProduct} />
 
@@ -262,7 +265,7 @@ function SingleProduct() {
                 </div>
 
 
-                <div className="border-[1px] border-gray-900 my-2 px-2 py-4">
+                <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                     <div className="text-[1.3rem]">
                         <span>Flavor Name: </span><span className="font-semibold">Milk Chocolate</span>
                     </div>
@@ -292,13 +295,31 @@ function SingleProduct() {
                 <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
                     <div className="flex text-5xl justify-around">
                         {
-                            [1,2,3,4,5].map((num) => (
-                                <span key={num} onClick={() => setRating(num)}>⭐</span>
-                            ))
+                            Array.from({length:5}).map((_,num) => {
+                                if ((rating > 0) && (rating-num > 0)) {
+                                    return <span className="text-yellow-400" key={num} onClick={() => {
+                                        if (rating === num+1) {
+                                            setRating(0);
+                                        }
+                                        else{
+                                            setRating(num+1);
+                                        }
+                                    }}><BiSolidStar /></span>
+                                }else{
+                                    return <span className="text-yellow-400" key={num} onClick={() => {
+                                        if (rating === num+1) {
+                                            setRating(0);
+                                        }
+                                        else{
+                                            setRating(num+1);
+                                        }
+                                    }}><BiStar /></span>
+                                }
+                            })
                         }
                     </div>
-                    <div className="mt-4 border-2 border-red-400 rounded-[8px]">
-                        <textarea rows={5} className="w-full" placeholder="Comment...(optional)" onChange={(e) => setComment(e.target.value)}></textarea>
+                    <div className="mt-4 rounded-[8px]">
+                        <textarea rows={5} className="border border-primary-200 w-full p-2 rounded-sm" placeholder="Comment...(optional)" onChange={(e) => setComment(e.target.value)}></textarea>
                     </div>
                     <div className="mt-4">
                         <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100" disabled={isReviewMutating} onClick={createReviewHandler}>{isReviewMutating?<Spinner width="20px" />:"Submit"}</button>
