@@ -44,7 +44,7 @@ body {
   initial-value: 0%;
   inherits: false;
 }
-@property --0-to-200-px{
+@property --px--400-to-400{
   syntax: "<length>";
   initial-value: 0px;
   inherits: false;
@@ -110,12 +110,14 @@ body {
   z-index:1;
 }
 .fog-x::before{
-  left: 0;
+  left: -1px;
   background: linear-gradient(90deg, white, transparent);
+  pointer-events: none;
 }
 .fog-x::after{
-  right: 0;
+  right: -1px;
   background: linear-gradient(90deg, transparent, white);
+  pointer-events: none;
 }
 .fog-y::before, .fog-y::after{
   content:"";
@@ -210,6 +212,10 @@ body {
 @keyframes animate-marquee {
   0%{--marquee-translate-x:0%}
   100%{--marquee-translate-x:-50%}
+}
+@keyframes animate-px--400-to-400 {
+  0%{--px--400-to-400:-400px}
+  100%{--px--400-to-400:400px}
 }
 @keyframes animate-skeletan {
   0% {

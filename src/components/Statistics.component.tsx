@@ -32,14 +32,14 @@ function Statistics() {
                 statistics.map((item, index) => (
                     <div key={index} className="text-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
-                            className="size-10 sm:size-20 mx-auto text-gray-500"
+                            className="size-13 sm:size-20 mx-auto text-gray-500"
                         >
                             {item.iconPaths}
                         </svg>
-                        <div className="text-3xl sm:text-5xl text-primary-400 font-bold my-2 font-mono">
+                        <div className="text-4xl sm:text-5xl text-primary-400 font-bold my-2 font-mono">
                             <RumbleText finalText={item.heading} interval={30} restart={isInViewStatisticRef} />
                         </div>
-                        <div className="text-sm sm:text-lg text-gray-500 my-1 text-shadow-md text-shadow-gray-100">{item.para}</div>
+                        <div className="text-lg text-gray-500 my-1 text-shadow-md text-shadow-gray-100">{item.para}</div>
                     </div>
                 ))
             }

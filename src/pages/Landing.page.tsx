@@ -214,16 +214,35 @@ function Landing() {
                     trailLengthShrinkable="sm"
                     trailThickness={2}
                 />
-                <h1 className="text-[clamp(26px,5vw,60px)] text-primary-400 font-bold text-center mt-5">
-                    <div className="leading-11 sm:leading-[clamp(12px,6.2vw,100px)]">Fuel Your<span className="bg-linear-90 from-primary-700 to-primary-200 text-transparent bg-clip-text"> Strength</span></div>
-                    <div className="leading-11 sm:leading-[clamp(12px,6.2vw,100px)]"><span className="bg-linear-90 from-primary-200 to-primary-700 text-transparent bg-clip-text">Power</span> Every Workout</div>
+                <h1 className="text-[clamp(32px,5.5vw,85px)] text-primary-400 font-bold text-center mt-5">
+                    <div className="leading-11 sm:leading-[clamp(12px,7vw,120px)]">Fuel Your<span className=""
+                    style={{
+                        background:"linear-gradient(135deg, var(--primary-700) 0% 10%, var(--primary-200) 16% 19%, var(--primary-700) 25% 100%)",
+                        backgroundPosition:"var(--px--400-to-400) 0px",
+                        backgroundSize:"800px",
+                        color:"transparent",
+                        backgroundClip:"text",
+                        animation:"animate-px--400-to-400 4s 1s ease-in infinite"
+                    }}
+                    > Strength</span></div>
+                    {/*<div className="leading-11 sm:leading-[clamp(12px,7vw,120px)]">Fuel Your<span className="bg-linear-90 from-primary-700 to-primary-200 text-transparent bg-clip-text"> Strength</span></div>*/}
+                    <div className="leading-11 sm:leading-[clamp(12px,7vw,120px)]"><span className="bg-linear-90 from-primary-200 to-primary-700 text-transparent bg-clip-text"
+                        style={{
+                            background:"linear-gradient(135deg, var(--primary-700) 0% 10%, var(--primary-200) 16% 19%, var(--primary-700) 25% 100%)",
+                            backgroundPosition:"var(--px--400-to-400) 0px",
+                            backgroundSize:"800px",
+                            color:"transparent",
+                            backgroundClip:"text",
+                            animation:"animate-px--400-to-400 4s ease-in infinite"
+                        }}
+                    >Power</span> Every Workout</div>
                 </h1>
                 <div className="w-[60%] h-0.25 min-w-10 bg-red-500 mt-2 mb-3"
                     style={{
                         background:"linear-gradient(to right, white, white, white, var(--primary-400), white, white, white)"
                     }}
                 ></div>
-                <p className="text-gray-500 text-[clamp(12px,2.7vw,17px)] w-[60%] min-w-10 my-2 text-justify tracking-wide">Fuel your fitness journey with premium-quality supplements designed to support strength, endurance, recovery, and overall performance. At BodyPrime Nutrition, we believe every workout deserves the right nutrition, helping you unlock your full potential with products you can trust.</p>
+                <p className="text-gray-500 text-[clamp(16px,2.7vw,17px)] w-[80%] max-w-210 min-w-10 my-2 text-justify tracking-wide">Fuel your fitness journey with premium-quality supplements designed to support strength, endurance, recovery, and overall performance. At BodyPrime Nutrition, we believe every workout deserves the right nutrition, helping you unlock your full potential with products you can trust.</p>
                 <div className="relative inline-block my-5">
 
                     {/* Button */}
@@ -284,7 +303,7 @@ function Landing() {
             />
 
 
-            <div className="text-lg sm:text-2xl text-gray-800 font-bold text-center py-2 sm:py-4 mt-10">
+            <div className="text-2xl text-gray-800 font-bold text-center py-2 sm:py-4 mt-10">
                 <div>Our Trusted Brands</div>
             </div>
             <Marquee
@@ -307,15 +326,11 @@ function Landing() {
             {/* statistics */}
             <Statistics />
 
-
+            {/* short videos */}
             <PickerSlider
                 items={
                     Array.from({length:7}).map((_, index) => (
-                        <div className="border w-full aspect-[9/16] group">
-                            {/*<video ref={(elem) => {videosRef.current[index] = elem}}
-                                src="short_videos.mp4"
-                                className=""
-                            />*/}
+                        <div className="w-full aspect-[9/16] group">
                             <video ref={(elem) => {videosRef.current[index] = elem}}
                                 src="/shorts/short1.mp4"
                                 className="h-full w-full object-cover"
@@ -353,7 +368,7 @@ function Landing() {
             {/* FAQ */}
             <div className="">
                 <div className="max-w-5xl mx-auto">
-                    <div className="text-lg sm:text-2xl text-gray-800 font-bold text-center py-2 sm:py-4">
+                    <div className="text-2xl text-gray-800 font-bold text-center py-2 sm:py-4">
                         <div>Frequenty Asked Questions</div>
                     </div>
                     <div className="px-3">
@@ -389,14 +404,14 @@ function Landing() {
                                         searchedResultFAQs.data.map(({matchedTag, heading, para}, index) => (
                                             <div key={index} className={`transition-all ease-in-out duration-300`}>
                                                 <div className="text-gray-700 font-semibold p-4 flex justify-between items-center cursor-pointer transition-all ease-in-out duration-300" onClick={()=>setActiveCords((prev)=>({...prev, [`${index-searchedResultFAQs.data.length}`]:!prev[`${index-searchedResultFAQs.data.length}`]}))}>
-                                                    <div className="text-md sm:text-xl">
+                                                    <div className="text-lg sm:text-xl">
                                                         <span>{heading.split(matchedTag)[0]}</span>
                                                         <span className="bg-primary-200">{matchedTag}</span>
                                                         <span>{heading.split(matchedTag)[1]}</span>
                                                     </div>
-                                                    <div className={`text-xl ${activeCords[`${index-searchedResultFAQs.data.length}`]?"rotate-0":"rotate-180"} transition-transform ease-in-out duration-300`}><BsArrowUpShort /></div>
+                                                    <div className={`text-2xl ${activeCords[`${index-searchedResultFAQs.data.length}`]?"rotate-0":"rotate-180"} transition-transform ease-in-out duration-300`}><BsArrowUpShort /></div>
                                                 </div>
-                                                <div className={`text-gray-600 bg-primary-50 text-sm sm:text-lg px-4 [text-shadow:0px_0px_2px_var(--color-gray-300)] tracking-wide text-left overflow-hidden rounded-lg origin-top [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] ${activeCords[`${index-searchedResultFAQs.data.length}`]?"h-60 py-2":"h-0 py-0"} transition-all ease-in-out duration-300`}>{para}</div>
+                                                <div className={`text-gray-600 bg-primary-50 text-lg px-4 [text-shadow:0px_0px_2px_var(--color-gray-300)] tracking-wide text-left overflow-hidden rounded-lg origin-top [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] ${activeCords[`${index-searchedResultFAQs.data.length}`]?"h-60 py-2":"h-0 py-0"} transition-all ease-in-out duration-300`}>{para}</div>
                                             </div>
                                         ))
                                     }

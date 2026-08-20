@@ -35,7 +35,7 @@ function Why() {
                 backgroundImage:'url(../patterns/hexagons.svg)'
             }}
         >
-            <div className="text-lg sm:text-2xl text-gray-800 font-bold text-center pb-5 sm:pb-10">
+            <div className="text-2xl text-gray-800 font-bold text-center pb-5 sm:pb-10">
                 <div>Why BodyPrime Nutrition</div>
             </div>
             <div className="flex gap-2 flex-wrap justify-around items-center flex-row"
@@ -56,16 +56,16 @@ function Why() {
                         ></div>
 
                         {/* only for div propertion opacity-0 */}
-                        <div className="px-3 pt-3 pb-10 min-w-70 rounded-[calc(12px-5px)] bg-white opacity-0 pointer-events-none">
+                        <div className="px-3 pt-3 pb-10 min-w-90 rounded-[calc(12px-5px)] bg-white opacity-0 pointer-events-none">
                             <img src={item.img} alt={item.img} className="mx-auto" />
-                            <div className="text-primary-700/60 text-xl font-semibold py-2 text-[clamp(1rem,1.5vw,2rem)]">{item.heading}</div>
-                            <div className="text-gray-500 text-lg leading-5 text-[clamp(0.8rem,1.3vw,1.6rem)]">{item.para}</div>
+                            <div className="text-primary-700/60 font-semibold py-2 text-[clamp(1.2rem,1.5vw,2rem)]">{item.heading}</div>
+                            <div className="text-gray-500 leading-5 text-[clamp(1rem,1.3vw,1.6rem)]">{item.para}</div>
                         </div>
                         {/* actual div */}
-                        <div className="px-3 pt-3 pb-10 min-w-70 rounded-[calc(12px-5px)] absolute inset-1 backdrop-blur-2xl pointer-events-none">
+                        <div className="px-3 pt-3 pb-10 min-w-90 rounded-[calc(12px-5px)] absolute inset-1 backdrop-blur-2xl pointer-events-none">
                             <img src={item.img} alt={item.img} className="mx-auto" />
-                            <div className="text-primary-700/60 py-2 font-semibold text-[clamp(1rem,1.5vw,2rem)]">{item.heading}</div>
-                            <div className="text-gray-500 text-lg leading-5 [text-shadow:0px_0px_4px_var(--primary-200)] text-[clamp(0.8rem,1.3vw,1.6rem)]">{item.para}</div>
+                            <div className="text-primary-700/60 py-2 font-semibold text-[clamp(1.2rem,1.5vw,2rem)]">{item.heading}</div>
+                            <div className="text-gray-500 leading-5 [text-shadow:0px_0px_4px_var(--primary-200)] text-[clamp(1rem,1.3vw,1.6rem)]">{item.para}</div>
                         </div>
                     </div>
                 ))

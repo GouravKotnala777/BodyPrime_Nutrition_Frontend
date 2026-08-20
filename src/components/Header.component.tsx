@@ -126,13 +126,13 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                 <div className="p-1 sm:p-3 hover:bg-primary-300/50 rounded-md cursor-pointer"
                     onClick={hamburgerSideBarToggleHandler}
                 >
-                    <div className="flex flex-col gap-1">
-                        <div className="bg-gray-800 rounded-xs h-0.75 w-5 xs:h-1 xs:w-8"></div>
-                        <div className="bg-gray-800 rounded-xs h-0.75 w-5 xs:h-1 xs:w-8"></div>
-                        <div className="bg-gray-800 rounded-xs h-0.75 w-5 xs:h-1 xs:w-8"></div>
+                    <div className="flex flex-col gap-1 w-6 xs:w-8">
+                        <div className="bg-gray-800 rounded-xs h-0.75 w-full xs:h-1"></div>
+                        <div className="bg-gray-800 rounded-xs h-0.75 w-full xs:h-1"></div>
+                        <div className="bg-gray-800 rounded-xs h-0.75 w-full xs:h-1"></div>
                     </div>
                 </div>
-                <NavLink to="/home" className="w-10 sm:w-15">
+                <NavLink to="/home" className="w-15 sm:w-15">
                     <img src="logo.png" alt="logo.png" />
                 </NavLink>
             </div>
@@ -177,8 +177,9 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                     }
 
                     {/* search bar suggessions */}
-                    <div className={`border border-gray-200 absolute top-[105%] left-[50%] -translate-x-[50%] bg-white rounded-lg h-140 w-full min-w-90 ${isSearchBarSuggessionsOpen?"scale-y-100 opacity-100":"scale-y-0 opacity-0"} origin-top transition-all ease-in-out duration-300 fog-y`}>
-                        <div className="border h-full p-4 flex flex-col gap-4 overflow-y-scroll scrollbar-thin">
+                    
+                    <div className={`border border-gray-200 absolute overflow-y-scroll md:scrollbar-thin top-[105%] left-[50%] -translate-x-[50%] bg-white rounded-lg py-5 sm:py-2 h-140 w-full min-w-90 ${isSearchBarSuggessionsOpen?"scale-y-100 opacity-100":"scale-y-0 opacity-0"} origin-top transition-all ease-in-out duration-300`}>
+                        <div className="h-max p-4 flex flex-col gap-4">
 
                             {
                                 searchedData["names"].length!==0 &&
@@ -189,17 +190,17 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                         <div className="flex flex-col">
                                             {
                                                 searchedData["names"].map((product, index) => (
-                                                    <NavLink to="####" key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md">
+                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInpClearHandler}>
                                                         <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                                         <div>
                                                             <div className="text-gray-700 font-semibold">{product.name}</div>
-                                                            <div className="text-sm text-gray-400">{product.brand} | {product.price}₹ | {product.category}</div>
+                                                            <div className="text-sm text-gray-400">{product.brand} | {product.category}</div>
                                                         </div>
                                                         <div className="text-gray-500 ml-auto"><BsArrowRight /></div>
                                                     </NavLink>
                                                 ))
                                             }
-                                            <NavLink to={`/searched_products/name/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputBlurHandler}>Show more</NavLink>
+                                            <NavLink to={`/searched_products/name/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInpClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -212,17 +213,17 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                         <div className="flex flex-col">
                                             {
                                                 searchedData["brands"].map((product, index) => (
-                                                    <NavLink to="####" key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md">
+                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInpClearHandler}>
                                                         <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                                         <div>
                                                             <div className="text-gray-700 font-semibold">{product.name}</div>
-                                                            <div className="text-sm text-gray-400">{product.brand} | {product.price}₹ | {product.category}</div>
+                                                            <div className="text-sm text-gray-400">{product.brand} | {product.category}</div>
                                                         </div>
                                                         <div className="text-gray-500 ml-auto"><BsArrowRight /></div>
                                                     </NavLink>
                                                 ))
                                             }
-                                            <NavLink to={`/searched_products/brand/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputBlurHandler}>Show more</NavLink>
+                                            <NavLink to={`/searched_products/brand/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInpClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -235,17 +236,17 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                         <div className="flex flex-col">
                                             {
                                                 searchedData["categories"].map((product, index) => (
-                                                    <NavLink to="####" key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md">
+                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInpClearHandler}>
                                                         <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                                         <div>
                                                             <div className="text-gray-700 font-semibold">{product.name}</div>
-                                                            <div className="text-sm text-gray-400">{product.brand} | {product.price}₹ | {product.category}</div>
+                                                            <div className="text-sm text-gray-400">{product.brand} | {product.category}</div>
                                                         </div>
                                                         <div className="text-gray-500 ml-auto"><BsArrowRight /></div>
                                                     </NavLink>
                                                 ))
                                             }
-                                            <NavLink to={`/searched_products/category/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputBlurHandler}>Show more</NavLink>
+                                            <NavLink to={`/searched_products/category/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInpClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -259,7 +260,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                             {
                                                 searchedData["tags"].map((product, index) => (
                                                     product.tag.map((t, ind) => (
-                                                        <NavLink to="####" key={t+ind+index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md">
+                                                        <NavLink to={`/single_product/${product._id}`} key={t+ind+index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md">
                                                             <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                                             <div>
                                                                 <div className="text-gray-700 font-semibold">{t}</div>
@@ -270,7 +271,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                                     ))
                                                 ))
                                             }
-                                            <NavLink to={`####`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputBlurHandler}>Show more</NavLink>
+                                            <NavLink to={`####`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInpClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -298,27 +299,33 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 <div className="text-lg font-semibold text-gray-800">Trending Products</div>
                                 <NavLink to="####" className="text-sm text-primary-400 my-2 underline underline-offset-2">See All</NavLink>
                             </div>
-                            <div className="border flex gap-3 overflow-x-scroll scrollbar-thin h-100"> //height ka koi asar nahi ho raha
-                                {
-                                    bestSellers.map((product, index) => (
-                                        <div key={index} className="border w-30 rounded-md cursor-pointer hover:bg-primary-100 group">
-                                            <div className="bg-gray-50 h-30">
-                                                <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} className="w-50 h-full mx-auto group-hover:scale-110 transition-transform ease-in-out duration-300" />
-                                            </div>
-                                            <div className="border h-20 border-gray-100 border-t-transparent px-2 rounded-b-sm">
-                                                <div className="text-xs font-semibold line-clamp-2 mt-2">{product.name}</div>
-                                                <div className="flex gap-2 font-semibold text-sm mt-1">
-                                                    <div className="text-gray-800">{product.price}</div>
-                                                    <div className="text-gray-500 line-through">₹9699</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))
-                                }
+
+                            
+                            <div className="relative">
+                                <div className="overflow-x-scroll md:scrollbar-thin fog-x">
+                                    <div className="flex w-max h-max gap-2 p-2">
+                                        {
+                                            bestSellers.map((product, index) => (
+                                                <NavLink to={`/single_product/${product._id}`} key={index} className="w-30 rounded-md cursor-pointer hover:bg-primary-100 group">
+                                                    <div className="bg-gray-50 h-30">
+                                                        <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} className="w-50 h-full mx-auto group-hover:scale-110 transition-transform ease-in-out duration-300" />
+                                                    </div>
+                                                    <div className="border h-20 border-gray-100 border-t-transparent px-2 rounded-b-sm">
+                                                        <div className="font-semibold line-clamp-2 mt-2">{product.name}</div>
+                                                        <div className="flex gap-2 font-semibold text-sm mt-1">
+                                                            <div className="text-gray-800">{product.price}</div>
+                                                            <div className="text-gray-500 line-through">₹9699</div>
+                                                        </div>
+                                                    </div>
+                                                </NavLink>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
                     </div>
+                    
                 </div>
             </div>
 
@@ -330,11 +337,11 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                     </svg>
 
-                    <span>
+                    <span className="text-lg sm:text-md">
                         {isUserAuthenticated()?"Account":"Login"}
                     </span>
 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                     </svg>
 
@@ -483,11 +490,11 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                 <NavLink to="/cart" className="p-2 sm:p-3 flex items-center gap-1 text-gray-800 hover:bg-primary-300/50 rounded-md cursor-default font-semibold relative">
                     <div className="absolute -top-0.5 left-4 text-primary-800 bg-primary-200 h-5 w-5 grid place-items-center rounded-full text-xs">{calculateTotalCartItems()}</div>
                         
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                     </svg>
 
-                    <span>Cart</span>
+                    <span className="text-lg sm:text-md">Cart</span>
                 </NavLink>
 
             </div>
@@ -495,7 +502,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
             <div className={`w-screen h-screen fixed top-0 left-0 bg-gray-800/80 ${isHamburgerSideBarOpen?"block":"hidden"}`}></div>
 
             {/* hamburger sidebar */}
-            <div className={`h-screen flex fixed gap-0.5 sm:gap-2 top-0 ${isHamburgerSideBarOpen?"left-0":"-left-[150%]"} transition-all ease-in-out duration-300`}>
+            <div className={`h-screen w-full flex fixed gap-0.5 sm:gap-2 top-0 ${isHamburgerSideBarOpen?"left-0":"-left-[150%]"} transition-all ease-in-out duration-300`}>
                 {/* hamburger sidebar content */}
                 <div className="flex flex-col bg-white">
                     {
@@ -504,12 +511,12 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 <span>{loggedInUserName()}</span>
                             </div>
                             :
-                            <NavLink to="/login" className="text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200">
+                            <NavLink to="/login" className="text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200" onClick={hamburgerSideBarToggleHandler}>
                                 <span>Login/Register</span> <BsArrowRight />
                             </NavLink>
                     }
                     <div className="grid grid-cols-3 text-sm sm:text-md">
-                        <NavLink to="/my_profile" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
+                        <NavLink to="/my_profile" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -517,7 +524,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             </div>
                             <div>My Account</div>
                         </NavLink>
-                        <NavLink to="/my_orders" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
+                        <NavLink to="/my_orders" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path d="M15 12h-5"/>
@@ -528,7 +535,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             </div>
                             <div>Your Orders</div>
                         </NavLink>
-                        <NavLink to="/cart" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
+                        <NavLink to="/cart" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
@@ -536,7 +543,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             </div>
                             <div>Your Cart</div>
                         </NavLink>
-                        <NavLink to="/authenticity" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
+                        <NavLink to="/authenticity" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
@@ -545,7 +552,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             </div>
                             <div>Authenticity</div>
                         </NavLink>
-                        <NavLink to="/####" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
+                        <NavLink to="/####" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
@@ -556,7 +563,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             </div>
                             <div>Offers</div>
                         </NavLink>
-                        <NavLink to="/support" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100">
+                        <NavLink to="/support" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
                             <div className="w-min mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                     <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/>
@@ -573,19 +580,19 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                     <div className="flex-1 overflow-x-hidden overflow-y-scroll text-sm sm:text-md">
                         {
                             productsBy[selectedTab].map((iter, ind) => (
-                                <div key={ind} className="flex items-center gap-2 p-3 hover:bg-primary-100 cursor-pointer">
+                                <NavLink to="####" key={ind} className="flex items-center gap-2 p-3 hover:bg-primary-100 cursor-pointer" onClick={hamburgerSideBarToggleHandler}>
                                     <div>O</div><div className="text-gray-500 text-shadow-xs text-shadow-gray-100">{iter}</div>
-                                </div>
+                                </NavLink>
                             ))
                         }
                     </div>
-                    <div className="border border-gray-200 w-full p-4 text-center text-primary-400 tracking-widest font-mono text-shadow-md text-shadow-primary-200/80">
+                    <NavLink to="/" className="border border-gray-200 w-full p-4 text-center text-primary-400 tracking-widest font-mono text-shadow-md text-shadow-primary-200/80" onClick={hamburgerSideBarToggleHandler}>
                         BodyPrime Nutrition
-                    </div>
+                    </NavLink>
                 </div>
                 {/* hamburger sidebar closer */}
-                <div className="">
-                    <button className="size-10 sm:size-15 rounded-full bg-white hover:bg-primary-300 text-primary-500 font-bold" onClick={hamburgerSideBarToggleHandler}>X</button>
+                <div className="flex-1" onClick={hamburgerSideBarToggleHandler}>
+                    <button className="size-10 sm:size-15 rounded-full bg-white hover:bg-primary-300 text-primary-500 font-bold">X</button>
                 </div>
                 
             </div>        
