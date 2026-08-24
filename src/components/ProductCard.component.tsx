@@ -7,7 +7,14 @@ import Spinner from "./Spinner.component";
 import { buttonNames } from "../utils/constants";
 import { IoIosAdd, IoMdArrowDropdown } from "react-icons/io";
 import { BiStar } from "react-icons/bi";
+import { type ProductVariantInterface } from "../utils/types";
 
+export interface ProductVariantOptionsInterface{
+    img:string;
+    description:string;
+    flavor:string; // how to assign type of key of weight to type of flavors array item type
+    variants:{[key:string]:{weight:string; price:number; stock:number;}[]};
+};
 export interface ProductCardPropTypes{
     product:{
         _id:string;
@@ -17,29 +24,55 @@ export interface ProductCardPropTypes{
         price:number;
         rating:number;
         numReviews:number;
-        weight:string;
-        flavor?:string;
         images:string[];
+
+        weight:string;
+        warnings?:string[];
+        tags:string[];
+        variants:string[];
+        //variants:{weight:string; price:number; stock:number;}[][];
+        flavor?:string;
+        //flavors:string[];
     };
     isCartMutating:boolean;
     isBestseller:boolean;
+    isVeg:boolean;
     off?:number;
 };
 
-function ProductCard({product, isCartMutating, isBestseller, off}:ProductCardPropTypes) {
+function ProductCard({product, isCartMutating, isBestseller, off, isVeg}:ProductCardPropTypes) {
     const {wishlistData} = useCart();
-    const {_id:productID, name, brand, category, price, rating, numReviews, weight, flavor, images} = product;
+    const {_id:productID, name, brand, category, price, rating, numReviews, weight, warnings, variants, flavor="unflavored", images} = product;
 
     function isAlreadyWishlisted() {
         const isExist = wishlistData.some((p) => p._id === productID);
         return isExist;
     };
 
+    function sendDataToHomePage () {
+        const variantsTransformed:ProductVariantOptionsInterface["variants"] = {};
+        for (let i = 0; i < variants.length; i++) {
+            const weightVar = variants[i].split("#")[1];
+            const priceVar = Number(variants[i].split("#")[2]);
+            const stockVar = Number(variants[i].split("#")[6]);
+            const flavorVar = variants[i].split("#")[0];
+            if (!variantsTransformed[flavorVar]||variantsTransformed[flavorVar]?.length===0) {
+                variantsTransformed[flavorVar] = [{weight:weightVar, price:priceVar, stock:stockVar}];
+            }else{
+                variantsTransformed[flavorVar].push({weight:weightVar, price:priceVar, stock:stockVar});
+            }
+        }
+        const event = new CustomEvent<ProductVariantOptionsInterface>("myEvent", {detail:{img:images[0], description:`${name} ${brand} ${category}`, flavor, variants:variantsTransformed}});
+        
+        window.dispatchEvent(event);
+    };
+
     return(
-        <div className="flex flex-col gap-2">
-            <div className="border border-gray-200 aspect-square p-4 rounded-2xl relative">
-                <img src="test-category.webp" alt="https://cdn2.nutrabay.com/uploads/variant/images/thumbnail_image-NB-NUT-1102-02-1785321618-200x200.webp"
-                
+        <div className="flex flex-row sm:flex-col gap-2">
+            {/* upper part */}
+            <div className="border border-gray-200 aspect-square p-4 rounded-2xl relative min-w-30">
+                <img src="/test-category.webp" alt="/test-category.webp"
+                    className="mx-auto"
                 />
                 {
                     off &&
@@ -50,8 +83,8 @@ function ProductCard({product, isCartMutating, isBestseller, off}:ProductCardPro
                         <div className="bg-blue-200/80 text-blue-700 absolute -top-0.25 -right-0.25 rounded-tr-2xl rounded-bl-2xl px-3 py-0.25 text-sm">Bestseller</div>
                 }
                 
-                
-                <button className="block text-primary-400 bg-primary-50 w-10.5 h-10.5 absolute -right-1.25 -bottom-1.25 rounded-md grid place-items-center text-2xl group gradient-angle-selectable z-2">
+                {/* buy button for larger devices */}
+                <button className="text-primary-400 bg-primary-50 w-10.5 h-10.5 absolute -right-1.25 -bottom-1.25 rounded-md place-items-center text-2xl group gradient-angle-selectable hidden sm:grid z-2">
 
                     <IoIosAdd className="stroke-20 group-hover:rotate-180 transition-transform ease-in-out duration-300" />
                 </button>
@@ -62,27 +95,36 @@ function ProductCard({product, isCartMutating, isBestseller, off}:ProductCardPro
                     </NavLink>*/}
 
 
-                    {/* Border */}
-                    <div className="w-12 h-12 absolute -right-2 -bottom-2 rounded-lg gradient-angle-target z-1"
-                        style={{
-                            background:"conic-gradient(from var(--gradient-angle), white, var(--primary-500), white)",
-                        }}
-                    ></div>
+                {/* buy button border for larger devices */}
+                <div className="w-12 h-12 absolute -right-2 -bottom-2 rounded-lg gradient-angle-target hidden sm:block z-1"
+                    style={{
+                        background:"conic-gradient(from var(--gradient-angle), white, var(--primary-500), white)",
+                    }}
+                ></div>
                     
                 {/*<button className="border-3 border-primary-400 text-primary-400 bg-primary-50 w-12 h-12 absolute -right-2 -bottom-2 rounded-lg grid place-items-center text-2xl group">
 
                     <IoIosAdd className="stroke-20 group-hover:rotate-180 transition-transform ease-in-out duration-300" />
                 </button>*/}
             </div>
+            {/* lower part */}
             <div className="flex flex-col gap-2 px-2">
+                <div className="text-gray-600 text-md line-clamp-3">Nutrabey Vital Whey Protein Concentrate Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, ipsam!</div>
                 <div className="flex items-center gap-2">
-                    <div className=""><img src="veg_icon.svg" alt="veg_icon.svg" className="size-7" /></div>
+                    <div className="relative group">
+                        <img src={isVeg?"/veg_icon.svg":"/nonveg_icon.svg"} alt={isVeg?"/veg_icon.svg":"/nonveg_icon.svg"} className="size-7" />
+                        <span className="border absolute -bottom-basis left-0 text-xs text-gray-200 bg-gray-700 w-max pt-0.25 pb-0.75 px-1.5 rounded-xs scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all ease-in-out duration-300 delay-300">
+                            {isVeg?"is pure vegiterian":"contain nonveg"}
+                        </span>
+                    </div>
                     <div className="border border-gray-200 rounded-sm flex items-center py-0.25 px-1"><span><BiStar className="text-yellow-400" /></span><span className="text-gray-600">{rating}</span><span className="text-gray-400">({numReviews})</span></div>
                 </div>
-                <div className="border border-gray-200 rounded-sm flex justify-between items-center px-2">
+                <button className="border border-gray-200 rounded-sm flex justify-between items-center px-2 hover:border-gray-400 active:scale-90 transition-transform ease-in-out duration-300"
+                    onClick={()=>sendDataToHomePage()}
+                >
                     <div className="w-[80%] text-nowrap truncate">{weight} (2.2lb), {flavor}</div>
-                    <IoMdArrowDropdown className="" />
-                </div>
+                    <IoMdArrowDropdown className="text-xl" />
+                </button>
                 <div className="flex items-center gap-2">
                     <span className="text-gray-800 font-semibold text-xl">₹{price-((price*(off??0))/100)}</span>
                     {
@@ -94,6 +136,11 @@ function ProductCard({product, isCartMutating, isBestseller, off}:ProductCardPro
                     }
                 </div>
                 <div className="text-sm text-gray-400">₹{price/100}/100g</div>
+                {/* buy button for small devices */}
+                <button className="border border-green-300 text-green-400 bg-green-50 rounded-md flex justify-center items-center gap-1 p-1 sm:hidden">
+                    <span className="text-lg">Add</span>
+                    <IoIosAdd className="text-2xl stroke-5" />
+                </button>
             </div>
         </div>
 
