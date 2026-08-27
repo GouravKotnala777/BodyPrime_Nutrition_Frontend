@@ -1,4 +1,4 @@
-import "../styles/components/components.css";
+//import "../styles/components/components.css";
 
 type fontWeightType = "light"|"medium"|"semibold"|"bold"|"extrabold";
 interface SpinnerPropTypes{
@@ -21,10 +21,10 @@ const FONT_WEIGHT:Record<fontWeightType, number> = {
 function Spinner({width, thickness, type, text, fontSize, fontWeight, color}:SpinnerPropTypes) {
 
     return(
-        <div className="spinner_cont relative" style={{
+        <div className="relative" style={{
 
         }}>
-            <div className="spinner w-full h-full mx-auto"
+            <div className="border rounded-full animate-spin"
                 style={{
                     width:width?width:"20px",
                     height:width?width:"20px",
@@ -33,7 +33,7 @@ function Spinner({width, thickness, type, text, fontSize, fontWeight, color}:Spi
                     ...(type==="secondary"&&{
                         borderBottom:thickness?`${thickness} solid transparent`:"2px solid transparent"
                     }),
-                    ...(color&&{borderColor:color, borderTopColor:"black"})
+                    ...(color&&{borderColor:color, borderTopColor:"transparent"})
                 }}
             >
             </div>
