@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom"
 import { addImages, getSimilarProducts, getSingleProduct } from "../apis/product.api";
 import { type ProductTypes, type ReviewTypesPopulated } from "../utils/types";
@@ -10,11 +10,28 @@ import { BiStar } from "react-icons/bi";
 import { FaArrowLeftLong, FaArrowRightLong, FaShare } from "react-icons/fa6";
 import ProductCard from "../components/ProductCard.component";
 import { GoHeartFill } from "react-icons/go";
-
+const off = 10;
 function SingleProduct() {
     const {productID, variant} = useParams();
     const [images, setImages] = useState<FileList|null>(null);
-    const [singleProduct, setSingleProduct] = useState<ProductTypes|null>(null);
+    const [singleProduct, setSingleProduct] = useState<ProductTypes>({_id:"", brand:"brand1", category:"other", dietaryType:"veg", images:[], name:"Product1", numReviews:0, price:800, rating:0, tags:[],
+        variants:[
+            "Unflavored#1kg#800#veg#''#''#1#''",
+            "Unflavored#100g#80#veg#''#''#0#''",
+            "Unflavored#200g#160#veg#''#''#1#''",
+            "Unflavored#500g#400#veg#''#''#1#''",
+            "Mango Shake#1kg#1000#veg#''#''#1#''",
+            "Mango Shake#100g#100#veg#''#''#1#''",
+            "Mango Shake#200g#200#veg#''#''#0#''",
+            "Mango Shake#500g#500#veg#''#''#1#''",
+            "Pista Badaam#1kg#2100#veg#''#''#1#''",
+            "Pista Badaam#100g#210#veg#''#''#1#''",
+            "Pista Badaam#2kg#4200#veg#''#''#1#''",
+            "Cashue Hazel#1kg#4700#veg#''#''#1#''",
+            "Cashue Hazel#200g#2700#veg#''#''#1#''",
+            "Cashue Hazel#5kg#6800#veg#''#''#1#''",
+        ],
+        weight:"1kg", description:"", flavor:"Unflavored", ingredients:[""], nutritionFacts:{calories:0, carbs:0, fat:0, protein:0, servingSize:"", servingsPerContainer:0}, stock:0, warnings:[]});
     const [allReviews, setAllReviews] = useState<ReviewTypesPopulated[]>([]);
     const [rating, setRating] = useState<number>(0);
     const [comment, setComment] = useState<string>("");
@@ -30,17 +47,64 @@ function SingleProduct() {
     const [sameCategoryProducts, setSameCategoryProducts] = useState<ProductTypes[]>([]);
     const [revealer, setRevealer] = useState<boolean>(false);
     const [isLikeActive, setIsLikeActive] = useState<boolean>(false);
+    const [isAddToCartVisible, setIsAddToCartVisible] = useState<boolean>(false);
+    const addToCartBtnRef = useRef<HTMLButtonElement|null>(null);
+    const [selectedFlavorVariant, setSelectedFlavorVariant] = useState<string>("Unflavored");
+    const [selectedWeightVariant, setSelectedWeightVariant] = useState<{weight:string; index:number;}>({weight:"1kg", index:0});
+    const [productVariantOptions, setProductVariantOptions] = useState<{[key:string]:{flavor:string; weight:string; price:number; stock:number;}[];}>({
+        "Unflavored":[
+            {flavor:"Unflavored", weight:"100g", price:80, stock:1},
+            {flavor:"Unflavored", weight:"200g", price:160, stock:0},
+            {flavor:"Unflavored", weight:"500g", price:400, stock:1},
+            {flavor:"Unflavored", weight:"1kg", price:800, stock:1}
+        ],
+        "Mango Shake":[
+            {flavor:"Mango Shake", weight:"100g", price:100, stock:1},
+            {flavor:"Mango Shake", weight:"200g", price:200, stock:1},
+            {flavor:"Mango Shake", weight:"500g", price:500, stock:0},
+            {flavor:"Mango Shake", weight:"1kg", price:1000, stock:1}
+        ],
+        "Pista Badaam":[
+            {flavor:"Pista Badaam", weight:"100g", price:210, stock:1},
+            {flavor:"Pista Badaam", weight:"1kg", price:2100, stock:1},
+            {flavor:"Pista Badaam", weight:"2kg", price:4200, stock:1}
+        ],
+        "Cashue Hazel":[
+            {flavor:"Cashue Hazel", weight:"200g", price:2700, stock:1},
+            {flavor:"Cashue Hazel", weight:"1kg", price:4700, stock:1},
+            {flavor:"Cashue Hazel", weight:"5kg", price:6800, stock:1}
+        ]
+
+
+    });
+    
 
     async function getSingleProductHandler(signal?:AbortSignal) {
         setDataStatus({isLoading:true, isSuccess:false, error:""});
         if (!productID) return;
         
-        const res = await getSingleProduct(productID, signal);
+        const res = await getSingleProduct({productID}, signal);
         console.log({res});
 
         if (res.success) {
             setSingleProduct(res.jsonData);
             setDataStatus({isLoading:false, isSuccess:true, error:""});
+            setSelectedFlavorVariant(singleProduct.flavor);
+            setSelectedWeightVariant({weight:singleProduct.weight, index:0});
+            const transformedVariantData = singleProduct.variants.reduce((acc, iter) => {
+                const flavor = iter.split("#")[0];
+                const weight = iter.split("#")[1];
+                const price = Number(iter.split("#")[2]);
+                const stock = Number(iter.split("#")[6]);
+                if (!acc[flavor]) {
+                    acc[flavor] = [{flavor, weight, price, stock}];
+                }
+                else{
+                    acc[flavor].push({flavor, weight, price, stock});
+                }                                            
+                return acc;
+            }, {} as {[key:string]:{flavor:string; weight:string; price:number; stock:number;}[];});
+            setProductVariantOptions(transformedVariantData);
         }
         else{
             setDataStatus({isLoading:false, isSuccess:false, error:res.message});
@@ -150,9 +214,9 @@ function SingleProduct() {
     };
 
     async function getProductsVariant() {
-        if (!singleProduct?.brand || !singleProduct?.category) return;
+        if (!singleProduct.brand || !singleProduct.category) return;
 
-        const res = await getSimilarProducts({excludeProductID:singleProduct._id, brand:singleProduct?.brand, category:singleProduct?.category});
+        const res = await getSimilarProducts({excludeProductID:singleProduct._id, brand:singleProduct.brand, category:singleProduct.category});
 
         if (res.success) {
             setVariantProducts(res.jsonData);
@@ -160,9 +224,9 @@ function SingleProduct() {
         }
     };
     async function getProductsWithSameBrand() {
-        if (!singleProduct?.brand) return;
+        if (!singleProduct.brand) return;
 
-        const res = await getSimilarProducts({excludeProductID:singleProduct._id, brand:singleProduct?.brand});
+        const res = await getSimilarProducts({excludeProductID:singleProduct._id, brand:singleProduct.brand});
 
         if (res.success) {
             setSameBrandProducts(res.jsonData);
@@ -170,9 +234,9 @@ function SingleProduct() {
         }
     };
     async function getProductsWithOfCategory() {
-        if (!singleProduct?.category) return;
+        if (!singleProduct.category) return;
 
-        const res = await getSimilarProducts({excludeProductID:singleProduct._id, category:singleProduct?.category});
+        const res = await getSimilarProducts({excludeProductID:singleProduct._id, category:singleProduct.category});
 
         if (res.success) {
             setSameCategoryProducts(res.jsonData);
@@ -198,20 +262,35 @@ function SingleProduct() {
     }, [singleProduct])
     
     useEffect(() => {
-        const findResult = cartData.find(p => p._id === singleProduct?._id);
+        const findResult = cartData.find(p => p._id === singleProduct._id);
         setQuantityInCart(findResult?.quantity||0);
     }, [cartData]);
 
+    useEffect(() => {
+        const addToCartBtn = addToCartBtnRef.current;
+
+        if (!addToCartBtn) return;
+
+        const observer = new IntersectionObserver(([entry]) => {
+            setIsAddToCartVisible(entry.isIntersecting)
+        }, {threshold:0.5});
+
+        observer.observe(addToCartBtn);
+
+        return() => observer.disconnect();
+    }, []);
+
     return (
-        <section className="relative h-[300vh] mt-20 mx-4">
+        <section className="relative h-[300vh] mt-20 mx-1 sm:mx-4">
             {/* left part */}
-            <div className="border border-gray-200 rounded-2xl sticky top-20 left-0 w-[45%] p-4">
+            <div className="sm:border border-gray-200 rounded-2xl block mx-auto sm:mx-0 w-full sm:top-20 sm:left-0 sm:sticky sm:w-[45%] p-4">
                 <div className="relative">
                     <img 
                         src="/test-category.webp" 
                         alt="/test-category.webp"
                         className="mx-auto w-md"
                     />
+                    <div className="bg-green-200/80 text-green-700 absolute -top-0.25 -left-0.25 rounded-tl-2xl rounded-br-2xl px-4 py-0.75 text-md">25% 0ff</div>
                     <div className="w-8 h-8 absolute top-0 right-0"><img src="/veg_icon.svg" alt="/veg_icon.svg" className="w-full" /></div>
                     <button className="border border-gray-200 w-8 h-8 text-xl absolute top-12 right-0 rounded-md grid place-items-center group" onClick={() => setIsLikeActive(!isLikeActive)}><GoHeartFill className={`${isLikeActive?"text-pink-400":"text-gray-200"} group-active:scale-130 transition-all ease-in-out duration-300`} /></button>
                     <button className="border border-gray-200 w-8 h-8 absolute top-24 right-0 rounded-md grid place-items-center text-gray-600"><FaShare/></button>
@@ -219,7 +298,7 @@ function SingleProduct() {
             </div>
 
             {/* right part */}
-            <div className="border border-gray-200 rounded-t-2xl absolute top-0 right-0 w-[51%] flex flex-col gap-3 p-4">
+            <div className="sm:border border-gray-200 rounded-t-2xl w-full sm:absolute sm:top-0 sm:right-0 sm:w-[51%] flex flex-col gap-3 p-4">
                 <div className="flex justify-between text-gray-400">
                     <div>Muscletech</div>
                     <div className="flex items-center gap-2">
@@ -233,10 +312,10 @@ function SingleProduct() {
                         <div>(104)</div>
                     </div>
                 </div>
-                <div className="text-gray-700 text-xl font-semibold">MuscleTech Nitrotech Whey Protein - 907 g (2 lb), Cappuccino</div>
+                <div className="text-gray-700 text-xl font-semibold">{singleProduct.name} - {selectedWeightVariant.weight} (2 lb), {selectedFlavorVariant}</div>
                 <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2"><div className="text-3xl text-gray-800"><span>₹</span><span className="font-semibold">4499</span></div><span className="text-gray-600">(inclusive of all taxes, Free Delivery)</span></div>
-                    <div className="text-gray-500"><span>MRP:</span><span className="line-through">4799</span> <span className="text-gray-600">Save : ₹300 (6% Off)</span></div>
+                    <div className="flex items-center gap-2"><div className="text-3xl text-gray-800"><span>₹</span><span className="font-semibold">{Math.floor((productVariantOptions[selectedFlavorVariant][0].price)-(((productVariantOptions[selectedFlavorVariant][0].price)*(Number(off??0)))/100))}</span></div><span className="text-gray-600">(inclusive of all taxes, Free Delivery)</span><span className="border border-blue-200 bg-blue-50 text-blue-700 px-3 py-0.5 text-sm rounded-sm">Bestseller</span></div>
+                    <div className="text-gray-500"><span>MRP:</span><span className="line-through">{productVariantOptions[selectedFlavorVariant][0].price}</span> <span className="text-gray-600">Save : ₹{singleProduct.price - Math.floor((productVariantOptions[selectedFlavorVariant][0].price)-(((productVariantOptions[selectedFlavorVariant][0].price)*(Number(off??0)))/100))} ({off}% Off)</span></div>
                     <div className="text-green-600 flex items-center gap-2">
                         <div>In Stock</div>
                         <div className="w-2 h-2 relative">
@@ -251,7 +330,7 @@ function SingleProduct() {
                                 relative w-full h-full overflow-hidden pointer-events-auto
                                 "opacity-100"
                             `}>
-                                <button className={`
+                                <button ref={addToCartBtnRef} className={`
                                     border border-green-300 bg-green-300 text-center content-center h-full w-full rounded-lg
                                     transition-all ease-in-out duration-300 hover:opacity-50
                                 `}
@@ -266,37 +345,48 @@ function SingleProduct() {
                        </div>
                     </div>
                 </div>
+                {/* flavors & weights */}
                 <div>
                     {/* flavors */}
                     <div className="py-1">
-                        <div className="text-gray-400 text-lg font-semibold py-1 mt-2">Flavor</div>
-                        <div className="relative">
-                            <div className="py-2 overflow-x-scroll scrollbar-thin fog-x">
-                                <div className="flex gap-4 group">
+                        <div className="py-1 mt-2">
+                            <span className="text-gray-500">Flavor : </span>
+                            <span className="text-gray-600">{selectedFlavorVariant}</span>
+                        </div>
+                        <div className="">
+                            <div className="py-2 overflow-x-scroll w-full sm:scrollbar-thin">
+                                <div className="w-max flex gap-4 group">
                                     {/* only to give leftmost space */}
                                     <div className={`
                                         shrink-0 w-10 opacity-25 pointer-events-none
                                         hover:scale-95
                                         content-center
-                                    `}><FaArrowLeftLong className="ml-auto group-hover:-translate-x-2 transition-all ease-in-out duration-300" /></div>
+                                    `}><FaArrowLeftLong className="ml-auto group-hover:-translate-x-2 transition-all ease-in-out duration-300"
+                                            style={{
+                                                animation:"left-arrow-flow 2s ease-in infinite",
+                                            }}
+                                        /></div>
 
                                     {/* flavor items */}
                                     {
-                                        Array.from({length:8}).map((_, flvr) => (
-                                            <button key={flvr} className={`
-                                                border px-2 py-1 rounded-sm shrink-0
-                                                
-                                            border-gray-300 bg-gray-50 text-gray-500
-                                                hover:scale-95 transition-all ease-in-out duration-300
-                                            `}>Chocolate Milk</button>
+                                        singleProduct.variants.reduce((acc, iter) => {
+                                            const flavor = iter.split("#")[0];
+                                            if (!acc.includes(flavor) ) {
+                                                acc.push(flavor);
+                                            }
+                                            return acc;
+                                        }, [] as string[]).map((flvr, index) => (
+                                            <button key={flvr} disabled={productVariantOptions[flvr][0].stock===0}
+                                                className={`
+                                                    border px-2 py-1 rounded-sm
+                                                    ${productVariantOptions[flvr][0].stock===0&&"border-dashed opacity-50"}
+                                                    ${selectedFlavorVariant===flvr?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
+                                                    hover:scale-95 transition-all ease-in-out duration-300
+                                                `}
+                                                onClick={()=>{setSelectedFlavorVariant(flvr); setSelectedWeightVariant({weight:"", index:0})}}
+                                            >{flvr}</button>
                                         ))
                                     }
-                                    {/* only to give rightmost space */}
-                                    <div className={`
-                                        shrink-0 w-15 opacity-25 pointer-events-none
-                                        hover:scale-95 transition-all ease-in-out duration-300
-                                        content-center
-                                    `}><FaArrowRightLong className="group-hover:translate-x-2 transition-all ease-in-out duration-300" /></div>
                                 </div>
                             </div>
                         </div>
@@ -304,57 +394,66 @@ function SingleProduct() {
 
                     {/* weights */}
                     <div className="py-1">
-                        <div className="text-gray-400 text-lg font-semibold py-1 mt-2">Weight</div>
-                        <div className="relative">
-                            <div className="py-2 overflow-x-scroll scrollbar-thin fog-x">
-                                <div className="flex gap-4 group">
+                        <div className="py-1 mt-2">
+                            <span className="text-gray-500">Weight : </span>
+                            <span className="text-gray-600">{selectedWeightVariant.weight} (0.88lb)</span>
+                        </div>
+                        <div className="">
+                            <div className="py-2 overflow-x-scroll sm:scrollbar-thin">
+                                <div className="w-max flex gap-4 group">
 
                                     {/* only to give leftmost space */}
                                     <div className={`
                                         shrink-0 w-10 opacity-25 pointer-events-none
                                         hover:scale-95 transition-all ease-in-out duration-300
                                         content-center
-                                    `}><FaArrowLeftLong className="ml-auto group-hover:-translate-x-2 transition-all ease-in-out duration-300" /></div>
+                                    `}><FaArrowLeftLong className="ml-auto group-hover:-translate-x-2 transition-all ease-in-out duration-300"
+                                            style={{
+                                                animation:"left-arrow-flow 2s ease-in infinite",
+                                            }}  
+                                        /></div>
                                     
                                     {/* weight items */}
                                     {
-                                        Array.from({length:8}).map((_, index) => (
+                                        productVariantOptions[selectedFlavorVariant].map(({flavor, weight, price, stock}, index) => (
                                             <button
                                                 key={index}
-                                                //disabled={stock===0}
+                                                disabled={stock===0}
                                                 className={`
                                                     border
-                                                    
+                                                    ${stock===0&&"border-dashed opacity-50"}
+                                                    ${selectedWeightVariant.weight===weight?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
                                                     border-gray-300 bg-gray-50 text-gray-500 shrink-0
                                                     text-left rounded-sm overflow-hidden hover:scale-95 transition-all ease-in-out duration-300
                                                     `}
-                                                onClick={()=>{}}
+                                                onClick={()=>setSelectedWeightVariant({weight, index})}
                                             >
-                                                <div className={`border-b p-2 border-b-gray-300`}>2kg (1.1 lb)</div>
+                                                <div className={`border-b p-2 border-b-gray-300`}>{weight} (1.1 lb)</div>
                                                 <div className="bg-white p-2">
                                                     <div>
-                                                        <span className="text-gray-700 text-xl font-semibold">₹4799</span><span className="text-gray-500 text-sm"> (₹360/100g)</span>
+                                                        <span className="text-gray-700 text-xl font-semibold">₹{price}</span><span className="text-gray-500 text-sm"> ₹(
+                                                            {
+                                                            (((productVariantOptions[selectedFlavorVariant][0].price)/
+                                                            (
+                                                                (weight.includes("kg"))?(Number(weight.slice(0,-2))*1000):(Number(weight.slice(0,-1)))
+                                                            )))*100
+                                                            }
+                                                            /100g)</span>
                                                     </div>
                                                     <div className="text-gray-400 text-sm">Save ₹100</div>
                                                 </div>
                                             </button>
                                         ))
                                     }
-
-                                    {/* only to give rightmost space */}
-                                    <div className={`
-                                        shrink-0 w-15 opacity-25 pointer-events-none
-                                        hover:scale-95 transition-all ease-in-out duration-300
-                                        content-center
-                                    `}><FaArrowRightLong className="group-hover:translate-x-2 transition-all ease-in-out duration-300" /></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                {/* you may also like */}
                 <div className="">
                     <div className="text-lg my-3">You May Also Like</div>
-                    <div className="overflow-x-scroll scrollbar-thin pb-4">
+                    <div className="overflow-x-scroll sm:scrollbar-thin pb-4">
                         <div className="flex gap-4">
                             {
                                 [1,2,3,4,5].map((iter) => (
@@ -371,6 +470,7 @@ function SingleProduct() {
                         </div>
                     </div>
                 </div>
+                {/*  */}
                 <div className="">
                     <div className="text-lg my-3">Details</div>
                     <div className="flex flex-col gap-4">
@@ -380,8 +480,8 @@ function SingleProduct() {
                                     iter.heading?
                                     (
                                         <div className="bg-gray-100 py-5 text-center shrink-0 basis-1/3">
-                                            <div className="text-gray-600 text-lg font-semibold">{iter.heading}</div>
-                                            <div className="text-gray-500">{iter.para}</div>
+                                            <div className="text-gray-600 text-md sm:text-lg font-semibold">{iter.heading}</div>
+                                            <div className="text-gray-500 text-sm sm:text-md">{iter.para}</div>
                                         </div>
                                     )
                                     :
@@ -420,22 +520,26 @@ function SingleProduct() {
                                 [1,2,3,4,5,6,7,8,9,10].map((iter) => (
                                     <img src="/test-category.webp"
                                         alt="/test-category.webp"
-                                        className="max-w-40 rounded-lg"
+                                        className="max-w-6040 rounded-lg"
                                     />
                                 ))
                             }
                         </div>
                     </div>
                 </div>
-                <div className="">
-                    <div className="text-lg my-3">Ratings & Reviews</div>
+                {/* ratings and reviews */}
+                <div className="flex flex-col gap-10 mb-30">
+                    <div className="flex justify-between items-center mt-6">
+                        <div className="text-lg">Ratings & Reviews</div>
+                        <button className="bg-linear-90 from-blue-200 via-blue-50 to-blue-200 text-blue-600 py-1 px-4 rounded-sm">Rate Product</button>
+                    </div>
                     <div className="flex justify-around items-center">
                         <div className="w-max">
                             <div className="text-gray-700 text-2xl font-semibold flex gap-1 items-end w-max mx-auto"><span className="">4.6</span>/<span className="text-lg">5</span></div>
                             <div className="flex gap-1 text-yellow-400 w-max mx-auto"><BiStar /><BiStar /><BiStar /><BiStar /><BiStar /></div>
                             <div className="text-gray-500">291 Ratings & 104 Reviews</div>
                         </div>
-                        <div className="">
+                        <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-2">
                                 <span className="flex items-center text-green-500 text-xs">5 <BiStar className="size-2.5" /></span>
                                 <div className="w-30 relative rounded-2xl overflow-hidden">
@@ -479,6 +583,28 @@ function SingleProduct() {
                         </div>
                     </div>
                 </div>
+
+                {/* dynamic bottom label */}
+                <div className={`bg-white fixed right-0 ${isAddToCartVisible?"-bottom-full":"bottom-0"} sm:mr-4 w-full sm:w-[49.8%] flex justify-between sm:rounded-md items-center py-3 px-4 [box-shadow:0px_0px_6px_0.5px_var(--color-gray-300)] transition-all ease-in-out duration-300 z-2`}>
+                    <div>
+                        <div className="flex items-center gap-2"><div className="text-3xl text-gray-800"><span>₹</span><span className="font-semibold">{Math.floor((productVariantOptions[selectedFlavorVariant][0].price)-(((productVariantOptions[selectedFlavorVariant][0].price)*(Number(off??0)))/100))}</span></div><span className="text-gray-600 hidden sm:inline">(inclusive of all taxes, Free Delivery)</span></div>
+                        <div className="text-gray-500"><span>MRP:</span><span className="line-through">{productVariantOptions[selectedFlavorVariant][0].price}</span> <span className="text-gray-600 hidden sm:inline">Save : {singleProduct.price - Math.floor((productVariantOptions[selectedFlavorVariant][0].price)-(((productVariantOptions[selectedFlavorVariant][0].price)*(Number(off??0)))/100))} ({off}% Off)</span></div>
+                    </div>
+                    <div className="h-11 w-full max-w-50">
+                        <button className={`
+                            border border-green-300 bg-green-300 text-center content-center h-full w-full rounded-md
+                            transition-all ease-in-out duration-300 hover:opacity-50
+                        `}
+                            
+                            onClick={()=>{
+                                
+                            }}
+                        >
+                            Add to Cart
+                        </button>
+                        {/*<button className="bg-yellow-400 text-gray-800 px-4 py-2 rounded-md min-w-50 w-full">Add to Cart</button>*/}
+                    </div>
+                </div>
             </div>
         </section>
         //<HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error}
@@ -492,25 +618,25 @@ function SingleProduct() {
         //        </>
         //    }
         //>
-        //    <section className="max-w-2xl mx-auto">
+        //    <section className="max-w-602xl mx-auto">
         //        <div className="flex justify-between items-center py-2 px-2 bg-[#f4476a24]">
         //            <div className="flex items-center gap-5">
         //                <div>
         //                    <ImageWithFallback
-        //                        src={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images}`}
-        //                        alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct?.images}`}
+        //                        src={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct.images}`}
+        //                        alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct.images}`}
         //                        fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
         //                        className="w-[50px] h-[50px]"
         //                    />
         //                </div>
         //                <div className="flex flex-col">
-        //                    <span className="text-[1rem] font-semibold">{singleProduct?.brand}</span>
-        //                    <span className="text-[0.9rem]">{singleProduct?.name}</span>
+        //                    <span className="text-[1rem] font-semibold">{singleProduct.brand}</span>
+        //                    <span className="text-[0.9rem]">{singleProduct.name}</span>
         //                </div>
         //            </div>
-        //            <div className="text-[1rem] flex gap-2"><span>{singleProduct?.rating}</span> <RatingStars rating={singleProduct?.rating||0} outOf={5} /> ({singleProduct?.numReviews})</div>
+        //            <div className="text-[1rem] flex gap-2"><span>{singleProduct.rating}</span> <RatingStars rating={singleProduct.rating||0} outOf={5} /> ({singleProduct.numReviews})</div>
         //        </div>
-        //        <p className="text-gray-700 px-2 font-semibold">{singleProduct?.brand} {singleProduct?.name} {singleProduct?.category} ({singleProduct?.flavor}, {singleProduct?.weight}) - {singleProduct?.description}</p>
+        //        <p className="text-gray-700 px-2 font-semibold">{singleProduct.brand} {singleProduct.name} {singleProduct.category} ({singleProduct.flavor}, {singleProduct.weight}) - {singleProduct.description}</p>
 
         //        <ImageSliderWithPreview singleProduct={singleProduct} />
 
@@ -607,9 +733,9 @@ function SingleProduct() {
                 
         //        <ProductsSlider heading="Other variants" products={variantProducts} />
                 
-        //        <ProductsSlider heading={`Other products of ${singleProduct?.brand}`} products={sameBrandProducts} />
+        //        <ProductsSlider heading={`Other products of ${singleProduct.brand}`} products={sameBrandProducts} />
                
-        //        <ProductsSlider heading={`${capitalizeString(singleProduct?.category)} from other brands`} products={sameCategoryProducts} />
+        //        <ProductsSlider heading={`${capitalizeString(singleProduct.category)} from other brands`} products={sameCategoryProducts} />
 
 
 
