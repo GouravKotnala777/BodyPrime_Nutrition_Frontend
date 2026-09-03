@@ -49,76 +49,53 @@ function RatingFormModal() {
         window.addEventListener("toggleReviewCard", receiveRatingFormModalEvent);
         return() => window.removeEventListener("toggleReviewCard", receiveRatingFormModalEvent);
     }, []);
+    useEffect(() => {
+        document.body.style.overflow = ratingFormModalEventData.isReviewCardOpen ? "hidden" : "auto";
+    }, [ratingFormModalEventData]);
     
     return(
-        <div className={`fixed top-0 left-0 w-full h-full bg-black/70 grid place-items-center ${ratingFormModalEventData.isReviewCardOpen?"scale-y-100 opacity-100":"scale-y-0 opacity-0"} z-100`}>
-            <div className="bg-white w-md h-md p-4 rounded-xl relative">
-                <button className="bg-white text-gray-700 w-min py-2.5 px-4.5 rounded-md absolute -top-14 right-0 hover:bg-red-500/70 hover:text-white transition-all ease-out duration-200" onClick={closeRatingFormModal}>X</button>
+        <div className={`fixed top-0 left-0 w-full h-full bg-black/70 grid place-items-center ${ratingFormModalEventData.isReviewCardOpen?"scale-y-100 opacity-100":"scale-y-0 opacity-0"} z-100`}
+            onClick={closeRatingFormModal}
+        >
+            <div className="bg-white w-full max-w-md h-md p-4 rounded-xl relative" onClick={(e) => e.stopPropagation()}>
+                <button className="bg-white text-gray-700 w-min py-2.5 px-4.5 rounded-md hidden sm:inline absolute -top-14 right-0 hover:bg-red-500/70 hover:text-white transition-all ease-out duration-75" onClick={closeRatingFormModal}>X</button>
                 <div className="flex gap-4">
                     <div className="w-full text-lg font-semibold text-center py-2">Give Review</div>
                 </div>
                 {/* stars hovering and selected */}
                 <div className="flex text-5xl justify-center my-2 py-2">
                     {
-                        Array.from({length:5}).map((_,num) => {
-                            if ((rating > 0) && (rating-num > 0)) {
-                                return <span className=""
-                                    key={num}
-                                    onClick={() => (rating === num+1) ? setRating(0) : setRating(num+1)}
-                                    onMouseEnter={() => setHoveringStarIndex(num+1)}
-                                    onMouseLeave={() => setHoveringStarIndex(0)}
-                                ><BiSolidStar
-                                    className={`
-                                        ${num<rating && "text-yellow-400"}
-                                        scale-70
-                                        transition-all ease-out duration-500
-                                    `}
-                                    style={{
-                                        transform:
-
-                                        hoveringStarIndex===(0) ?
-                                            `translate(0,0px)`
+                        Array.from({length:5}).map((_,num) => (
+                            <span className=""
+                                key={num}
+                                onClick={() => (rating === num+1) ? setRating(0) : setRating(num+1)}
+                                onMouseEnter={() => setHoveringStarIndex(num+1)}
+                                onMouseLeave={() => setHoveringStarIndex(0)}
+                            ><BiSolidStar
+                                className={`
+                                    ${(rating > 0) && (rating-num > 0) ?
+                                        num<rating && "text-yellow-400"
+                                        :
+                                        num<hoveringStarIndex ? "text-primary-400":"text-gray-300"
+                                    }
+                                    ${hoveringStarIndex===(0) ?
+                                        "sm:translate-y-0"
+                                        :
+                                        hoveringStarIndex===(num+1) ?
+                                            "sm:-translate-y-5"
                                             :
-                                            hoveringStarIndex===(num+1) ?
-                                                `translate(0,-20px)`
+                                            (hoveringStarIndex===(num) || hoveringStarIndex===(num+2)) ?
+                                                "sm:-translate-y-2.5"
                                                 :
-                                                (hoveringStarIndex===(num) || hoveringStarIndex===(num+2)) ?
-                                                `translate(0,-10px)`
-                                                :
-                                                `translate(0,0)`
-                                    }}
-                                    
-                                /></span>
-                            }else{
-                                return <span className=""
-                                    key={num}
-                                    onClick={() => (rating === num+1) ? setRating(0) : setRating(num+1)}
-                                    onMouseEnter={() => setHoveringStarIndex(num+1)}
-                                    onMouseLeave={() => setHoveringStarIndex(0)}
-                                ><BiSolidStar
-                                    className={`
-                                        ${num<hoveringStarIndex ? "text-primary-400":"text-gray-300"}
-                                        scale-70
-                                        transition-all ease-out duration-500
-                                    `}
-                                    style={{
-                                        transform:
-
-                                        hoveringStarIndex===(0) ?
-                                            `translate(0,0px)`
-                                            :
-                                            hoveringStarIndex===(num+1) ?
-                                                `translate(0,-20px)`
-                                                :
-                                                (hoveringStarIndex===(num) || hoveringStarIndex===(num+2)) ?
-                                                `translate(0,-10px)`
-                                                :
-                                                `translate(0,0)`
-                                    }}
-                                    
-                                /></span>
-                            }
-                        })
+                                                "sm:translate-y-0"
+                                    }
+                                    scale-70 transition-all ease-out duration-500
+                                `}
+                                
+                            /></span>
+                        ))
+                            
+                        
                     }
                 </div>
                 {/* comment field */}
