@@ -30,10 +30,11 @@ function Spinner({width, thickness, type, text, fontSize, fontWeight, color}:Spi
                     height:width?width:"20px",
                     border:thickness?`${thickness} solid #f44769`:"2px solid #f44769",
                     borderTop:thickness?`${thickness} solid transparent`:"2px solid transparent",
+                    ...(color&&{borderColor:color, borderTopColor:"transparent"}),
                     ...(type==="secondary"&&{
                         borderBottom:thickness?`${thickness} solid transparent`:"2px solid transparent"
-                    }),
-                    ...(color&&{borderColor:color, borderTopColor:"transparent"})
+                    })
+                    
                 }}
             >
             </div>
