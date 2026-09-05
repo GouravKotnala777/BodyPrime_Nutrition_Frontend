@@ -1,4 +1,4 @@
-import type { CartTypesFlatted, CartTypesPopulated } from "./types";
+import type { CartTypesFlatted, CartTypesPopulated, WishlistTypesFlatted, WishlistTypesPopulated } from "./types";
 import toast from "react-hot-toast";
 
 interface APIHandlerTypes<BodyType> {
@@ -33,23 +33,41 @@ export async function apiHandler <BodyType, JsonResType>({endpoint, method, cont
 };
 
 export function transformCartDataForRes(cartData:CartTypesPopulated) {
-    const transformedCartData = cartData.products.reduce((acc, {productID, quantity}) => {
+    const transformedCartData = cartData.products.reduce((acc, {productID, variant, quantity}) => {
         acc.products.push({
             _id:productID._id,
             name:productID.name,
             brand:productID.brand,
             category:productID.category,
             price:productID.price,
-            size:productID.size,
             weight:productID.weight,
             flavor:productID.flavor,
             images:productID.images,
-            quantity
+            dietaryType:productID.dietaryType,
+            quantity,
+            variant
         });
         return acc;
     }, {userID:"", products:[], totalPrice:0} as CartTypesFlatted);
+    return transformedCartData;
+};
+export function transformWishlistDataForRes(wishlistData:WishlistTypesPopulated) {
+    const transformedCartData = wishlistData.products.reduce((acc, {productID, variant}) => {
+        acc.products.push({
+            _id:productID._id,
+            name:productID.name,
+            brand:productID.brand,
+            category:productID.category,
+            price:productID.price,
+            weight:productID.weight,
+            flavor:productID.flavor,
+            images:productID.images,
+            dietaryType:productID.dietaryType,
+            variant
+        });
+        return acc;
+    }, {userID:"", products:[]} as WishlistTypesFlatted);
 
-    console.log(transformedCartData);
     return transformedCartData;
 };
 
@@ -73,3 +91,15 @@ export const capitalizeString = (str?:string) => {
     if (!str) return "word is undefined";
     return str.charAt(0).toUpperCase()+str.slice(1);
 };
+export function converKgtolbs(weight:string) {
+    // abhi conditions for weight input reh rahe hai
+    const doesContainKG = weight.includes("kg");
+    let value = 0;
+    if (doesContainKG) {
+        value = Number(weight.slice(0,-2));
+    }
+    else{
+        value = Number(weight.slice(0,-1));            
+    }
+    return (value*2.20462).toFixed(1);
+}
