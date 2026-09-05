@@ -16,13 +16,13 @@ export async function getCart() {
         throw error;
     }
 };
-export async function addToCart({productID, quantity}:{productID:string; quantity:number;}) {
+export async function addToCart({productID, variant, quantity}:{productID:string; variant:string; quantity:number;}) {
     try {
-        const data = await apiHandler<{productID:string; quantity:number;}, {products:ProductTypes; quantity:number;}>({
+        const data = await apiHandler<{productID:string; variant:string; quantity:number;}, {products:ProductTypes; variant:string; quantity:number;}>({
             endpoint:"/cart/add_to_cart",
             method:"POST",
             contentType:"application/json",
-            body:{productID, quantity}
+            body:{productID, variant, quantity}
         });
         toastHandler(data);
         return data;
@@ -32,13 +32,13 @@ export async function addToCart({productID, quantity}:{productID:string; quantit
         throw error;
     }
 };
-export async function removeFromCart({productID, quantity}:{productID:string; quantity:number;}) {
+export async function removeFromCart({productID, variant, quantity}:{productID:string; variant:string; quantity:number;}) {
     try {
-        const data = await apiHandler<{productID:string; quantity:number;}, {products:string; quantity:number;}>({
+        const data = await apiHandler<{productID:string; variant:string; quantity:number;}, {products:string; variant:string; quantity:number;}>({
             endpoint:"/cart/remove_from_cart",
             method:"POST",
             contentType:"application/json",
-            body:{productID, quantity}
+            body:{productID, variant, quantity}
         });
         toastHandler(data);
         return data;
