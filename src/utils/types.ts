@@ -28,7 +28,7 @@ export interface ProductVariantInterface{
     images?: string[];
     dietaryType:"veg"|"nonveg"|"vegan";
     tags:string[];
-}
+};
 export interface ProductTypes {
     _id:string;
     name:string;
@@ -51,6 +51,7 @@ export interface ProductTypes {
         calories?: number;
     };
     rating: number;
+    avgRating:number;
     numReviews: number;
     dietaryType:"veg"|"nonveg"|"vegan";
     flavor:string;
