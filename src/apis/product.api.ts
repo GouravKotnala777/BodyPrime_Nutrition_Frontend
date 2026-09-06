@@ -57,7 +57,7 @@ export async function getSimilarProducts({excludeProductID, brand, category}:{ex
     }
 };
 
-export async function getSingleProduct(productID:string, signal?:AbortSignal) {
+export async function getSingleProduct({productID}:{productID:string;}, signal?:AbortSignal) {
     try {
         const data = await apiHandler<null, ProductTypes>({
             endpoint:`/product/single_product/${productID}`,
@@ -114,6 +114,22 @@ export async function updateProduct(formData:UpdateProductFormTypes, productID:s
     try {
         const data = await apiHandler<UpdateProductFormTypes, ProductTypes>({
             endpoint:`/product/update_product?productID=${productID}`,
+            method:"PUT",
+            contentType:"application/json",
+            body:formData
+        });
+        toastHandler(data);
+        return data;
+    } catch (error) {
+        console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
+        throw error;
+    }
+};
+export async function addProductVariant(formData:UpdateProductFormTypes, productID:string) {
+    try {
+        const data = await apiHandler<UpdateProductFormTypes, ProductTypes>({
+            endpoint:`/product/add_variant?productID=${productID}`,
             method:"PUT",
             contentType:"application/json",
             body:formData
