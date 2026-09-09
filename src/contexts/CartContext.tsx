@@ -9,7 +9,7 @@ interface CartContextPropTypes{
     setWishlistData:Dispatch<SetStateAction<WishlistTypes[]>>
     addToLocalCart:(product:LocalCartTypes)=>void;
     fetchLocalCartProducts:()=>LocalCartTypes[];
-    removeProductFromLocalCart:({_id, quantity}:{_id:string; quantity:number;})=>void;
+    removeProductFromLocalCart:({_id, variant, quantity}:{_id:string; variant:string; quantity:number;})=>void;
     changeLocalCartProductQuantity:(e:(MouseEvent<HTMLButtonElement>|ChangeEvent<HTMLInputElement>), productId:string)=>void;
     clearLocalCart:()=>void;
     calculateTotalCartItems:()=>number;
@@ -33,17 +33,17 @@ export function CartProvider({children}:{children:ReactNode;}) {
         return cart;
     };
 
-    function addToLocalCart({_id, name, brand, category, price, quantity, size, weight, flavor, images}:LocalCartTypes) {
+    function addToLocalCart({_id, name, brand, category, price, quantity, weight, flavor, images, variant}:LocalCartTypes) {
         try {
             const localStorageCartData = JSON.parse(localStorage.getItem("cart")||"[]") as LocalCartTypes[];
 
-            const isProductExist = localStorageCartData.find((p) => p._id === _id);
+            const isProductExist = localStorageCartData.find((p) => (p._id === _id && p.variant === variant));
 
             if (isProductExist) {
                 isProductExist.quantity+=quantity;
             }
             else{
-                localStorageCartData.push({_id, name, brand, category, price, quantity, size, weight, flavor, images});
+                localStorageCartData.push({_id, name, brand, category, price, quantity, weight, flavor, images, variant});
             }
             
             localStorage.setItem("cart", JSON.stringify(localStorageCartData));
@@ -54,10 +54,10 @@ export function CartProvider({children}:{children:ReactNode;}) {
         }
     };
 
-    function removeProductFromLocalCart({_id, quantity}:{_id:string; quantity:number;}) {
+    function removeProductFromLocalCart({_id, variant, quantity}:{_id:string; variant:string; quantity:number;}) {
         
         setCartData((prev) => {
-            const selectedProduct = prev.find((product) => product._id === _id);
+            const selectedProduct = prev.find((product) => (product._id === _id && product.variant === variant));
             if (!selectedProduct) {
                 console.warn("selectedProduct not found");                
                 return prev;
@@ -65,7 +65,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
             
             let updatedCart;
             if (selectedProduct.quantity > quantity) {
-                updatedCart = prev.map((product) => product._id === _id ?
+                updatedCart = prev.map((product) => (product._id === _id && product.variant === variant) ?
                 {...product, quantity:product.quantity-quantity}
                 :
                 product);
@@ -81,6 +81,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
         });
     };
 
+    // isko vaiant ke hissab se update karna hai abhi nahi kiya
     function changeLocalCartProductQuantity(e:(MouseEvent<HTMLButtonElement>|ChangeEvent<HTMLInputElement>), productId:string) {
         const eventName = e.currentTarget.name;
         let eventValue = e.currentTarget.value;
@@ -137,7 +138,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
     
     function calculateTotalCartValue() {
         return cartData.reduce((acc, iter) => {
-            acc += (iter.price * iter.quantity);
+            acc += (Number(iter.variant.split("#")[3]) * iter.quantity);
             return acc;
         }, 0);
     };
