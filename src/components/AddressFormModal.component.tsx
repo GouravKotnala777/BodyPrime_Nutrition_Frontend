@@ -1,7 +1,8 @@
-import { useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import type { UserTypes } from "../utils/types";
 
 function AddressFormModal() {
+    const [isAddressFormModalOpen, setIsAddressFormModalOpen] = useState<boolean>(false);
     const [addressFormData, setAddressFormData] = useState({});
     const [userFormData, setUserFormData] = useState<Pick<UserTypes, "name"|"email"|"mobile">>({name:"", email:"", mobile:""});
 
@@ -21,12 +22,38 @@ function AddressFormModal() {
             (err) => {console.log(err);},
         )
     };
+    function closeAddressFormModal() {
+        setIsAddressFormModalOpen(false);
+    };
+    function receiveAddressFormModalEvent(event:Event) {
+        const eventData = (event as CustomEvent<{isAddressFormModalOpen:boolean;}>).detail; // it will be true always whenever event emits it sends {isAddressFormModalOpen:true} (for open modal don't have access to close it) not false so i think property name is not appropriate
+        setIsAddressFormModalOpen(eventData.isAddressFormModalOpen);
+    };
+
+    useEffect(() => {
+        window.addEventListener("toggleAddressFormModal", receiveAddressFormModalEvent);
+
+        return() => window.removeEventListener("toggleAddressFormModal", receiveAddressFormModalEvent);
+    }, []);
+
+    useEffect(() => {
+        document.body.style.overflow = isAddressFormModalOpen ? "hidden" : "auto";
+    }, [isAddressFormModalOpen]);
 
     return(
-        <div className="border border-red-500 bg-black/70 fixed top-0 left-0 w-full h-full grid place-items-end sm:place-items-center">
-            <div className="border border-violet-500 bg-white w-full sm:max-w-110 mt-0 sm:mt-10 p-4 rounded-t-xl sm:rounded-xl">
+        <div className={`border border-red-500 bg-black/70 fixed top-0 left-0 w-full h-full grid place-items-end sm:place-items-center ${isAddressFormModalOpen?"scale-y-100 opacity-100":"scale-y-0 opacity-0"}`}
+            onClick={closeAddressFormModal}
+        >
+            <div className="border border-violet-500 bg-white w-full sm:max-w-110 mt-0 sm:mt-10 p-4 rounded-t-xl sm:rounded-xl"
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div>
-                    <div className="text-gray-400 font-semibold mb-2">Enter address details</div>
+                    <div className="flex justify-between items-center">
+                        <div className="text-gray-400 font-semibold">Enter address details</div>
+                        <button className="border border-red-100 text-red-500 bg-red-50 hover:bg-red-300 hover:text-red-50 font-semibold text-sm rounded-md w-8 h-8 mb-2 transition-colors ease-in duration-75"
+                            onClick={closeAddressFormModal}
+                        >X</button>
+                    </div>
                     <div>
                         <input type="text" name="address1" placeholder="Flat, House no, Building, Apartment..."
                             className="ring-1 ring-gray-200 w-full my-2 px-3 py-2 rounded-md"
