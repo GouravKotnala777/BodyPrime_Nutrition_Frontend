@@ -274,6 +274,21 @@ body {
     opacity: 0;
   }
 }
+
+@keyframes up-down-dot-loading{
+  0%{
+    transform: translate(0px, 0px);
+  }
+  33%{
+    transform: translate(0px, 4px);
+  }
+  66%{
+    transform: translate(0px, -4px);
+  }
+  100%{
+    transform: translate(0px, 0px);
+  }
+}
 /*.cart-parent:hover{
   --cart-x:200px;
   --cart-y:200px;
