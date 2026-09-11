@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 
 
 interface RangeInputInterface{
@@ -10,6 +10,10 @@ interface RangeInputInterface{
     maxValue:number;
     thumbSize?:"xxs"|"xs"|"sm"|"md"|"lg"|"xl";
     rangeThickness?:"xs"|"sm"|"md"|"lg"|"xl";
+    onChangeHandlers:{
+        minChangeHandler?(e:ChangeEvent<HTMLInputElement>):void;
+        maxChangeHandler?(e:ChangeEvent<HTMLInputElement>):void;
+    }
 };
 
 const applyThumbSize = {
@@ -31,7 +35,8 @@ const applyRangeThickness = {
 
 function RangeInput({
     minState, setMinState, maxState, setMaxState, minValue, maxValue,
-    thumbSize="md", rangeThickness="md"
+    thumbSize="md", rangeThickness="md",
+    onChangeHandlers
 
 }:RangeInputInterface) {
 
@@ -56,6 +61,7 @@ function RangeInput({
 
                 {/* Minimum thumb */}
                 <input
+                name="minPrice"
                 type="range"
                 min={minValue}
                 max={maxValue}
@@ -63,6 +69,9 @@ function RangeInput({
                 onChange={(e) => {
                     const value = Number(e.target.value);
                     if (value < maxState) setMinState(value);
+                    if (onChangeHandlers.minChangeHandler) {
+                        onChangeHandlers.minChangeHandler(e);
+                    }
                 }}
                 className={`pointer-events-none absolute top-1/2 w-full -translate-y-1/2 appearance-none bg-transparent
                     [&::-webkit-slider-thumb]:pointer-events-auto
@@ -77,6 +86,7 @@ function RangeInput({
 
                 {/* Maximum thumb */}
                 <input
+                name="maxPrice"
                 type="range"
                 min={minValue}
                 max={maxValue}
@@ -84,6 +94,9 @@ function RangeInput({
                 onChange={(e) => {
                     const value = Number(e.target.value);
                     if (value > minState) setMaxState(value);
+                    if (onChangeHandlers.maxChangeHandler) {
+                        onChangeHandlers.maxChangeHandler(e);
+                    }
                 }}
                 className={`pointer-events-none absolute top-1/2 w-full -translate-y-1/2 appearance-none bg-transparent
                     [&::-webkit-slider-thumb]:pointer-events-auto
