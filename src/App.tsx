@@ -15,7 +15,7 @@ import Logout from './pages/Logout.page.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.component.tsx';
 import Inventory from './pages/Inventory.page.tsx';
 import { addToCart, getCart } from './apis/cart.api.ts';
-import { transformCartDataForRes } from './utils/functions.ts';
+import { transformCartDataForRes, transformWishlistDataForRes } from './utils/functions.ts';
 import Address from './pages/Address.page.tsx';
 import Verification from './pages/Verification.page.tsx';
 import {Toaster} from "react-hot-toast";
@@ -26,6 +26,9 @@ import SearchedProducts from './pages/SearchedProducts.page.tsx';
 import Delivery from './pages/Delivery.page.tsx';
 import Landing from './pages/Landing.page.tsx';
 import Authenticity from './pages/Authenticity.page.tsx';
+import ProductVariantDialog from './components/ProductVariantsDialog.component.tsx';
+import RatingFormModal from './components/RatingFormModal.component.tsx';
+import AddressFormModal from './components/AddressFormModal.component.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -37,12 +40,14 @@ import Authenticity from './pages/Authenticity.page.tsx';
 //};
 
 function App() {
-  const {setCartData, fetchLocalCartProducts, removeProductFromLocalCart, clearLocalCart, setWishlistData} = useCart();
+  const {cartData, setCartData, addToLocalCart, calculateTotalCartItems, fetchLocalCartProducts, removeProductFromLocalCart, clearLocalCart, setWishlistData} = useCart();
   const {setUser, isUserAuthenticated, isUserAdmin} = useUser();
   const [isHeaderVisible, setIsHeaderVisible] = useState<boolean>(true);
   const [lastScrollY, setLastScrollY] = useState<number>(0);
-
+  //const [selectedProduct, setSelectedProduct] = useState<string|null>(null);
+      
   async function myProfileHandler(signal?:AbortSignal) {
+    console.log("fetching profile......");
     const res = await myProfile(signal);
     if (res.success) {
       setUser(res.jsonData);
@@ -50,20 +55,27 @@ function App() {
   };
 
   async function getCartHandler() {
+    console.log("fetching cart......");
+    
       const res = await getCart();
       if (res.success) {
-        console.log(res.jsonData);
-        
         setCartData(transformCartDataForRes(res.jsonData).products);
       }
   };
 
   async function getWishlistHandler() {
-      const res = await getWishlist();
+    console.log("fetching widhlist......");
+    const res = await getWishlist();
 
-      if (res.success) {
-        setWishlistData(res.jsonData);
-      }
+    if (!res.success) {
+      console.log("error from getWishlistHandler");
+      console.log(res.message);
+      return;
+    }
+
+    if (res.success) {
+      setWishlistData(transformWishlistDataForRes(res.jsonData).products);
+    }
   };
 
   function headerShowHideHandler() {
@@ -79,6 +91,8 @@ function App() {
     setLastScrollY(currentScrollY);
   };
 
+  
+
   useEffect(() => {
     window.addEventListener("scroll", headerShowHideHandler);
 
@@ -86,37 +100,47 @@ function App() {
   }, [lastScrollY]);
   
   useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    myProfileHandler(signal);
+    //const controller = new AbortController();
+    //const signal = controller.signal;
+    //let timer = 0;
+    //timer = setTimeout(() => {
+      myProfileHandler();
+    //}, 1000);
+    //myProfileHandler(signal);
     //setUser(dummyUser);
 
-    return() => {controller.abort()}
+    //return() => clearTimeout(timer);
+    //return() => {controller.abort()}
   }, []);
 
   useEffect(() => {
-    (async () => {
-      if (isUserAuthenticated()) {
-        const localCartData = fetchLocalCartProducts();
-  
-        if (localCartData.length !== 0) {
-          for (const {_id, quantity} of localCartData) {
-              const data = await addToCart({productID:_id, quantity});
-              if (data.success) {
-                removeProductFromLocalCart({_id, quantity});
-              }
+    let timer = 0;
+
+    timer = setTimeout(() => {
+      (async () => {
+        if (isUserAuthenticated()) {
+          const localCartData = fetchLocalCartProducts();
+    
+          if (localCartData.length !== 0) {
+            for (const {_id, variant, quantity} of localCartData) {
+                const data = await addToCart({productID:_id, variant, quantity});
+                if (data.success) {
+                  removeProductFromLocalCart({_id, variant, quantity});
+                }
+            }
+            clearLocalCart();
           }
-          clearLocalCart();
+          getCartHandler();
+          getWishlistHandler();
         }
-        getCartHandler();
-        getWishlistHandler();
-      }
-      else{
-        fetchLocalCartProducts();
-      }
-    })();
-}, [isUserAuthenticated()]);
+        else{
+          fetchLocalCartProducts();
+        }
+      })();
+    }, 2000);
+
+    return() => clearTimeout(timer);
+  }, [isUserAuthenticated()]);
 
   return (
     <BrowserRouter>
@@ -171,6 +195,12 @@ function App() {
 
       </Routes>
     </main>
+    {/* product variant options dialog box */}
+    <ProductVariantDialog addToLocalCart={addToLocalCart} removeProductFromLocalCart={removeProductFromLocalCart} cartData={cartData} setCartData={setCartData} isUserAuthenticated={isUserAuthenticated()} setWishlistData={setWishlistData} totalCartItems={calculateTotalCartItems()} />
+    {/* rating form modal */}
+    <RatingFormModal />
+    {/* address form modal */}
+    <AddressFormModal />
     <footer></footer>
     </BrowserRouter>
   )
