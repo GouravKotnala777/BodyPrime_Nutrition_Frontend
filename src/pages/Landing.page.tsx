@@ -2,7 +2,6 @@ import { MeteorMash } from "kotnala_ui";
 import { useEffect, useRef, useState } from "react";
 import Statistics from "../components/Statistics.component";
 import Why from "../components/Why.component";
-import { BsArrowUpShort } from "react-icons/bs";
 import { BiLeaf, BiPlay } from "react-icons/bi";
 import { RiMoneyRupeeCircleLine, RiShieldFlashLine } from "react-icons/ri";
 import { GrCertificate } from "react-icons/gr";
@@ -402,16 +401,40 @@ function Landing() {
                                 <div className="">
                                     {
                                         searchedResultFAQs.data.map(({matchedTag, heading, para}, index) => (
-                                            <div key={index} className={`transition-all ease-in-out duration-300`}>
-                                                <div className="text-gray-700 font-semibold p-4 flex justify-between items-center cursor-pointer transition-all ease-in-out duration-300" onClick={()=>setActiveCords((prev)=>({...prev, [`${index-searchedResultFAQs.data.length}`]:!prev[`${index-searchedResultFAQs.data.length}`]}))}>
+                                            <div key={index} className="">
+                                                <div className="text-gray-700 font-semibold p-4 flex justify-between items-center cursor-pointer" onClick={()=>setActiveCords((prev)=>({...prev, [`${index-searchedResultFAQs.data.length}`]:!prev[`${index-searchedResultFAQs.data.length}`]}))}>
                                                     <div className="text-lg sm:text-xl">
                                                         <span>{heading.split(matchedTag)[0]}</span>
                                                         <span className="bg-primary-200">{matchedTag}</span>
                                                         <span>{heading.split(matchedTag)[1]}</span>
                                                     </div>
-                                                    <div className={`text-2xl ${activeCords[`${index-searchedResultFAQs.data.length}`]?"rotate-0":"rotate-180"} transition-transform ease-in-out duration-300`}><BsArrowUpShort /></div>
+                                                    <div
+                                                        className=""
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor"
+                                                        className={`${activeCords[`${index-searchedResultFAQs.data.length}`]?"rotate-x-180":"rotate-x-0"} translate-y-0.5 size-3.5 origin-center transition-transform ease-in-out duration-400`}
+                                                        >
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                                        </svg>
+
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor"
+                                                        className={`${activeCords[`${index-searchedResultFAQs.data.length}`]?"rotate-x-180":"rotate-x-0"} -translate-y-0.5 size-3.5 origin-center transition-transform ease-in-out duration-400`}
+                                                        >
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                                        </svg>
+                                                    </div>
                                                 </div>
-                                                <div className={`text-gray-600 bg-primary-50 text-lg px-4 [text-shadow:0px_0px_2px_var(--color-gray-300)] tracking-wide text-left overflow-hidden rounded-lg origin-top [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] ${activeCords[`${index-searchedResultFAQs.data.length}`]?"h-60 py-2":"h-0 py-0"} transition-all ease-in-out duration-300`}>{para}</div>
+                                                <div className={`
+                                                    text-gray-600 bg-primary-50 text-lg px-4 tracking-wide text-left rounded-lg origin-top
+                                                    [text-shadow:0px_0px_2px_var(--color-gray-300)] [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset]
+                                                    grid
+                                                    ${activeCords[`${index-searchedResultFAQs.data.length}`]?"grid-rows-[1fr]":"grid-rows-[0fr]"}
+                                                    transition-[grid-template-rows] ease-in-out duration-400
+                                                `}>
+                                                        <div className="overflow-hidden">
+                                                            <p className="py-2">{para}</p>
+                                                        </div>
+                                                    </div>
                                             </div>
                                         ))
                                     }
@@ -422,7 +445,14 @@ function Landing() {
                     </div>
                     
                     <Accordion
-                        data={ACCORDION_DATA}
+                        data={
+                            ACCORDION_DATA.map((iter) => (
+                                {
+                                    heading:(<div className="text-lg sm:text-xl p-3">{iter.heading}</div>),
+                                    para:(<p className="py-2 px-4 bg-primary-50 [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] rounded-xl">{iter.para}</p>)
+                                }
+                            ))
+                        }
                     />
                 </div>
             </div>
