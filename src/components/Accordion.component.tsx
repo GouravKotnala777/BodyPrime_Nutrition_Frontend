@@ -43,9 +43,9 @@ function Accordion({data, chevronSize="md"}:AccordionProptypes) {
                                 </svg>
                             </div>
                         </div>
-                        <div className={`text-gray-600 bg-primary-50 text-lg
-                            [text-shadow:0px_0px_2px_var(--color-gray-300)] [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset]
-                            tracking-wide text-left rounded-lg origin-top grid
+                        <div className={`text-gray-600 text-lg
+                            [text-shadow:0px_0px_2px_var(--color-gray-300)]
+                            tracking-wide text-left  origin-top grid
                             ${activeCords[`${index}`]?"grid-rows-[1fr]":"grid-rows-[0fr]"}
                             transition-[grid-template-rows] ease-in-out duration-400
                         `}>
