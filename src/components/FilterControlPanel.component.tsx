@@ -53,8 +53,8 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                         {/* left part */}
                         <div className="border border-gray-200 w-25 flex flex-col">
                             {
-                                ["preference", "price", "brand", "rating", "flavor", "category"].map((iter) => (
-                                    <button className={`border-r-4 ${selectedFilter===iter ? "text-primary-400":"border-transparent text-gray-800"} text-sm py-4`} onClick={() => setSelectedFilter(iter)}>{capitalizeString(iter)}</button>
+                                ["preference", "category", "price", "brand", "rating", "flavor"].map((iter) => (
+                                    <button key={iter} className={`border-r-4 ${selectedFilter===iter ? "text-primary-400":"border-transparent text-gray-800"} text-sm py-4`} onClick={() => setSelectedFilter(iter)}>{capitalizeString(iter)}</button>
                                 ))
                             }
                         </div>
@@ -82,13 +82,38 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                         </div>
                                 }
 
+                                {/* category part */}
+                                {
+                                    selectedFilter === "category" &&
+                                        <div className="">
+                                            <div className="m-5">
+                                                <input name="brands" placeholder="Enter category name"
+                                                    className="border border-gray-200 bg-white text-md w-full px-3 py-3 rounded-sm"
+                                                />
+                                            </div>
+                                            <div className="text-gray-700 text-md flex flex-col gap-10 h-full px-4 py-3 overflow-y-scroll scrollbar-thin">
+                                                {
+                                                    ["Protein", "Mass Gainer", "BCAAs", "EEAs", "Fat Burner", "Minerals", "Beauty Wellness", "Creatine", "Cartemine"].map((category) => (
+                                                        <div key={category} className="flex items-center gap-4">
+                                                            <input id={category} type="checkbox" name="category" value={category} onChange={filterOnChangeHandler} />
+                                                            <label htmlFor={category}>{category}</label>
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                        </div>
+                                }
+
                                 {/* price part */}
                                 {
                                     selectedFilter === "price" &&
                                         <div className="flex flex-col gap-4 px-4 py-15">
                                             <div className="w-full">
                                                 <RangeInput minState={min} setMinState={setMin} maxState={max} setMaxState={setMax} minValue={500} maxValue={10000}
-                                                    thumbSize="xs" rangeThickness="sm"
+                                                    thumbSize="xs" rangeThickness="sm" onChangeHandlers={{
+                                                        maxChangeHandler(e) {filterOnChangeHandler(e)},
+                                                        minChangeHandler(e) {filterOnChangeHandler(e)}
+                                                    }}
                                                 />
                                             </div>
                                             <div className="flex justify-around items-center text-sm gap-2">
@@ -111,7 +136,7 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                             <div className="text-gray-700 text-md flex flex-col gap-10 h-full px-4 py-3 overflow-y-scroll scrollbar-thin">
                                                 {
                                                     ["Viado's Himalayan Organics", "Neuherbs", "HealthyHey Nutrition", "Dr. Morepen", "HealthAid", "Zeroharm", "Nutrabay", "Optimum", "Patoni"].map((brand) => (
-                                                        <div className="flex items-center gap-4">
+                                                        <div key={brand} className="flex items-center gap-4">
                                                             <input id={brand} type="checkbox" name="brands" value={brand} onChange={filterOnChangeHandler} />
                                                             <label htmlFor={brand}>{brand}</label>
                                                         </div>
@@ -127,7 +152,7 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                         <div className="text-sm flex flex-col gap-10 px-4 py-3">
                                             {
                                                 [{label:"⭐⭐⭐⭐⭐ Only", value:5}, {label:"⭐⭐⭐⭐ & Up", value:4}, {label:"⭐⭐⭐ & Up", value:3}, {label:"⭐⭐ & Up", value:2}, {label:"⭐ & Up", value:1}].map((iter) => (
-                                                    <div className="text-gray-700 text-md flex items-center gap-4">
+                                                    <div key={iter.value} className="text-gray-700 text-md flex items-center gap-4">
                                                         <input id={iter.label} type="radio" name="rating" value={iter.value} onChange={filterOnChangeHandler} />
                                                         <label htmlFor={iter.label}>{iter.label}</label>
                                                     </div>
@@ -148,7 +173,7 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                             <div className="text-gray-700 text-md flex flex-col gap-10 h-full px-4 py-3 overflow-y-scroll scrollbar-thin">
                                                 {
                                                     ["Chocolate Milk", "Mango Shake", "Banana Shake", "Pista Badam", "Strawberry Milk", "Vanilla", "Butter Scotch", "Orange", "Unflavored", "Lemon"].map((flavor) => (
-                                                        <div className="flex items-center gap-4">
+                                                        <div key={flavor} className="flex items-center gap-4">
                                                             <input id={flavor} type="checkbox" name="flavor" value={flavor} onChange={filterOnChangeHandler} />
                                                             <label htmlFor={flavor}>{flavor}</label>
                                                         </div>
@@ -159,27 +184,6 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                 }
 
 
-                                {/* category part */}
-                                {
-                                    selectedFilter === "category" &&
-                                        <div className="">
-                                            <div className="m-5">
-                                                <input name="brands" placeholder="Enter category name"
-                                                    className="border border-gray-200 bg-white text-md w-full px-3 py-3 rounded-sm"
-                                                />
-                                            </div>
-                                            <div className="text-gray-700 text-md flex flex-col gap-10 h-full px-4 py-3 overflow-y-scroll scrollbar-thin">
-                                                {
-                                                    ["Protein", "Mass Gainer", "BCAAs", "EEAs", "Fat Burner", "Minerals", "Beauty Wellness", "Creatine", "Cartemine"].map((category) => (
-                                                        <div className="flex items-center gap-4">
-                                                            <input id={category} type="checkbox" name="category" value={category} onChange={filterOnChangeHandler} />
-                                                            <label htmlFor={category}>{category}</label>
-                                                        </div>
-                                                    ))
-                                                }
-                                            </div>
-                                        </div>
-                                }
 
                                 
 
