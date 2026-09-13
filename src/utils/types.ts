@@ -29,12 +29,13 @@ export interface ProductVariantInterface{
     dietaryType:"veg"|"nonveg"|"vegan";
     tags:string[];
 };
+export type CategoryTypes = "protein"|"weight"|"pre-workout"|"vitamins"|"minerals"|"fatty acids"|"ayurvedic"|"wellness";
 export interface ProductTypes {
     _id:string;
     name:string;
     price:number;
     brand:string;
-    category:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";
+    category:CategoryTypes;
     subCategory:string;
     //size:number;
     tags:string[];

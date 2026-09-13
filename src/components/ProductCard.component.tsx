@@ -4,7 +4,7 @@ import ImageWithFallback from "./ImageWithFallback.component";
 //import { buttonNames } from "../utils/constants";
 import { IoIosAdd, IoMdArrowDropdown } from "react-icons/io";
 import { BiStar } from "react-icons/bi";
-import { type LocalCartTypes } from "../utils/types";
+import { type CategoryTypes, type LocalCartTypes } from "../utils/types";
 import { addToCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
 import { converKgtolbs } from "../utils/functions";
@@ -21,7 +21,7 @@ export interface ProductCardPropTypes{
         _id:string;
         name:string;
         brand:string;
-        category:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";
+        category:CategoryTypes;
         subCategory:string;
         price:number;
         rating:number;
