@@ -152,7 +152,7 @@ function App() {
       <Routes>
         <Route path={"/"} element={<Landing />} />
         <Route path={"/home"} element={<Home />} />
-        <Route path={"/searched_products/:searchField/:searchQuery"} element={<SearchedProducts />} />
+        <Route path={"/searched_products/:searchField/:searchQuery/:subCategory"} element={<SearchedProducts />} />
         <Route path={"/single_product/:productID"} element={<SingleProduct />} />
         <Route path={"/cart"} element={<Cart />} />
         <Route path={"/address"} element={<Address />} />

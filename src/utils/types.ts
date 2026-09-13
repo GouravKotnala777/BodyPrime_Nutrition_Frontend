@@ -35,6 +35,7 @@ export interface ProductTypes {
     price:number;
     brand:string;
     category:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";
+    subCategory:string;
     //size:number;
     tags:string[];
     description?: string;
@@ -58,8 +59,8 @@ export interface ProductTypes {
     warnings?:string[];
     variants:string[];
 };
-export type CreateProductFormTypes = Pick<ProductTypes, "name"|"brand"|"category"|"price"|"flavor"|"description"|"dietaryType"|"tags"|"weight"|"warnings">;
-export type UpdateProductFormTypes = Partial<Pick<ProductTypes, "name"|"brand"|"category"|"price"|"flavor"|"description"|"dietaryType"|"tags"|"weight"|"warnings">>;
+export type CreateProductFormTypes = Pick<ProductTypes, "name"|"brand"|"category"|"subCategory"|"price"|"flavor"|"description"|"dietaryType"|"tags"|"weight"|"warnings">;
+export type UpdateProductFormTypes = Partial<Pick<ProductTypes, "name"|"brand"|"category"|"subCategory"|"price"|"flavor"|"description"|"dietaryType"|"tags"|"weight"|"warnings">>;
 
 export type LocalCartTypes = (Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images">&{quantity: number; variant:string;});
 export interface CartTypes{

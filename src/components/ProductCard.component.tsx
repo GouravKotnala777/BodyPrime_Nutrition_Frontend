@@ -22,6 +22,7 @@ export interface ProductCardPropTypes{
         name:string;
         brand:string;
         category:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";
+        subCategory:string;
         price:number;
         rating:number;
         numReviews:number;

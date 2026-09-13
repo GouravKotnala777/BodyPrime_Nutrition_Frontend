@@ -104,6 +104,23 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                         </div>
                                 }
 
+                                {/* sub category part */}
+                                <div className="bg-primary-50/30 [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] rounded-lg">
+                                    <input name="subCategories" placeholder="Enter sub category name"
+                                        className="border border-gray-200 bg-white text-sm w-full mt-4 px-3 py-3 sm:py-2.5 rounded-sm"
+                                    />
+                                    <div className="text-sm flex flex-col gap-2 h-50 px-4 py-3 overflow-y-scroll scrollbar-thin">
+                                        {
+                                            ["whey", "plant", "yeast"].map((sub) => (
+                                                <div key={sub} className="flex items-center gap-2 hover:text-primary-400">
+                                                    <input id={sub} type="checkbox" name="subCategories" value={sub} onChange={filterOnChangeHandler} />
+                                                    <label htmlFor={sub} className="w-full">{sub}</label>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+
                                 {/* price part */}
                                 {
                                     selectedFilter === "price" &&

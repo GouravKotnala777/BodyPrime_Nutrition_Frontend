@@ -22,7 +22,7 @@ import FilterControlPanel from "../components/FilterControlPanel.component";
 
 let timer = 0;
 function SearchedProducts() {
-    const {searchField, searchQuery} = useParams();
+    const {searchField, searchQuery, subCategory} = useParams();
     const [skip, setSkip] = useState<number>(0);
     const [products, setProducts] = useState<ProductTypes[]>([]);
     const navigate = useNavigate();
@@ -72,7 +72,7 @@ function SearchedProducts() {
 
         timer = setTimeout(async() => {
             try {
-                const data = await getProducts(skip+1, searchField as "name"|"brand"|"category", searchQuery, filterParams);
+                const data = await getProducts(skip+1, searchField as "name"|"brand"|"category", searchQuery, subCategory, filterParams);
                 if (data.success) {                    
                     if (data.jsonData.length !== 0) {
                         setSkip(skip+1);
@@ -124,7 +124,7 @@ function SearchedProducts() {
         clearTimeout(timer);
         timer = setTimeout(async() => {
             try {
-                const data = await getProducts(0, searchField as "name"|"brand"|"category", searchQuery, filterParamsLocal.toString());
+                const data = await getProducts(0, searchField as "name"|"brand"|"category", searchQuery, subCategory, filterParamsLocal.toString());
                 
                 if (data.success) {
                     setProducts(data.jsonData);
@@ -132,8 +132,12 @@ function SearchedProducts() {
                     if (data.jsonData.length === 0) {
                         setIsProductsFinished(true);
                     }
+                    else{
+                        setIsProductsFinished(false);
+                    }
                 }
                 else{
+                    setIsProductsFinished(false);
                     throw new Error(data.message);
                 }
                 setIsFiltersMutating(false);
@@ -142,6 +146,7 @@ function SearchedProducts() {
                 setIsProductsRefetching(false);
                 setIsResloading(false);
                 setIsFiltersMutating(false);
+                setIsProductsFinished(false);
                 setError(new Error(error as string).message);
             }
         }, 2000);
@@ -152,13 +157,18 @@ function SearchedProducts() {
         // it will reset products array state to [] automaticaly
         
         try {
-            const data = await getProducts(skip, searchField as "name"|"brand"|"category", searchQuery, filterParamsLocal.toString());
+            const data = await getProducts(skip, searchField as "name"|"brand"|"category", searchQuery, subCategory, filterParamsLocal.toString());
             
             if (data.success) {
                 setIsResloading(false);
                 if (data.jsonData.length !== 0) {
                     setFilterParams(filterParamsLocal.toString());
                     setProducts(data.jsonData);
+                }
+                else{
+                    setIsProductsFinished(true);
+                    setIsFiltersMutating(false);
+                    setIsProductsRefetching(false);
                 }
             }
             else{
@@ -467,10 +477,31 @@ function SearchedProducts() {
                                             />
                                             <div className="text-sm flex flex-col gap-2 h-50 px-4 py-3 overflow-y-scroll scrollbar-thin">
                                                 {
-                                                    ["protein", "Mass Gainer", "Fat Burner", "Beauty Wellness", "EEA's", "BCCA's", "Vitamins", "Minerals", "Cartemine", "Creatine"].map((category) => (
+                                                    ["protein", "Mass Gainer", "Fat Burner", "Beauty Wellness", "Vitamins", "Minerals", "pre-workout", "ayurvedic", "gut & digestive health", "joint, bone & skin health", ""].map((category) => (
                                                         <div key={category} className="flex items-center gap-2 hover:text-primary-400">
                                                             <input id={category} type="checkbox" name="categories" value={category} onChange={filterOnChangeHandler} />
                                                             <label htmlFor={category} className="w-full">{category}</label>
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                        </div>
+                                    )
+                                },
+                                {
+                                    // sub category
+                                    heading:(<div className="text-sm font-semibold px-4 py-3">Sub Category</div>),
+                                    para:(
+                                        <div className="bg-primary-50/30 [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] rounded-lg">
+                                            <input name="subCategories" placeholder="Enter sub category name"
+                                                className="border border-gray-200 bg-white text-sm w-full mt-4 px-3 py-3 sm:py-2.5 rounded-sm"
+                                            />
+                                            <div className="text-sm flex flex-col gap-2 h-50 px-4 py-3 overflow-y-scroll scrollbar-thin">
+                                                {
+                                                    ["whey", "plant", "yeast", "concentrate", "isolate", "hydrolyzed", "collagen", "caffeine", "l-citrulline", "beta-alanine", "l-tyrosine", "creatine", "taurine", "betaine", "electrolytes", "bcaa", "eaa", "glutamine", "vitamin a", "vitamin b", "vitamin c", "vitamin d", "vitamin e", "vitamin k", "zinc", "calcium", "iron", "potassium", "fish oil", "krill oil", "omega 3", "flaxseed oil", "antioxidants", "sleep & relaxation", "immune support", "liver support"].map((sub) => (
+                                                        <div key={sub} className="flex items-center gap-2 hover:text-primary-400">
+                                                            <input id={sub} type="checkbox" name="subCategories" value={sub} onChange={filterOnChangeHandler} />
+                                                            <label htmlFor={sub} className="w-full">{sub}</label>
                                                         </div>
                                                     ))
                                                 }
@@ -564,7 +595,7 @@ function SearchedProducts() {
                 </div>
                 {/* right part */}
                 <div className="border border-gray-200 bg-white flex-1 rounded-t-2xl">
-                    {/*<pre className="text-sm">{JSON.stringify(error, null, `\t`)}</pre>*/}
+                    {/*<pre className="text-sm">{JSON.stringify({searchField, searchQuery}, null, `\t`)}</pre>*/}
 
                     {
                         (isReloading||isFiltersMutating) ?
@@ -604,55 +635,59 @@ function SearchedProducts() {
                                     </div>
                                     :
                                     // products
-                                    <div className="flex flex-wrap justify-around gap-2 px-2 sm:p-4">
+                                    <div>
+                                        <div className="flex flex-wrap justify-around gap-2 px-2 sm:p-4">
+                                            {
+                                                products.map((product, index) => (
+                                                    <div key={index} className="w-full sm:max-w-60 mt-10">
+                                                        <ProductCard product={product} isVeg={product.dietaryType!=="nonveg"} isBestseller={false} isCartMutating={false} />
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
+
+                                        {/* fetch more button */}
                                         {
-                                            products.map((product, index) => (
-                                                <div key={index} className="w-full sm:max-w-60 mt-10">
-                                                    <ProductCard product={product} isVeg={product.dietaryType!=="nonveg"} isBestseller={false} isCartMutating={false} />
+                                            (!isReloading && !error) &&
+                                                <div className="my-6">
+                                                    <button disabled={(!isProductsRefetching&&isProductsFinished)} className={`border relative ${(!isProductsRefetching&&!isProductsFinished)?"border-primary-200 text-primary-400 bg-primary-50 hover:bg-primary-50/50":"border-primary-100 text-primary-200 bg-primary-50/50 cursor-no-drop"} rounded-md block mx-auto w-25 h-10`}
+                                                        onClick={getProductsFromNextBtn}
+                                                    >
+                                                        <div className={`${(isProductsRefetching&&!isProductsFinished)?"opacity-100 scale-100 blur-0":"opacity-0 scale-0 blur-sm"} h-full absolute top-0 -left-0.25 w-full transition-all ease-in-out duration-300`}>
+                                                            <div className="w-full h-full flex justify-center items-center gap-1.25">
+                                                                <div className="size-1.5 bg-primary-400 rounded-2xl"
+                                                                    style={{
+                                                                        animation:"up-down-dot-loading 1s 0s linear infinite"
+                                                                    }}
+                                                                ></div>
+                                                                <div className="size-1.5 bg-primary-400 rounded-2xl"
+                                                                    style={{
+                                                                        animation:"up-down-dot-loading 1s 0.2s linear infinite"
+                                                                    }}
+                                                                ></div>
+                                                                <div className="size-1.5 bg-primary-400 rounded-2xl"
+                                                                    style={{
+                                                                        animation:"up-down-dot-loading 1s 0.4s linear infinite"
+                                                                    }}
+                                                                ></div>
+                                                            </div>
+                                                        </div>
+                                                        <div className={`${(!isProductsRefetching&&isProductsFinished)?"opacity-100 scale-100 blur-0":"opacity-0 scale-0 blur-sm"} h-full absolute top-0 -left-0.25 w-full transition-all ease-in-out duration-300`}>
+                                                            <div className="w-full h-full flex justify-center items-center gap-1.25">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-6">
+                                                                    <path d="m2 2 20 20"/>
+                                                                    <path d="M8.35 2.69A10 10 0 0 1 21.3 15.65"/>
+                                                                    <path d="M19.08 19.08A10 10 0 1 1 4.92 4.92"/>
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div className={`${(!isProductsRefetching&&!isProductsFinished)?"opacity-100 scale-100 blur-0":"opacity-0 scale-0 blur-sm"} font-semibold transition-all ease-in-out duration-300`}>More</div>
+                                                    </button>
                                                 </div>
-                                            ))
                                         }
                                     </div>
                     }
 
-                    {
-                        !error &&
-                            <div className="my-6">
-                                <button disabled={(!isProductsRefetching&&isProductsFinished)} className={`border relative ${(!isProductsRefetching&&!isProductsFinished)?"border-primary-400 text-primary-400 bg-primary-50 hover:bg-primary-50/50":"border-primary-200 text-primary-200 bg-primary-50/50 cursor-no-drop"} rounded-md block mx-auto w-25 h-10`}
-                                    onClick={getProductsFromNextBtn}
-                                >
-                                    <div className={`${(isProductsRefetching&&!isProductsFinished)?"opacity-100 scale-100 blur-0":"opacity-0 scale-0 blur-sm"} h-full absolute top-0 -left-0.25 w-full transition-all ease-in-out duration-300`}>
-                                        <div className="w-full h-full flex justify-center items-center gap-1.25">
-                                            <div className="size-1.5 bg-primary-400 rounded-2xl"
-                                                style={{
-                                                    animation:"up-down-dot-loading 1s 0s linear infinite"
-                                                }}
-                                            ></div>
-                                            <div className="size-1.5 bg-primary-400 rounded-2xl"
-                                                style={{
-                                                    animation:"up-down-dot-loading 1s 0.2s linear infinite"
-                                                }}
-                                            ></div>
-                                            <div className="size-1.5 bg-primary-400 rounded-2xl"
-                                                style={{
-                                                    animation:"up-down-dot-loading 1s 0.4s linear infinite"
-                                                }}
-                                            ></div>
-                                        </div>
-                                    </div>
-                                    <div className={`${(!isProductsRefetching&&isProductsFinished)?"opacity-100 scale-100 blur-0":"opacity-0 scale-0 blur-sm"} h-full absolute top-0 -left-0.25 w-full transition-all ease-in-out duration-300`}>
-                                        <div className="w-full h-full flex justify-center items-center gap-1.25">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-6">
-                                                <path d="m2 2 20 20"/>
-                                                <path d="M8.35 2.69A10 10 0 0 1 21.3 15.65"/>
-                                                <path d="M19.08 19.08A10 10 0 1 1 4.92 4.92"/>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div className={`${(!isProductsRefetching&&!isProductsFinished)?"opacity-100 scale-100 blur-0":"opacity-0 scale-0 blur-sm"} font-semibold transition-all ease-in-out duration-300`}>More</div>
-                                </button>
-                            </div>
-                    }
                 </div>
 
 

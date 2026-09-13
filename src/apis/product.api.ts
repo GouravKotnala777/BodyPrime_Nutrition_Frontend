@@ -3,14 +3,10 @@ import type { CreateProductFormTypes, ProductTypes, UpdateProductFormTypes } fro
 
 
 
-export async function getProducts(skip:number, searchField:"name"|"category"|"brand"|"soldCount"|"returnCount"|"createdAt"|""="", searchQuery:string|""="", signal?:AbortSignal) {
-    try {
-        console.log("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-        console.log({signal});
-        console.log("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-        
+export async function getProducts(skip:number, searchField:"name"|"category"|"brand"|"soldCount"|"returnCount"|"createdAt"|""="", searchQuery:string|""="", subCategory:string|""="", filters:string, signal?:AbortSignal) {
+    try {        
         const data = await apiHandler<null, ProductTypes[]>({
-            endpoint:`/product/get_products?skip=${skip}&searchField=${searchField}&searchQuery=${searchQuery}`,
+            endpoint:`/product/get_products?skip=${skip}&searchField=${searchField}&searchQuery=${searchQuery}&subCategory=${subCategory}&${filters}`,
             method:"GET",
             contentType:"application/json",
             ...(signal&&{signal})
