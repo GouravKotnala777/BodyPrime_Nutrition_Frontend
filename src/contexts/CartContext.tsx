@@ -24,8 +24,8 @@ interface CartContextPropTypes{
 const CartContext = createContext<CartContextPropTypes|null>(null);
 
 export function CartProvider({children}:{children:ReactNode;}) {
-    const [cartData, setCartData] = useState<LocalCartTypes[]>([]);
-    const [wishlistData, setWishlistData] = useState<WishlistTypes[]>([]);
+    const [cartData, setCartData] = useState<LocalCartTypes[]>([{_id:"initialProductId", brand:"initialBrand", category:"protein", flavor:"unflavored", images:[], name:"initialProduct", price:10, quantity:1, weight:"1kg", variant:"initialProductId#unflavored#1kg#10"}]);
+    const [wishlistData, setWishlistData] = useState<WishlistTypes[]>([{_id:"initialProductId", brand:"initialBrand", category:"protein", images:[], name:"initialProduct", price:10, variant:"initialProductId#unflavored#1kg#10"}]);
 
     function fetchLocalCartProducts() {
         const cart:LocalCartTypes[] = JSON.parse(localStorage.getItem("cart")||"[]");
