@@ -10,6 +10,17 @@ import Skeletan from "../components/Skeletan";
 //import { capitalizeString } from "../utils/functions";
 import { BiFilter } from "react-icons/bi";
 import FilterControlPanel from "../components/FilterControlPanel.component";
+import { FILTER_CATEGORIES_OBJECT, FILTER_SUB_CATEGORIES_OBJECT, MAX_PRICE_INITIALLY, MIN_PRICE_INITIALLY } from "../utils/constants";
+
+interface FilterInterface{
+    dietaryTypes:("veg"|"nonveg"|"vegan")[];
+    categories:string[];
+    subCategories:string[];
+    price:{min:number; max:number;};
+    brands:string[];
+    rating:0|1|2|3|4|5;
+    flavors:string[];
+};
 
 //const dummyProducts:ProductTypes[] = [
 //    {_id:"1246891", brand:"brand1", category:"protein", description:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa numquam aliquid voluptas itaque mollitia quasi modi! Est quis alias tempore.", images:["/public/vite.svg"], name:"product1", numReviews:0, price:3000, rating:0, size:1, stock:1, tag:["powder"], weight:"1kg", flavor:"chocolate"},
@@ -37,19 +48,13 @@ function SearchedProducts() {
     //const [selectedProduct, setSelectedProduct] = useState<string|null>(null);
     //const {isUserAuthenticated} = useUser();
     //const {cartData, setCartData, addToLocalCart} = useCart();
-    const [min, setMin] = useState(500);
-    const [max, setMax] = useState(10000);
+    const [min, setMin] = useState(MIN_PRICE_INITIALLY);
+    const [max, setMax] = useState(MAX_PRICE_INITIALLY);
     const [filterParams, setFilterParams] = useState<string>("");
-    const [filters, setFilters] = useState<{
-        dietaryTypes:("veg"|"nonveg"|"vegan")[];
-        categories:string[];
-        price:{min:number; max:number;};
-        brands:string[];
-        rating:0|1|2|3|4|5;
-        flavors:string[];
-    }>({
+    const [filters, setFilters] = useState<FilterInterface>({
         dietaryTypes:[],
         categories:[],
+        subCategories:[],
         price:{min:0, max:Infinity},
         brands:[],
         rating:0,
@@ -116,7 +121,7 @@ function SearchedProducts() {
             filterParamsLocal.append("flavors", flavor);
         });
         filterParamsLocal.append("minPrice", String(filters.price.min));
-        filterParamsLocal.append("maxPrice", String(filters.price.max));
+        filterParamsLocal.append("maxPrice", String((filters.price.max<MAX_PRICE_INITIALLY)?MAX_PRICE_INITIALLY:Infinity));
         filterParamsLocal.append("rating", String(filters.rating));
 
         setIsFiltersMutating(true);
@@ -202,7 +207,7 @@ function SearchedProducts() {
                 filterParamsLocal.append("flavors", flavor);
             });
             filterParamsLocal.append("minPrice", String(filters.price.min));
-            filterParamsLocal.append("maxPrice", String(filters.price.max));
+            filterParamsLocal.append("maxPrice", String((filters.price.max<MAX_PRICE_INITIALLY)?filters.price.max:Infinity));
             filterParamsLocal.append("rating", String(filters.rating));
 
             getProductsAfterReloadingPage({skip, filterParamsLocal});
@@ -287,6 +292,7 @@ function SearchedProducts() {
         const filtersLocal:{
             dietaryTypes: ("veg" | "nonveg" | "vegan")[];
             categories:string[],
+            subCategories:string[],
             price: {
                 min: number;
                 max: number;
@@ -353,14 +359,15 @@ function SearchedProducts() {
         setFilters({
             dietaryTypes:[],
             categories:[],
-            price:{min:0, max:Infinity},
+            subCategories:[],
+            price:{min:0, max:MAX_PRICE_INITIALLY},
             brands:[],
             rating:0,
             flavors:[]
         });
         setMin(0);
         setSkip(0);
-        setMax(Infinity);
+        setMax(MAX_PRICE_INITIALLY);
         clearTimeout(timer);
         setIsResloading(true);
         setProducts([]);
@@ -376,6 +383,47 @@ function SearchedProducts() {
 
             getProductsAfterReloadingPage({skip:0, filterParamsLocal});
         }, 3000);
+    };
+    function clearSingleFilterByBadge({filterName, filterValue}:{filterName:keyof FilterInterface; filterValue:(string|("veg"|"nonveg"|"vegan"));}) {
+        const filtersLocal:{
+            dietaryTypes:("veg" | "nonveg" | "vegan")[];
+            categories:string[],
+            subCategories:string[],
+            price: {
+                min: number;
+                max: number;
+            };
+            brands: string[];
+            rating: 0 | 1 | 2 | 3 | 4 | 5;
+            flavors: string[];
+        } = filters;
+
+        if (filterName === searchField) {
+            
+        }
+
+        if (filterName !== "price" && filterName !== "rating" && filterName !== "dietaryTypes") {
+            const filteredArray = filtersLocal[filterName].filter((filter) => (filter !== filterValue));
+            filtersLocal[filterName] = filteredArray;
+            //setFilters(prev => ({...prev, [filterName]:filteredArray}));
+        }
+        else if (filterName === "dietaryTypes") {
+            const filteredArray = filtersLocal[filterName].filter((filter) => (filter !== filterValue));
+            filtersLocal[filterName] = filteredArray;
+            //setFilters(prev => ({...prev, [filterName]:filteredArray}));
+        }
+        else if(filterName === "price"){
+            setMin(MIN_PRICE_INITIALLY);
+            setMax(MAX_PRICE_INITIALLY);
+            //setFilters(prev => ({...prev, price:{min:0, max:Infinity}}));
+            filtersLocal.price = {min:0, max:Infinity};
+        }
+        else{
+            filtersLocal.rating = 0;
+            //setFilters(prev => ({...prev, rating:0}))
+        }
+        setFilters(filtersLocal);
+        getProductsFromChangingFilters();
     };
 
     function emitFilterControlPanelEvent() {
@@ -424,12 +472,99 @@ function SearchedProducts() {
                         {/* filter badges */}
                         <div className="flex flex-wrap gap-4 p-4">
                             {
-                                //filters.map((filter) => (
-                                //    <button className="bg-gray-200/70 rounded-full text-gray-600 text-xs px-2.5 pt-1.5 pb-1.75 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300">
-                                //        <span>{filter}</span>
-                                //        <span>x</span>
-                                //    </button>
-                                //))
+                                (searchQuery&&searchQuery!=="null") &&
+                                    <button className="border border-gray-200 bg-gray-200/40 rounded-full text-gray-600 text-xs pl-3.25 pr-3 pt-1 pb-1.5 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300"
+                                        onClick={()=>{window.location.href = `/searched_products/null/null/null`;}}
+                                    >
+                                        <span>{searchQuery}</span>
+                                        <span>x</span>
+                                    </button>
+                                
+                            }
+                            {
+                                (subCategory&&subCategory!=="null") &&
+                                    <button className="border border-gray-200 bg-gray-200/40 rounded-full text-gray-600 text-xs pl-3.25 pr-3 pt-1 pb-1.5 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300"
+                                        onClick={()=>{
+                                            if(searchField&&searchQuery){
+                                                window.location.href = `/searched_products/${searchField}/${searchQuery}/null`;
+                                            }
+                                            else{
+                                                window.location.href = `/searched_products/null/null/null`;
+                                            }
+                                        }}
+                                    >
+                                        <span>{subCategory}</span>
+                                        <span>x</span>
+                                    </button>
+                                
+                            }
+                            {
+                                filters.dietaryTypes.map((filterValue) => (
+                                    <button className="border border-gray-200 bg-gray-200/40 rounded-full text-gray-600 text-xs pl-3.25 pr-3 pt-1 pb-1.5 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300"
+                                        onClick={() => clearSingleFilterByBadge({filterName:"dietaryTypes", filterValue})}
+                                    >
+                                        <span>{filterValue}</span>
+                                        <span>x</span>
+                                    </button>
+                                ))
+                            }
+                            {
+                                filters.categories.map((filterValue) => (
+                                    <button className="border border-gray-200 bg-gray-200/40 rounded-full text-gray-600 text-xs pl-3.25 pr-3 pt-1 pb-1.5 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300"
+                                        onClick={() => clearSingleFilterByBadge({filterName:"categories", filterValue})}
+                                    >
+                                        <span>{filterValue}</span>
+                                        <span>x</span>
+                                    </button>
+                                ))
+                            }
+                            {
+                                filters.subCategories.map((filterValue) => (
+                                    <button className="border border-gray-200 bg-gray-200/40 rounded-full text-gray-600 text-xs pl-3.25 pr-3 pt-1 pb-1.5 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300"
+                                        onClick={() => clearSingleFilterByBadge({filterName:"subCategories", filterValue})}
+                                    >
+                                        <span>{filterValue}</span>
+                                        <span>x</span>
+                                    </button>
+                                ))
+                            }
+                            {
+                                (filters.price.min > 0 || filters.price.max < MAX_PRICE_INITIALLY) &&
+                                    <button className="border border-gray-200 bg-gray-200/40 rounded-full text-gray-600 text-xs pl-3.25 pr-3 pt-1 pb-1.5 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300"
+                                        onClick={() => clearSingleFilterByBadge({filterName:"price", filterValue:""})}
+                                    >
+                                        <span>Price ₹{filters.price.min} - ₹{filters.price.max}</span>
+                                        <span>x</span>
+                                    </button>
+                            }
+                            {
+                                filters.brands.map((filterValue) => (
+                                    <button className="border border-gray-200 bg-gray-200/40 rounded-full text-gray-600 text-xs pl-3.25 pr-3 pt-1 pb-1.5 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300"
+                                        onClick={() => clearSingleFilterByBadge({filterName:"brands", filterValue})}
+                                    >
+                                        <span>{filterValue}</span>
+                                        <span>x</span>
+                                    </button>
+                                ))
+                            }
+                            {
+                                filters.rating!==0 && 
+                                    <button className="border border-gray-200 bg-gray-200/40 rounded-full text-gray-600 text-xs pl-3.25 pr-3 pt-1 pb-1.5 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300"
+                                        onClick={() => clearSingleFilterByBadge({filterName:"rating", filterValue:""})}
+                                    >
+                                        <span>{filters.rating} {filters.rating===1?"star":"stars"}</span>
+                                        <span>x</span>
+                                    </button>
+                            }
+                            {
+                                filters.flavors.map((filterValue) => (
+                                    <button className="border border-gray-200 bg-gray-200/40 rounded-full text-gray-600 text-xs pl-3.25 pr-3 pt-1 pb-1.5 flex items-center gap-1.5 hover:bg-primary-100 hover:scale-90 transition-all ease-out duration-300"
+                                        onClick={() => clearSingleFilterByBadge({filterName:"flavors", filterValue})}
+                                    >
+                                        <span>{filterValue}</span>
+                                        <span>x</span>
+                                    </button>
+                                ))
                             }
 
                         </div>
@@ -453,15 +588,15 @@ function SearchedProducts() {
                                     para:(
                                         <div className="text-sm flex flex-col gap-2 px-4 py-3 bg-primary-50/30 [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] rounded-lg">
                                             <div className="flex items-center gap-2 hover:text-primary-400">
-                                                <input id="veg" type="checkbox" name="dietaryType" value="veg" onChange={filterOnChangeHandler} />
+                                                <input id="veg" type="checkbox" name="dietaryType" value="veg" checked={filters.dietaryTypes.includes("veg")} onChange={filterOnChangeHandler} />
                                                 <label htmlFor="veg" className="w-full">Vegetarian</label>
                                             </div>
                                             <div className="flex items-center gap-2 hover:text-primary-400">
-                                                <input id="nonveg" type="checkbox" name="dietaryType" value="nonveg" onChange={filterOnChangeHandler} />
+                                                <input id="nonveg" type="checkbox" name="dietaryType" value="nonveg" checked={filters.dietaryTypes.includes("nonveg")} onChange={filterOnChangeHandler} />
                                                 <label htmlFor="nonveg" className="w-full">Non-Vegetarian</label>
                                             </div>
                                             <div className="flex items-center gap-2 hover:text-primary-400">
-                                                <input id="vegan" type="checkbox" name="dietaryType" value="vegan" onChange={filterOnChangeHandler} />
+                                                <input id="vegan" type="checkbox" name="dietaryType" value="vegan" checked={filters.dietaryTypes.includes("vegan")} onChange={filterOnChangeHandler} />
                                                 <label htmlFor="vegan" className="w-full">Vegan</label>
                                             </div>
                                         </div>
@@ -475,12 +610,11 @@ function SearchedProducts() {
                                             <input name="categories" placeholder="Enter category name"
                                                 className="border border-gray-200 bg-white text-sm w-full mt-4 px-3 py-3 sm:py-2.5 rounded-sm"
                                             />
-                                            <div className="text-sm flex flex-col gap-2 h-50 px-4 py-3 overflow-y-scroll scrollbar-thin">
-                                                {
-                                                    ["protein", "Mass Gainer", "Fat Burner", "Beauty Wellness", "Vitamins", "Minerals", "pre-workout", "ayurvedic", "gut & digestive health", "joint, bone & skin health", ""].map((category) => (
+                                            <div className="text-sm flex flex-col gap-2 h-40 max-h-min px-4 py-3 overflow-y-scroll scrollbar-thin">
+                                                {    FILTER_CATEGORIES_OBJECT.map(({heading, category}) => (
                                                         <div key={category} className="flex items-center gap-2 hover:text-primary-400">
-                                                            <input id={category} type="checkbox" name="categories" value={category} onChange={filterOnChangeHandler} />
-                                                            <label htmlFor={category} className="w-full">{category}</label>
+                                                            <input id={category} type="checkbox" name="categories" value={category} checked={filters.categories.includes(category)} onChange={filterOnChangeHandler} />
+                                                            <label htmlFor={category} className="w-full">{heading}</label>
                                                         </div>
                                                     ))
                                                 }
@@ -493,16 +627,21 @@ function SearchedProducts() {
                                     heading:(<div className="text-sm font-semibold px-4 py-3">Sub Category</div>),
                                     para:(
                                         <div className="bg-primary-50/30 [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] rounded-lg">
-                                            <input name="subCategories" placeholder="Enter sub category name"
-                                                className="border border-gray-200 bg-white text-sm w-full mt-4 px-3 py-3 sm:py-2.5 rounded-sm"
-                                            />
-                                            <div className="text-sm flex flex-col gap-2 h-50 px-4 py-3 overflow-y-scroll scrollbar-thin">
+                                            <div className="text-sm flex flex-col gap-2 h-40 max-h-min p-4 overflow-y-scroll scrollbar-thin">
                                                 {
-                                                    ["whey", "plant", "yeast", "concentrate", "isolate", "hydrolyzed", "collagen", "caffeine", "l-citrulline", "beta-alanine", "l-tyrosine", "creatine", "taurine", "betaine", "electrolytes", "bcaa", "eaa", "glutamine", "vitamin a", "vitamin b", "vitamin c", "vitamin d", "vitamin e", "vitamin k", "zinc", "calcium", "iron", "potassium", "fish oil", "krill oil", "omega 3", "flaxseed oil", "antioxidants", "sleep & relaxation", "immune support", "liver support"].map((sub) => (
-                                                        <div key={sub} className="flex items-center gap-2 hover:text-primary-400">
-                                                            <input id={sub} type="checkbox" name="subCategories" value={sub} onChange={filterOnChangeHandler} />
-                                                            <label htmlFor={sub} className="w-full">{sub}</label>
-                                                        </div>
+                                                    filters.categories.map((category) => (
+                                                        (category !== ""
+                                                        &&
+                                                        FILTER_SUB_CATEGORIES_OBJECT[category as keyof typeof FILTER_SUB_CATEGORIES_OBJECT] !== null
+                                                        &&
+                                                        typeof FILTER_SUB_CATEGORIES_OBJECT[category as keyof typeof FILTER_SUB_CATEGORIES_OBJECT] === "object")
+                                                        &&
+                                                        FILTER_SUB_CATEGORIES_OBJECT[category as keyof typeof FILTER_SUB_CATEGORIES_OBJECT].map(({heading, subCategory}) => (
+                                                            <div key={subCategory} className="flex items-center gap-2 hover:text-primary-400">
+                                                                <input id={subCategory} type="checkbox" name="subCategories" value={subCategory} checked={filters.subCategories.includes(subCategory)} onChange={filterOnChangeHandler} />
+                                                                <label htmlFor={subCategory} className="w-full">{heading}</label>
+                                                            </div>
+                                                        ))
                                                     ))
                                                 }
                                             </div>
@@ -515,7 +654,7 @@ function SearchedProducts() {
                                     para:(
                                         <div className="flex flex-col gap-4 px-4 py-3 bg-primary-50/30 [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] rounded-lg">
                                             <div className="w-full">
-                                                <RangeInput minState={min} setMinState={setMin} maxState={max} setMaxState={setMax} minValue={500} maxValue={10000}
+                                                <RangeInput minState={min} setMinState={setMin} maxState={max} setMaxState={setMax} minValue={MIN_PRICE_INITIALLY} maxValue={MAX_PRICE_INITIALLY}
                                                     thumbSize="xs" rangeThickness="sm" onChangeHandlers={{
                                                         maxChangeHandler(e) {filterOnChangeHandler(e)},
                                                         minChangeHandler(e) {filterOnChangeHandler(e)}
@@ -538,11 +677,11 @@ function SearchedProducts() {
                                             <input name="brands" placeholder="Enter brand name"
                                                 className="border border-gray-200 bg-white text-sm w-full mt-4 px-3 py-3 sm:py-2.5 rounded-sm"
                                             />
-                                            <div className="text-sm flex flex-col gap-2 h-50 px-4 py-3 overflow-y-scroll scrollbar-thin">
+                                            <div className="text-sm flex flex-col gap-2 h-40 max-h-min px-4 py-3 overflow-y-scroll scrollbar-thin">
                                                 {
                                                     ["brand1", "brand2", "Viado's Himalayan Organics", "Neuherbs", "HealthyHey Nutrition", "Dr. Morepen", "HealthAid", "Zeroharm", "Nutrabay", "Optimum", "Patoni"].map((brand) => (
                                                         <div key={brand} className="flex items-center gap-2 hover:text-primary-400">
-                                                            <input id={brand} type="checkbox" name="brands" value={brand} onChange={filterOnChangeHandler} />
+                                                            <input id={brand} type="checkbox" name="brands" value={brand} checked={filters.brands.includes(brand)} onChange={filterOnChangeHandler} />
                                                             <label htmlFor={brand} className="w-full">{brand}</label>
                                                         </div>
                                                     ))
@@ -559,7 +698,7 @@ function SearchedProducts() {
                                             {
                                                 [{label:"⭐⭐⭐⭐⭐ Only", value:5}, {label:"⭐⭐⭐⭐ & Up", value:4}, {label:"⭐⭐⭐ & Up", value:3}, {label:"⭐⭐ & Up", value:2}, {label:"⭐ & Up", value:1}].map((iter) => (
                                                     <div key={iter.value} className="flex items-center gap-2 hover:text-primary-400">
-                                                        <input id={iter.label} type="radio" name="rating" value={iter.value} onChange={filterOnChangeHandler} />
+                                                        <input id={iter.label} type="radio" name="rating" value={iter.value} checked={filters.rating === iter.value} onChange={filterOnChangeHandler} />
                                                         <label htmlFor={iter.label} className="w-full">{iter.label}</label>
                                                     </div>
                                                 ))
@@ -575,11 +714,11 @@ function SearchedProducts() {
                                             <input name="" placeholder="Enter flavor name"
                                                 className="border border-gray-200 bg-white text-sm w-full mt-4 px-3 py-3 sm:py-2.5 rounded-sm"
                                             />
-                                            <div className="text-sm flex flex-col gap-2 h-50 px-4 py-3 overflow-y-scroll scrollbar-thin">
+                                            <div className="text-sm flex flex-col gap-2 h-40 max-h-min px-4 py-3 overflow-y-scroll scrollbar-thin">
                                                 {
                                                     ["Chocolate Milk", "Mango Shake", "Banana Shake", "Pista Badam", "Strawberry Milk", "Vanilla", "Butter Scotch", "Orange", "Unflavored", "Lemon"].map((flavor) => (
                                                         <div key={flavor} className="flex items-center gap-2 hover:text-primary-400">
-                                                            <input id={flavor} type="checkbox" name="flavors" value={flavor} onChange={filterOnChangeHandler} />
+                                                            <input id={flavor} type="checkbox" name="flavors" value={flavor} checked={filters.flavors.includes(flavor)} onChange={filterOnChangeHandler} />
                                                             <label htmlFor={flavor} className="w-full">{flavor}</label>
                                                         </div>
                                                     ))
