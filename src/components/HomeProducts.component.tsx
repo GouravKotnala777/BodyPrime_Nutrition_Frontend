@@ -26,9 +26,9 @@ export function HomeProducts({selectedProduct}:{selectedProduct:string|null;}) {
     const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
 
 
-    async function getProductsHandler(signal?:AbortSignal) {
+    async function getProductsHandler() {
         setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
-        const data = await getProducts(skip, "", "", signal);
+        const data = await getProducts(skip, "", "", "", "");
         if (data.success) {
             if (data.jsonData.length !== 0) {
                 setSkip(skip+1);
@@ -51,11 +51,9 @@ export function HomeProducts({selectedProduct}:{selectedProduct:string|null;}) {
     };
 
     useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
 
         setDataStatus({isLoading:true, isSuccess:false, error:""});
-        getProductsHandler(signal)
+        getProductsHandler()
         .then((data) => {
             if (data.success) {
                 setDataStatus({isLoading:false, isSuccess:true, error:""});
@@ -64,10 +62,6 @@ export function HomeProducts({selectedProduct}:{selectedProduct:string|null;}) {
         .catch((err) => {
             console.log(err);
         });
-
-        return () => {
-            controller.abort();
-        }
     }, []);
     
     //async function addToWishlistHandler(selectedProduct:{_id:string; name:string; brand:string; category:ProductTypes["category"]; images:string[]; price:number;}) {
@@ -155,10 +149,10 @@ export function HomeProducts({selectedProduct}:{selectedProduct:string|null;}) {
 
     return(
         <HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error}>
-            <section>
+            <section className="border-2 border-violet-500">
                 {
                     products.map((p) => (
-                        <ProductCard key={p._id} product={p} isCartMutating={selectedProduct === p._id} />
+                        <ProductCard key={p._id} product={p} isBestseller={false} isVeg={p.dietaryType !== "nonveg"} isCartMutating={selectedProduct === p._id} />
                         //<ProductCard key={p._id} productID={p._id} name={p.name} brand={p.brand} category={p.category} price={p.price} numReviews={p.numReviews} rating={p.rating} weight={p.weight} flavor={p.flavor} images={p.images} />
                     ))
                 }
@@ -182,10 +176,10 @@ export function BestSellers({selectedProduct}:{selectedProduct:string|null;}) {
     //const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     
 
-    async function getBestSellersHandler(signal?:AbortSignal) {
+    async function getBestSellersHandler() {
         try {
             setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
-            const res = await getProducts(skip, "soldCount", "", signal);
+            const res = await getProducts(skip, "soldCount", "", "", "");
 
             if (res.success) {
                 setBestSellers((prev) => [...prev, ...res.jsonData]);
@@ -203,12 +197,11 @@ export function BestSellers({selectedProduct}:{selectedProduct:string|null;}) {
     };
 
     useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-
-        getBestSellersHandler(signal);
-
-        return() => {controller.abort()}
+        let timer = 0;
+        timer = setTimeout(() => {
+            getBestSellersHandler();
+        }, 1000);
+        return() => clearTimeout(timer);
     }, []);
 
     return(
@@ -216,7 +209,7 @@ export function BestSellers({selectedProduct}:{selectedProduct:string|null;}) {
             {bestSellers.length !== 0 && <h1 className="text-[1.3rem] font-semibold text-white mt-10 p-2 bg-gradient-to-br from-[#f44669] to-[#ff7f50]">Best Sellers</h1>}
             {
                 bestSellers.map((p) => (
-                    <ProductCard key={p._id} product={p} isCartMutating={selectedProduct === p._id} />
+                    <ProductCard key={p._id} product={p} isBestseller={false} isVeg={p.dietaryType !== "nonveg"} isCartMutating={selectedProduct === p._id} />
                 ))
             }
             {bestSellers.length !== 0 &&
@@ -240,10 +233,10 @@ export function FeatureProducts({selectedProduct}:{selectedProduct:string|null;}
     //const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     
 
-    async function getBestSellersHandler(signal?:AbortSignal) {
+    async function getBestSellersHandler() {
         try {
             setRefetchDataStatus({isLoading:true, isSuccess:false, error:""});
-            const res = await getProducts(skip, "createdAt", "", signal);
+            const res = await getProducts(skip, "createdAt", "", "", "");
 
             if (res.success) {
                 setFeatureProducts((prev) => [...prev, ...res.jsonData]);
@@ -261,12 +254,12 @@ export function FeatureProducts({selectedProduct}:{selectedProduct:string|null;}
     };
 
     useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
+        let timer = 0;
+        timer = setTimeout(() => {
+            getBestSellersHandler();
+        }, 1000);
 
-        getBestSellersHandler(signal);
-
-        return() => {controller.abort()}
+        return() => clearTimeout(timer);
     }, []);
 
     return(
@@ -274,7 +267,7 @@ export function FeatureProducts({selectedProduct}:{selectedProduct:string|null;}
             {featureProducts.length !== 0 && <h1 className="text-[1.3rem] font-semibold text-white mt-10 p-2 bg-gradient-to-br from-[#f44669] to-[#ff7f50]">Feature Products</h1>}
             {
                 featureProducts.map((p) => (
-                    <ProductCard key={p._id} product={p} isCartMutating={selectedProduct === p._id} />
+                    <ProductCard key={p._id} product={p} isBestseller={false} isVeg={p.dietaryType !== "nonveg"} isCartMutating={selectedProduct === p._id} />
                 ))
             }
 
