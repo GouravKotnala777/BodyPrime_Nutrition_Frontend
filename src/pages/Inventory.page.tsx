@@ -1,12 +1,13 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import { addImages, addProductVariant, createProduct, getProducts, getSingleProduct, updateProduct } from "../apis/product.api";
-import { type ProductTypes, type CreateProductFormTypes, type UpdateProductFormTypes } from "../utils/types";
+import { type ProductTypes, type CreateProductFormTypes, type UpdateProductFormTypes, type CategoryTypes } from "../utils/types";
 import { AiOutlineProduct } from "react-icons/ai";
 import { BiCamera } from "react-icons/bi";
 import { useLocation } from "react-router-dom";
 import HandlePageUIWithState from "../components/HandlePageUIWithState";
 import { ButtonPrimary } from "../components/Button.component";
 import ImageWithFallback from "../components/ImageWithFallback.component";
+import { FILTER_CATEGORIES_OBJECT, FILTER_SUB_CATEGORIES_OBJECT } from "../utils/constants";
 
 type InventoryTabTypes = "all"|"add"|"update"|"addVariant";
 
@@ -32,8 +33,8 @@ function Inventory() {
     const [tab, setTab] = useState<InventoryTabTypes>(state?.tab||"all");
     const [skip, setSkip] = useState<number>(0);
     const [productID, setProductID] = useState<string>("");
-    const [createProductForm, setCreateProductForm] = useState<Omit<CreateProductFormTypes, "tags"|"warnings">&{tags:string; warnings:string; weight:string;}>({name:"", brand:"", category:"other", subCategory:"whey", price:0, description:"", dietaryType:"veg", weight:"", tags:"", flavor:"", warnings:""});
-    const [updateProductForm, setUpdateProductForm] = useState<Omit<UpdateProductFormTypes, "tags"|"warnings"|"category">&{tags?:string; warnings?:string; weight?:string; category?:"protein"|"pre-workout"|"vitamins"|"creatine"|"other";}>({name:"", brand:"", price:0, weight:"", tags:"", flavor:"", warnings:""});
+    const [createProductForm, setCreateProductForm] = useState<Omit<CreateProductFormTypes, "tags"|"warnings">&{tags:string; warnings:string; weight:string;}>({name:"", brand:"", category:"protein", subCategory:"whey", price:0, description:"", dietaryType:"veg", weight:"", tags:"", flavor:"", warnings:""});
+    const [updateProductForm, setUpdateProductForm] = useState<Omit<UpdateProductFormTypes, "tags"|"warnings"|"category">&{tags?:string; warnings?:string; weight?:string; category?:CategoryTypes}>({name:"", brand:"", price:0, weight:"", tags:"", flavor:"", warnings:""});
     const [dataStatus, setDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
     const [refetchDataStatus, setRefetchDataStatus] = useState<{isLoading:boolean, isSuccess:boolean, error:string}>({isLoading:true, isSuccess:false, error:""});
 
@@ -81,7 +82,8 @@ function Inventory() {
             ...updateProductForm,
             tags:updateProductForm.tags?.split(","),
             warnings:updateProductForm.warnings?.split(","),
-            category:updateProductForm.category
+            category:updateProductForm.category,
+            subCategory:updateProductForm.subCategory
         }, selectedProduct._id);
 
         console.log(res);
@@ -222,17 +224,20 @@ function Inventory() {
                         <input type="text" name="brand" className="border border-primary-200 px-5 py-2 rounded-md" placeholder="Brand" onChange={onChangeHandler} />
                         <select name="category" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeHandler}>
                             <option value="null" disabled>--select category--</option>
-                            <option value="protein">protein</option>
-                            <option value="pre-workout">pre-workout</option>
-                            <option value="vitamins">vitamins</option>
-                            <option value="creatine">creatine</option>
-                            <option value="other">other</option>
+                            {
+                                FILTER_CATEGORIES_OBJECT.map((iter) => (
+                                    <option value={iter.category}>{iter.heading}</option>
+                                ))
+                            }
                         </select>
                         <select name="subCategory" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeHandler}>
                             <option value="null" disabled>--select subCategory--</option>
-                            <option value="whey">whey</option>
-                            <option value="plant">plant</option>
-                            <option value="yeast">yeast</option>
+                            {
+                                FILTER_SUB_CATEGORIES_OBJECT[createProductForm.category].map((iter) => (
+                                    <option value={iter.subCategory}>{iter.heading}</option>
+                                    
+                                ))
+                            }
                         </select>
                         <select name="dietaryType" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeHandler}>
                             <option value="null" disabled>--select dietaryType--</option>
@@ -243,8 +248,15 @@ function Inventory() {
                         <input type="text" name="price" className="border border-primary-200 px-5 py-2 rounded-md" placeholder="Price" onChange={onChangeHandler} />
                         <input type="text" name="flavor" className="border border-primary-200 px-5 py-2 rounded-md" placeholder="Flavor" onChange={onChangeHandler} />
                         <input type="text" name="description" maxLength={200} className="border border-primary-200 px-5 py-2 rounded-md" placeholder="Description..." onChange={onChangeHandler} />
-                        <input type="text" name="tags" className="border border-primary-200 px-5 py-2 rounded-md" placeholder="Tags" onChange={onChangeHandler} />
-                        <input type="text" name="weight" className="border border-primary-200 px-5 py-2 rounded-md" placeholder="Weight" onChange={onChangeHandler} />
+                        <input type="text" name="tags" className="border border-primary-200 px-5 py-2 rounded-md" placeholder="Tags" value={`${createProductForm.brand},${createProductForm.category},${createProductForm.subCategory}`} onChange={onChangeHandler} />
+                        <select name="weight" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeHandler}>
+                            <option value="null" disabled>--select weight--</option>
+                            {
+                                ["50g", "100g", "200g", "500g", "1kg", "2kg", "5kg"].map((iter) => (
+                                    <option value={iter}>{iter}</option>
+                                ))
+                            }
+                        </select>
                         <input type="text" name="warnings" className="border border-primary-200 px-5 py-2 rounded-md" placeholder="Warnings" onChange={onChangeHandler} />
                         <button className="font-semibold py-2 rounded-md text-white bg-primary-400 hover:opacity-80" onClick={createProductHandler}>Create Product</button>
                     </div>
@@ -286,20 +298,23 @@ function Inventory() {
                     <input type="text" name="brand" className="border border-primary-200 px-5 py-2 rounded-md" placeholder={selectedProduct?.brand||"Product brand"} onChange={onChangeUpdateHandler} />
                     <select name="category" className="px-5 py-2 text-gray-500" defaultValue={selectedProduct?.category} onChange={onChangeUpdateHandler}>
                         <option value="null" disabled>--select category--</option>
-                        <option value="protein">protein</option>
-                        <option value="pre-workout">pre-workout</option>
-                        <option value="vitamins">vitamins</option>
-                        <option value="creatine">creatine</option>
-                        <option value="other">other</option>
+                        {
+                            FILTER_CATEGORIES_OBJECT.map((iter) => (
+                                <option value={iter.category}>{iter.heading}</option>
+                            ))
+                        }
                     </select>
                     <select name="subCategory" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeUpdateHandler}>
                         <option value="null" disabled>--select subCategory--</option>
-                        <option value="whey">whey</option>
-                        <option value="plant">plant</option>
-                        <option value="yeast">yeast</option>
+                        {
+                            FILTER_SUB_CATEGORIES_OBJECT[createProductForm.category].map((iter) => (
+                                <option value={iter.subCategory}>{iter.heading}</option>
+                                
+                            ))
+                        }
                     </select>
                     <select name="dietaryType" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeUpdateHandler}>
-                        <option value="null" disabled>--select category--</option>
+                        <option value="null" disabled>--select dietaryType--</option>
                         <option value="veg">veg</option>
                         <option value="nonveg">nonveg</option>
                         <option value="vegan">vegan</option>
@@ -308,7 +323,14 @@ function Inventory() {
                     <input type="text" name="flavor" className="border border-primary-200 px-5 py-2 rounded-md" placeholder={selectedProduct?.flavor||"Flavor"} onChange={onChangeUpdateHandler} />
                     {/*<input type="text" name="size" className="border border-primary-200 px-5 py-2 rounded-md" placeholder={selectedProduct?.size.toString()||"Size"} onChange={onChangeUpdateHandler} />*/}
                     <input type="text" name="tags" className="border border-primary-200 px-5 py-2 rounded-md" placeholder={selectedProduct?.tags.join(",")||"Tags"} onChange={onChangeUpdateHandler} />
-                    <input type="text" name="weight" className="border border-primary-200 px-5 py-2 rounded-md" placeholder="Weight" onChange={onChangeUpdateHandler} />
+                    <select name="weight" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeUpdateHandler}>
+                        <option value="null" disabled>--select weight--</option>
+                        {
+                            ["50g", "100g", "200g", "500g", "1kg", "2kg", "5kg"].map((iter) => (
+                                <option value={iter}>{iter}</option>
+                            ))
+                        }
+                    </select>
                     <input type="text" name="warnings" className="border border-primary-200 px-5 py-2 rounded-md" placeholder={selectedProduct?.warnings?.join(",")||"Warnings"} onChange={onChangeUpdateHandler} />
 
                     <button className="font-semibold py-2 rounded-md text-white bg-primary-400 hover:opacity-80" onClick={updateProductHandler}>Update Product</button>
