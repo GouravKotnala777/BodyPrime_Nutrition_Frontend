@@ -1,13 +1,10 @@
-import { useEffect, useState, type Dispatch, type MouseEvent, type SetStateAction } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import type { ProductVariantOptionsInterface } from "./ProductCard.component";
 import { NavLink } from "react-router-dom";
-import { BsArrowRight, BsCheck, BsExclamation } from "react-icons/bs";
+import { BsArrowRight, BsExclamation } from "react-icons/bs";
 import Spinner from "./Spinner.component";
 import { addToCart, removeFromCart } from "../apis/cart.api";
-import { useUser } from "../contexts/UserContext";
-import type { LocalCartTypes, ProductTypes, WishlistTypes } from "../utils/types";
-import { addToWishlist } from "../apis/wishlist.api";
-import { useCart } from "../contexts/CartContext";
+import type { LocalCartTypes, WishlistTypes } from "../utils/types";
 import { converKgtolbs } from "../utils/functions";
 
 interface ProductVariantDialogPropTypes{
@@ -17,15 +14,14 @@ interface ProductVariantDialogPropTypes{
     setCartData:Dispatch<SetStateAction<LocalCartTypes[]>>;
     setWishlistData:Dispatch<SetStateAction<WishlistTypes[]>>;
     addToLocalCart:(product:LocalCartTypes) => void;
-    removeProductFromLocalCart:({_id, variant, quantity}:{_id:string; variant:string; quantity:number;})=>void;    
-
+    removeProductFromLocalCart:({_id, variant, quantity}:{_id:string; variant:string; quantity:number;})=>void;
 }
 
-function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserAuthenticated, setCartData, setWishlistData}:ProductVariantDialogPropTypes) {
+function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserAuthenticated, setCartData}:ProductVariantDialogPropTypes) {
     const [isProductVariantOptionsOpen, setIsProductVariantOptionsOpen] = useState<boolean>(false);
-    const [productVariantOptions, setProductVariantOptions] = useState<ProductVariantOptionsInterface>({img:"test-category.webp", description:"", flavor:"Cold Coffee", variants:{}, product:{_id:"", brand:"", category:"other", images:[], name:"", price:0}});
+    const [productVariantOptions, setProductVariantOptions] = useState<ProductVariantOptionsInterface>({img:"test-category.webp", description:"", flavor:"Cold Coffee", variants:{}, product:{_id:"", brand:"", category:"protein", images:[], name:"", price:0}});
     const [processState, setProcessState] = useState<"loading"|"success"|"error"|null>(null);
-    const [selectedProduct, setSelectedProduct] = useState<string|null>(null);
+    //const [selectedProduct, setSelectedProduct] = useState<string|null>(null);
     const [selectedVariantQty, setSelectedVariantQty] = useState<number>(0);
     const [selectedFlavorVariant, setSelectedFlavorVariant] = useState<keyof ProductVariantOptionsInterface["variants"]>("");
     const [selectedWeightVariant, setSelectedWeightVariant] = useState<{weight:string; index:number;}>({weight:"", index:0});
@@ -84,25 +80,27 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
         setSelectedVariantQty(isExist);
     };
 
-    async function addToWishlistHandler(selectedProduct:{_id:string; name:string; brand:string; category:ProductTypes["category"]; dietaryType:"veg"|"nonveg"|"vegan"; images:string[]; price:number; variant:string;}) {
-        const res = await addToWishlist({productID:selectedProduct._id, variant:selectedProduct.variant});
-        if (res.success) {
-            setWishlistData((prev) => {
-                if (res.jsonData.operation === 1) {
-                    return [...prev, selectedProduct];
-                }
-                else if (res.jsonData.operation === -1) {
-                    return prev.filter((p) => p._id !== res.jsonData.productID);
-                }
-                else{
-                    return prev;
-                }
-            })
-        }
-    };
+    //async function addToWishlistHandler(selectedProduct:{_id:string; name:string; brand:string; category:ProductTypes["category"]; dietaryType:"veg"|"nonveg"|"vegan"; images:string[]; price:number; variant:string;}) {
+    //    const res = await addToWishlist({productID:selectedProduct._id, variant:selectedProduct.variant});
+    //    if (res.success) {
+    //        setWishlistData((prev) => {
+    //            if (res.jsonData.operation === 1) {
+    //                return [...prev, selectedProduct];
+    //            }
+    //            else if (res.jsonData.operation === -1) {
+    //                return prev.filter((p) => p._id !== res.jsonData.productID);
+    //            }
+    //            else{
+    //                return prev;
+    //            }
+    //        })
+    //    }
+    //};
+    
+    
     async function addToCartHandler({productID, variant}:{productID:string; variant:string;}) {
         try {
-            setSelectedProduct(productID);
+            //setSelectedProduct(productID);
             const res = await addToCart({productID, variant, quantity:1});
     
             if (!res.success) {
@@ -139,7 +137,7 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
             console.log(error);
         }
         finally{
-            setSelectedProduct(null);
+            //setSelectedProduct(null);
         }
     };
     async function onClickAddToCartHandlers() {
@@ -170,7 +168,7 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
     };
     async function removeFromCartHandler({productID, variant, quantity}:{productID:string; variant:string; quantity:number;}) {
         try {
-            setSelectedProduct(productID);            
+            //setSelectedProduct(productID);            
             const res = await removeFromCart({productID, variant, quantity});
 
             if (!res.success) {
@@ -196,7 +194,7 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
             console.log(error);
         }
         finally{
-            setSelectedProduct("");
+            //setSelectedProduct("");
         }
     };
 
