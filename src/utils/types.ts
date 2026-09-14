@@ -29,7 +29,7 @@ export interface ProductVariantInterface{
     dietaryType:"veg"|"nonveg"|"vegan";
     tags:string[];
 };
-export type CategoryTypes = "protein"|"weight"|"pre-workout"|"vitamins"|"minerals"|"fatty acids"|"ayurvedic"|"wellness";
+export type CategoryTypes = "protein"|"weight"|"pre-workout"|"vitamins"|"minerals"|"fatty acids"|"ayurvedic"|"wellness"|"health food";
 export interface ProductTypes {
     _id:string;
     name:string;

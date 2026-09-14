@@ -49,7 +49,7 @@ function Inventory() {
     async function createProductHandler() {
         const res = await createProduct({
             ...createProductForm,
-            tags:createProductForm.tags.split(","),
+            tags:`${createProductForm.brand},${createProductForm.category},${createProductForm.subCategory}`.split(","),
             warnings:createProductForm.warnings.split(",")
         });
         console.log(res);

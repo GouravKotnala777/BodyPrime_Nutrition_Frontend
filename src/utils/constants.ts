@@ -18,6 +18,7 @@ export const FILTER_CATEGORIES_OBJECT = [
     {heading:"Essential Fatty Acids", category:"fatty acids"},
     {heading:"Ayurvedic", category:"ayurvedic"},
     {heading:"Digestive Health", category:"wellness"},
+    {heading:"Health Foods", category:"health food"},
 ];
 export const FILTER_SUB_CATEGORIES_OBJECT = {
     protein:[
@@ -78,6 +79,19 @@ export const FILTER_SUB_CATEGORIES_OBJECT = {
         {heading:"Immune Support", subCategory:"immune"},
         {heading:"Sleep & Relaxation", subCategory:"sleep"},
         {heading:"Antioxidants", subCategory:"antioxidants"},
+    ],
+    "health food":[
+        {heading:"Oats", subCategory:"grain"},
+        {heading:"Peanuts", subCategory:"legumes"},
+        {heading:"Almonds", subCategory:"nut"},
+        {heading:"Cashews", subCategory:"nut"},
+        {heading:"Pistachios", subCategory:"nut"},
+        {heading:"Hazelnuts", subCategory:"nut"},
+        {heading:"Apple Cider Vineger", subCategory:"vineger"},
+        {heading:"Protein Bars", subCategory:"bar"},
+        {heading:"Yogurt", subCategory:"yogurt"},
+        {heading:"Soy Milk", subCategory:"milk"},
+        {heading:"Fortified Oat", subCategory:"milk"}
     ]
 }
 //const CATEGORIES = [
