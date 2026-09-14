@@ -8,6 +8,7 @@ import { useUser } from "../contexts/UserContext";
 import type { LocalCartTypes, ProductTypes, WishlistTypes } from "../utils/types";
 import { addToWishlist } from "../apis/wishlist.api";
 import { useCart } from "../contexts/CartContext";
+import { converKgtolbs } from "../utils/functions";
 
 interface ProductVariantDialogPropTypes{
     totalCartItems:number;
@@ -260,7 +261,7 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                                             `}
                                         onClick={()=>setSelectedWeightVariant({weight, index})}
                                     >
-                                        <div className={`border-b p-2 ${selectedWeightVariant.weight===weight?"border-b-primary-300":"border-b-gray-300"}`}>{weight} (1.1 lb)</div>
+                                        <div className={`border-b p-2 ${selectedWeightVariant.weight===weight?"border-b-primary-300":"border-b-gray-300"}`}>{weight} ({converKgtolbs(weight)} lb)</div>
                                         <div className="bg-white p-2">
                                             <div>
                                                 <span className="text-gray-700 text-xl font-semibold">₹{price}</span><span className="text-gray-500 text-sm"> (₹360/100g)</span>
