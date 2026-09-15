@@ -7,6 +7,9 @@ import { BsArrowRight } from "react-icons/bs";
 import { getProducts, searchProducts } from "../apis/product.api";
 import type { ProductTypes } from "../utils/types";
 import { MdOutlineInventory2 } from "react-icons/md";
+import { SUGGESSION_BADGES, SUGGESSIONS_TRENDING_SEARCHES } from "../utils/constants";
+import ImageWithFallback from "./ImageWithFallback.component";
+import Spinner from "./Spinner.component";
 
 
 
@@ -19,6 +22,8 @@ const productsBy = {
     brands:["asdkajsdlka", "asdasd asdasd", "sakdjasldk asd asdas", "askdlajsd asdkl", "asas asdasdasdad", "asdasdasds adasdasasd"]
 };
 
+const OFF = 20;
+
 function Header({isHeaderVisible}:HeaderPropTypes) {
     const {calculateTotalCartItems, wishlistData} = useCart();
     const {loggedInUserName, isUserAuthenticated, userData} = useUser();
@@ -26,6 +31,8 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
     const [isHamburgerSideBarOpen, setIsHamburgerSideBarOpen] = useState<boolean>(false);
     const [isSearchBarSuggessionsOpen, setIsSearchBarSuggessionsOpen] = useState<boolean>(false);
     const [bestSellers, setBestSellers] = useState<ProductTypes[]>([]);
+    const [isSearchFound, setIsSearchFound] = useState<boolean|null>(null);
+    const [isSearching, setIsSearching] = useState<boolean>(false);
     const [searchedData, setSearchedData] = useState<{names:ProductTypes[]; categories:ProductTypes[]; brands:ProductTypes[]; tags:ProductTypes[];}>({
         names:[
             //{_id:"12345678901", brand:"brand1", category:"protein", images:[], name:"product1", price:1000, size:100, tag:["brand1", "protein"], numReviews:0, weight:"100gm", rating:0}
@@ -48,14 +55,12 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
     function searchInpOnChnageHandler(e:ChangeEvent<HTMLInputElement>) {
         setSearchQry(e.target.value);
     };
-    function searchInpClearHandler() {
+    function searchInputClearHandler() {
         setSearchQry("");
+        setIsSearchBarSuggessionsOpen(false);
     };
     function searchInputFocusHandler() {
         setIsSearchBarSuggessionsOpen(true);
-    };
-    function searchInputBlurHandler() {
-        setIsSearchBarSuggessionsOpen(false);
     };
     
     function categoryBrandTabHandler(e:MouseEvent<HTMLButtonElement>) {
@@ -71,11 +76,8 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
     };
     async function getBestSellersHandler(signal?:AbortSignal) {
         try {
-            const res = await getProducts(0, "soldCount", "", signal);
-
+            const res = await getProducts(0, "soldCount", "", "", "", signal);
             if (res.success) {
-                console.log(res.jsonData);
-                
                 setBestSellers(res.jsonData);
             }
         } catch (error) {
@@ -89,28 +91,54 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
             setSearchedData({names:[],brands:[], categories:[], tags:[]});
             throw Error("searchQuery not found");
         }
+        setIsSearching(false);
         const res = await searchProducts(searchQry);
         if (res.success) {
-            setSearchedData(res.jsonData);
+            if (
+                res.jsonData.brands.length !== 0 ||
+                res.jsonData.brands.length !== 0 ||
+                res.jsonData.brands.length !== 0 ||
+                res.jsonData.brands.length !== 0
+            ) {
+                setSearchedData(res.jsonData);
+                setIsSearchFound(true);
+            }
+            else{
+                setSearchedData({names:[],brands:[], categories:[], tags:[]});
+                setIsSearchFound(false);
+            }
         }
-        console.log(res);
     };
 
     useEffect(() => {
-        getBestSellersHandler();
+        let timer = 0;
+
+        timer = setTimeout(() => {
+            getBestSellersHandler();
+        }, 2000);
+
+        return() => clearTimeout(timer);
     }, []);
 
     useEffect(() => {
+        if(!searchQry) {
+            setIsSearching(false);
+            setIsSearchFound(null);
+            setSearchedData({names:[],brands:[], categories:[], tags:[]});
+            return;
+        }
+        setIsSearching(true);
         const timer = setTimeout(() => {
             getSearchedProductsHandler();
         }, 2000);
-
+        
         return () => clearTimeout(timer);
     }, [searchQry]);
     
 
     useEffect(() => {
         document.body.style.overflow = (isHamburgerSideBarOpen||isSearchBarSuggessionsOpen) ? "hidden" : "auto";
+        
     }, [isHamburgerSideBarOpen, isSearchBarSuggessionsOpen])
 
     return(
@@ -120,6 +148,8 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                 transform:isHeaderVisible?"translateY(0%)":"translateY(-101%)"
             }}
         >
+            {/* overlay */}
+            <div className={`fixed ${isSearchBarSuggessionsOpen?"block":"hidden"} top-0 left-0 w-screen h-screen bg-black/60`} onClick={searchInputClearHandler}></div>
 
             {/* ham and logo */}
             <div className="flex items-center gap-3 sm:gap-4">
@@ -133,13 +163,13 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                     </div>
                 </div>
                 <NavLink to="/home" className="w-15 sm:w-15">
-                    <img src="logo.png" alt="logo.png" />
+                    <img src="/logo.png" alt="/logo.png" />
                 </NavLink>
             </div>
 
             {/* search bar */}
             <div className="content-center w-25 xs:w-50 sm:w-80 md:w-200">
-                <div className="border border-primary-800 bg-primary-200 placeholder-primary-800 relative rounded-md">
+                <div className="border border-primary-800 bg-primary-200 placeholder-primary-800 relative rounded-md [box-shadow:0px_0px_4px_1px_white]">
                     {/* search input */}
 
                     <div className="w-full absolute top-0 left-0 text-gray-700 rounded-md flex overflow-hidden">
@@ -150,37 +180,48 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 color:searchQry?"#364153":"transparent"
                             }}
                             onFocus={searchInputFocusHandler}
-                            onBlur={searchInputBlurHandler}
                             onChange={searchInpOnChnageHandler}
                         />
-                        <button className="px-3 py-3 border-primary-400 cursor-pointer hover:bg-primary-100 transition-all ease-in-out duration-300"
-                            style={{
-                                filter:searchQry?"blur(0px)":"blur(2px)",
-                                transform:searchQry?"scale(1)":"scale(0)"
-                            }}
-                            onClick={searchInpClearHandler}
-                        >X</button>
+                        <button className="px-3 py-3 border-primary-400 cursor-pointer hover:text-primary-500 transition-all ease-in-out duration-300"
+                            //style={{
+                            //    filter:searchQry?"blur(0px)":"blur(2px)",
+                            //    transform:searchQry?"scale(1)":"scale(0)"
+                            //}}
+                            onClick={searchInputClearHandler}
+                        >
+                            {
+                                isSearching ?
+                                    <div className="">
+                                        <Spinner color="var(--color-primary-800)" />
+                                    </div>
+                                    :
+                                    <div className="px-1.75">X</div>
+                            }
+                        </button>
                     </div>
                     
                     {   /* search input placeholder */
-                        <div className="w-full h-full text-nowrap truncate p-3 rounded-md font-mono flex items-center"
+                        <div className="w-full h-full text-nowrap truncate p-3 rounded-md font-mono"
                             style={{
                                 color:searchQry?"transparent":"oklch(44.4% 0.177 26.899)"
                                 //opacity:0
                             }}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="size-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.7" stroke="currentColor" className="size-5 inline">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                             </svg>
+                            &nbsp;
+                            Search Products, Category, Brands and More    
+                        </div>
 
-                            &nbsp;Search Products, Category, Brands and More</div>
                     }
 
                     {/* search bar suggessions */}
                     
-                    <div className={`border border-gray-200 absolute overflow-y-scroll md:scrollbar-thin top-[105%] left-[50%] -translate-x-[50%] bg-white rounded-lg py-5 sm:py-2 h-140 w-full min-w-90 ${isSearchBarSuggessionsOpen?"scale-y-100 opacity-100":"scale-y-0 opacity-0"} origin-top transition-all ease-in-out duration-300`}>
+                    <div className={`border border-gray-200 absolute overflow-y-scroll md:scrollbar-thin top-[105%] left-[40%] sm:left-[50%] -translate-x-[50%] bg-white rounded-lg py-5 sm:py-2 h-140 w-full min-w-90 ${isSearchBarSuggessionsOpen?"scale-y-100 opacity-100":"scale-y-0 opacity-0"} origin-top transition-all ease-in-out duration-300`}>
                         <div className="h-max p-4 flex flex-col gap-4">
 
+                            {/* searched item list */}
                             {
                                 searchedData["names"].length!==0 &&
                                     <div className="flex flex-col gap-4">
@@ -190,7 +231,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                         <div className="flex flex-col">
                                             {
                                                 searchedData["names"].map((product, index) => (
-                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInpClearHandler}>
+                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInputClearHandler}>
                                                         <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                                         <div>
                                                             <div className="text-gray-700 font-semibold">{product.name}</div>
@@ -200,7 +241,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                                     </NavLink>
                                                 ))
                                             }
-                                            <NavLink to={`/searched_products/name/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInpClearHandler}>Show more</NavLink>
+                                            <NavLink to={`/searched_products/name/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -213,7 +254,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                         <div className="flex flex-col">
                                             {
                                                 searchedData["brands"].map((product, index) => (
-                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInpClearHandler}>
+                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInputClearHandler}>
                                                         <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                                         <div>
                                                             <div className="text-gray-700 font-semibold">{product.name}</div>
@@ -223,7 +264,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                                     </NavLink>
                                                 ))
                                             }
-                                            <NavLink to={`/searched_products/brand/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInpClearHandler}>Show more</NavLink>
+                                            <NavLink to={`/searched_products/brand/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -236,7 +277,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                         <div className="flex flex-col">
                                             {
                                                 searchedData["categories"].map((product, index) => (
-                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInpClearHandler}>
+                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInputClearHandler}>
                                                         <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                                         <div>
                                                             <div className="text-gray-700 font-semibold">{product.name}</div>
@@ -246,7 +287,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                                     </NavLink>
                                                 ))
                                             }
-                                            <NavLink to={`/searched_products/category/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInpClearHandler}>Show more</NavLink>
+                                            <NavLink to={`/searched_products/category/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -259,7 +300,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                         <div className="flex flex-col">
                                             {
                                                 searchedData["tags"].map((product, index) => (
-                                                    product.tag.map((t, ind) => (
+                                                    product.tags.map((t, ind) => (
                                                         <NavLink to={`/single_product/${product._id}`} key={t+ind+index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md">
                                                             <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                                             <div>
@@ -271,7 +312,37 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                                     ))
                                                 ))
                                             }
-                                            <NavLink to={`####`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInpClearHandler}>Show more</NavLink>
+                                            <NavLink to={`####`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
+                                        </div>
+                                    </div>
+                            }
+                            
+                            {/* query suggession badges if search not found */}
+                            {
+                                (!isSearchFound && isSearchFound !== null) && 
+                                    <div className="border border-gray-200 rounded-md p-4">
+                                        <div className="text-gray-800 text-center mb-6 font-semibold">Search not found</div>
+                                        <div className="flex flex-wrap gap-4">
+                                            {
+                                                SUGGESSION_BADGES.map(({heading, category, subCategory}) => (
+                                                    <NavLink to={`/searched_products/category/${category}/${subCategory}`} className="border border-dashed border-gray-200 text-gray-600 bg-gray-50/60 w-max pl-3 pr-2.5 pt-1 pb-1.5 text-sm flex items-center gap-1.5 rounded-full hover:border-primary-200 hover:text-primary-600 hover:bg-primary-50 scale-95 hover:scale-100 cursor-pointer transition-all ease-out duration-300" onClick={searchInputClearHandler}>
+                                                        <span>{heading}</span>
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            viewBox="0 0 24 24"
+                                                            strokeWidth="1.5"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            className="size-4"
+                                                        >
+                                                            <path
+                                                                d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                                                            />
+                                                        </svg>
+                                                        
+                                                    </NavLink>
+                                                ))
+                                            }
                                         </div>
                                     </div>
                             }
@@ -281,23 +352,23 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             <div className="text-lg font-semibold text-gray-800">Trending Searches</div>
                             <div className="flex flex-col">
                                 {
-                                    [0,1,2].map((_, index) => (
-                                        <NavLink to="####" key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md">
+                                    SUGGESSIONS_TRENDING_SEARCHES.map(({heading, category, subCategory}, index) => (
+                                        <NavLink to={`/searched_products/category/${category}/${subCategory}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInputClearHandler}>
                                             <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                             <div>
-                                                <div className="text-gray-700 font-semibold">Whey Proteins</div>
+                                                <div className="text-gray-700 font-semibold">{heading}</div>
                                                 <div className="text-sm text-gray-400">In all Categories</div>
                                             </div>
                                             <div className="text-gray-500 ml-auto"><BsArrowRight /></div>
                                         </NavLink>
                                     ))
                                 }
-                                <NavLink to="####" className="text-sm text-primary-400 my-2 underline underline-offset-2">Show more</NavLink>
+                                <NavLink to="####" className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
 
                             </div>
                             <div className="flex justify-between items-center">
-                                <div className="text-lg font-semibold text-gray-800">Trending Products</div>
-                                <NavLink to="####" className="text-sm text-primary-400 my-2 underline underline-offset-2">See All</NavLink>
+                                <div className="text-lg font-semibold text-gray-800">Bestseller Products</div>
+                                <NavLink to={`/searched_products/soldCount/null/null`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>See All</NavLink>
                             </div>
 
                             
@@ -306,15 +377,18 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                     <div className="flex w-max h-max gap-2 p-2">
                                         {
                                             bestSellers.map((product, index) => (
-                                                <NavLink to={`/single_product/${product._id}`} key={index} className="w-30 rounded-md cursor-pointer hover:bg-primary-100 group">
-                                                    <div className="bg-gray-50 h-30">
-                                                        <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} className="w-50 h-full mx-auto group-hover:scale-110 transition-transform ease-in-out duration-300" />
+                                                <NavLink to={`/single_product/${product._id}`} key={index} className="border border-gray-100 w-30 rounded-md cursor-pointer hover:bg-primary-50 overflow-hidden group" onClick={searchInputClearHandler}>
+                                                    <div className="h-30 p-1">
+                                                        <div className="rounded-t-sm overflow-hidden">
+                                                            <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} fallbackSrc="/public/placeholders/no_product.jpg" />
+                                                        </div>
+                                                        {/*<img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} className="w-50 h-full mx-auto group-hover:scale-110 transition-transform ease-in-out duration-300" />*/}
                                                     </div>
-                                                    <div className="border h-20 border-gray-100 border-t-transparent px-2 rounded-b-sm">
-                                                        <div className="font-semibold line-clamp-2 mt-2">{product.name}</div>
-                                                        <div className="flex gap-2 font-semibold text-sm mt-1">
-                                                            <div className="text-gray-800">{product.price}</div>
-                                                            <div className="text-gray-500 line-through">₹9699</div>
+                                                    <div className="h-20 px-2 rounded-b-md">
+                                                        <div className="text-gray-700 text-center font-semibold line-clamp-2 mt-2">{product.name} Lorem ipsum dolor sit amet.</div>
+                                                        <div className="flex justify-center items-center gap-2 font-semibold mt-1">
+                                                            <div className="text-sm text-gray-600">₹{product.price}</div>
+                                                            <div className="text-xs text-gray-400 line-through">₹{product.price-(Math.round((product.price*OFF)/100))}</div>
                                                         </div>
                                                     </div>
                                                 </NavLink>
@@ -349,7 +423,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                     {/* account navigation dialog */}
                     <div className="border border-gray-200 hidden absolute right-0 top-full flex-col p-3 gap-3 sm:p-4 sm:gap-4 rounded-lg bg-white group-hover:flex">
                         {/* profile access*/}
-                        <NavLink to={isUserAuthenticated()?"/my_profile":"/login"} className="border border-gray-200 flex gap-4 rounded-md hover:bg-primary-100">
+                        <NavLink to={isUserAuthenticated()?"/my_profile":"/login"} className="border border-gray-200 flex rounded-md hover:bg-primary-100 group/right-arrow">
                             <div className="p-3">
                                 <div className="w-15 h-15 grid place-items-center rounded-full bg-primary-100/50 p-1.5">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.6" stroke="currentColor" className="size-full bg-primary-200 font-semibold p-3 text-primary-800 rounded-full">
@@ -373,7 +447,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                             <div className="text-primary-500">Login or Signup</div>
                                     }
                                 </div>
-                                <div><BsArrowRight /></div>
+                                <div className="w-6 group-hover/right-arrow:translate-x-2 transition-all ease-in-out duration-300"><BsArrowRight /></div>
                             </div>
                         </NavLink>
 
