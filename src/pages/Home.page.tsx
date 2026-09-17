@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import ProductCard, { type ProductCardPropTypes } from "../components/ProductCard.component";
+//import { type ProductCardPropTypes } from "../components/ProductCard.component";
+import ImageWithFallback from "../components/ImageWithFallback.component";
 
 
 const CATEGORY_DATA = [
@@ -25,21 +26,21 @@ const CATEGORY_DATA2 = [
     {img:"https://cdn2.nutrabay.com/marketing-promotions/Pre-&-Probiotic-1-1779255946.webp", heading:"Pre & Probiotics", category:"wellness", subCategory:"probiotics"}
 ];
 const CATEGORY_DATA3 = [
-    {img:"https://cdn2.nutrabay.com/marketing-promotions/Nuts,-Seed-7-grain-1767085203.webp", heading:"Protein Oats", category:"protein oats", subCategory:""},
-    {img:"https://cdn2.nutrabay.com/marketing-promotions/Peanut-Butter-1767085203.webp", heading:"Peanut Butter", category:"peanut butter", subCategory:""},
+    {img:"https://cdn2.nutrabay.com/marketing-promotions/Nuts,-Seed-7-grain-1767085203.webp", heading:"Protein Oats", category:"health food", subCategory:"grain"},
+    {img:"https://cdn2.nutrabay.com/marketing-promotions/Peanut-Butter-1767085203.webp", heading:"Peanut Butter", category:"health food", subCategory:"legumes"},
     {img:"https://cdn2.nutrabay.com/marketing-promotions/Apple-Cidar-Vinegar-1767085203.webp", heading:"Apple Cider Vineger", category:"apple cider vineger", subCategory:""},
-    {img:"https://cdn2.nutrabay.com/marketing-promotions/Protein-Bars-1767085203.webp", heading:"Protein Bars", category:"protein bar", subCategory:""},
+    {img:"https://cdn2.nutrabay.com/marketing-promotions/Protein-Bars-1767085203.webp", heading:"Protein Bars", category:"health food", subCategory:"bar"},
 ];
 
-const PRODUCTS:ProductCardPropTypes["product"][] = [
-    {_id:"1234567890", brand:"brand1", category:"protein", subCategory:"whey", dietaryType:"veg", images:["/test-category.webp"], name:"product1", price:2400, rating:4, numReviews:3832, weight:"1kg", variants:[], flavor:"chocolate", tags:[]},
-    {_id:"1234567891", brand:"brand2", category:"vitamins", subCategory:"vitamin a", dietaryType:"veg", images:["/test-category.webp"], name:"product2", price:3100, rating:3, numReviews:2112, weight:"1kg", variants:[],  flavor:"vanilla", tags:[]},
-    {_id:"1234567892", brand:"brand3", category:"protein", subCategory:"whey", dietaryType:"veg", images:["/test-category.webp"], name:"product3", price:400, rating:2, numReviews:128, weight:"1kg", variants:[],  flavor:"milk", tags:[]},
-    {_id:"1234567893", brand:"brand1", category:"minerals", subCategory:"zinc", dietaryType:"veg", images:["/test-category.webp"], name:"product4", price:1100, rating:4, numReviews:732, weight:"1kg", variants:[],  flavor:"chocolate", tags:[]},
-    {_id:"1234567894", brand:"brand1", category:"pre-workout", subCategory:"creatine", dietaryType:"veg", images:["/test-category.webp"], name:"product5", price:2400, rating:1, numReviews:9092, weight:"1kg", variants:[],  flavor:"mango", tags:[]},
-    {_id:"1234567895", brand:"brand2", category:"protein", subCategory:"whey", dietaryType:"veg", images:["/test-category.webp"], name:"product6", price:5499, rating:4, numReviews:32, weight:"1kg", variants:[],  flavor:"butter", tags:[]},
-    //{_id:"1234567896", brand:"brand1", category:"vitamins", images:["test-category.webp"], name:"product7", price:3090, rating:5, numReviews:338, weight:"1kg", flavor:"chocolate"},
-]
+//const PRODUCTS:ProductCardPropTypes["product"][] = [
+//    {_id:"1234567890", brand:"brand1", category:"protein", subCategory:"whey", dietaryType:"veg", images:["/test-category.webp"], name:"product1", price:2400, rating:4, numReviews:3832, weight:"1kg", variants:[], flavor:"chocolate", tags:[]},
+//    {_id:"1234567891", brand:"brand2", category:"vitamins", subCategory:"vitamin a", dietaryType:"veg", images:["/test-category.webp"], name:"product2", price:3100, rating:3, numReviews:2112, weight:"1kg", variants:[],  flavor:"vanilla", tags:[]},
+//    {_id:"1234567892", brand:"brand3", category:"protein", subCategory:"whey", dietaryType:"veg", images:["/test-category.webp"], name:"product3", price:400, rating:2, numReviews:128, weight:"1kg", variants:[],  flavor:"milk", tags:[]},
+//    {_id:"1234567893", brand:"brand1", category:"minerals", subCategory:"zinc", dietaryType:"veg", images:["/test-category.webp"], name:"product4", price:1100, rating:4, numReviews:732, weight:"1kg", variants:[],  flavor:"chocolate", tags:[]},
+//    {_id:"1234567894", brand:"brand1", category:"pre-workout", subCategory:"creatine", dietaryType:"veg", images:["/test-category.webp"], name:"product5", price:2400, rating:1, numReviews:9092, weight:"1kg", variants:[],  flavor:"mango", tags:[]},
+//    {_id:"1234567895", brand:"brand2", category:"protein", subCategory:"whey", dietaryType:"veg", images:["/test-category.webp"], name:"product6", price:5499, rating:4, numReviews:32, weight:"1kg", variants:[],  flavor:"butter", tags:[]},
+//    //{_id:"1234567896", brand:"brand1", category:"vitamins", images:["test-category.webp"], name:"product7", price:3090, rating:5, numReviews:338, weight:"1kg", flavor:"chocolate"},
+//]
 
 
 function Home() {
@@ -61,7 +62,7 @@ function Home() {
                         CATEGORY_DATA.map(({img, heading, category, subCategory}) => (
                             <NavLink key={heading} to={`/searched_products/category/${category}/${subCategory}`} className="text-center full w-20 sm:w-30">
                                 <div className="w-full h-full mx-auto rounded-3xl overflow-hidden">
-                                    <img src={img} alt={img} className="w-full h-full" />
+                                    <ImageWithFallback src={img} alt={img} fallbackSrc="/placeholders/no_product.jpg" />
                                 </div>
                                 <div className="text-gray-700 text-lg py-1">{heading}</div>
                             </NavLink>
@@ -86,7 +87,7 @@ function Home() {
                         CATEGORY_DATA2.map(({img, heading, category, subCategory}) => (
                             <NavLink key={heading} to={`/searched_products/category/${category}/${subCategory}`} className="text-center full w-20 sm:w-30">
                                 <div className="w-full h-full mx-auto rounded-3xl overflow-hidden">
-                                    <img src={img} alt={img} className="w-full h-full" />
+                                    <ImageWithFallback src={img} alt={img} fallbackSrc="/placeholders/no_product.jpg" />
                                 </div>
                                 <div className="text-gray-700 text-lg py-1">{heading}</div>
                             </NavLink>
@@ -109,13 +110,13 @@ function Home() {
             <div className="">
                 <div className="flex justify-between items-center flex-wrap gap-2">
                     {
-                        CATEGORY_DATA3.map(({img, heading}) => (
-                            <div key={heading} className="text-center full w-20 sm:w-30">
+                        CATEGORY_DATA3.map(({img, heading, category, subCategory}) => (
+                            <NavLink key={heading} to={`/searched_products/category/${category}/${subCategory}`} className="text-center full w-20 sm:w-30">
                                 <div className="w-full h-full mx-auto rounded-3xl overflow-hidden">
-                                    <img src={img} alt={img} className="w-full h-full" />
+                                    <ImageWithFallback src={img} alt={img} fallbackSrc="/placeholders/no_product.jpg" />
                                 </div>
                                 <div className="text-gray-700 text-lg py-1">{heading}</div>
-                            </div>
+                            </NavLink>
                         ))
                     }
                 </div>
@@ -134,31 +135,21 @@ function Home() {
             <div>
                 <div className="flex justify-between">
                     {
-                        PRODUCTS.map((product, index) => (
-                            // give only 6 products
-                            <div className="w-[14%]">
-                                <ProductCard
-                                    product={product}
-                                    isCartMutating={false}
-                                    isBestseller={index%3===0}
-                                    isVeg={(index!==1 && index!==3)}
-                                    off={index===2?25:undefined}
-                                />
-                            </div>
-                        ))
+                        //PRODUCTS.map((product, index) => (
+                        //    // give only 6 products
+                        //    <div className="w-[14%]">
+                        //        <ProductCard
+                        //            product={product}
+                        //            isCartMutating={false}
+                        //            isBestseller={index%3===0}
+                        //            isVeg={(index!==1 && index!==3)}
+                        //            off={index===2?25:undefined}
+                        //        />
+                        //    </div>
+                        //))
                     }
                 </div>
             </div>
-
-
-
-            {/*<HomeProducts selectedProduct={selectedProduct} />*/}
-
-            
-            {/*<BestSellers selectedProduct={selectedProduct} />*/}
-
-            
-            {/*<FeatureProducts selectedProduct={selectedProduct} />*/}
         </section>
     )
 };
