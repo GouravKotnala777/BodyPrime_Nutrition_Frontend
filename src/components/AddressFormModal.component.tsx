@@ -7,23 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm.component";
 import Accordion from "./Accordion.component";
+import { getMyAddresses } from "../apis/address.api";
+import type { AddressFormTypes } from "../utils/types";
 
-interface AddressFormInterface{
-    address1:string;
-    address2:string;
-    landmark:string;
-    city:string;
-    state:string;
-    country:string;
-    pincode:string;
-};
 
-const addressDummyData = [
-    {address1:"New bhoor colony", address2:"", landmark:"", city:"Old Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
-    {address1:"Ho.No.371, lal mandir ke pichhe", address2:"", landmark:"", city:"Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
-    {address1:"Baselwa colony", address2:"", landmark:"", city:"Old Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
-    {address1:"Parwatiya colony", address2:"", landmark:"", city:"Dabua, Faridabad", country:"India", phone:"08882732859", pincode:"121009", state:"Haryana"}
-];
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -32,8 +19,8 @@ function AddressFormModal() {
     const {userData} = useUser();
     const {cartData, setCartData, calculateTotalCartValue} = useCart();
     const [isAddressFormModalOpen, setIsAddressFormModalOpen] = useState<boolean>(false);
-    const [addressFormData, setAddressFormData] = useState<AddressFormInterface>({address1:"", address2:"", landmark:"", city:"", state:"", country:"", pincode:""});
-    //const [shippingType, setShippingType] = useState<"Express"|"Standard"|"Regular">("Regular");
+    const [addressFormData, setAddressFormData] = useState<AddressFormTypes>({address1:"", address2:"", landmark:"", city:"", state:"", country:"", pincode:""});
+    const [previousAddresses, setPreviousAddresses] = useState<AddressFormTypes[]>([]);
     const [priceSummary, setPriceSummary] = useState<{
         itemsPrice: number;
         taxPrice: number;
@@ -52,6 +39,7 @@ function AddressFormModal() {
             status:"canceled"|"processing"|"requires_action"|"requires_capture"|"requires_confirmation"|"requires_payment_method"|"succeeded";
         }>({method:"COD", status:"processing", transactionID:""});
     const [isAccordionManuallyClosed, setIsAccordionManuallyClosed] = useState<boolean>(false);
+    const [saveAddressConfirmation, setSaveAddressConfirmation] = useState<boolean>(false);
 
 
 
@@ -108,7 +96,9 @@ function AddressFormModal() {
             ...priceSummary,
             ...addressFormData,
             phone:userData?.mobile as string,
-            orderStatus:"processing"
+            orderStatus:"processing",
+            saveAddressConfirmation
+
         });
         console.log(res);
 
@@ -122,17 +112,31 @@ function AddressFormModal() {
         return res;
     };
 
-    function onClickAddressBadgesHandler(address:AddressFormInterface) {
+    function onClickAddressBadgesHandler(address:AddressFormTypes) {
         setAddressFormData(address);
         setIsAccordionManuallyClosed(true);
         //setTimeout(() => {
         //    setIsAccordionManuallyClosed(false);
         //}, 1000);
-    }
+    };
 
-    //useEffect(() => {
-    //    calculatePriceSummaryHandler();
-    //}, [cartData, shippingType]);
+    async function getMyAddressesHandler() {
+        const myAddresses = await getMyAddresses();
+
+        if (myAddresses.success) {
+            setPreviousAddresses(myAddresses.jsonData);
+        }
+    };
+
+    useEffect(() => {
+        //let timer = 0;
+
+        //clearTimeout(timer);
+
+        //timer = setTimeout(() => {
+            getMyAddressesHandler();
+        //}, 1000);
+    }, []);
 
     useEffect(() => {
         window.addEventListener("toggleAddressFormModal", receiveAddressFormModalEvent);
@@ -158,60 +162,67 @@ function AddressFormModal() {
                             onClick={closeAddressFormModal}
                         >X</button>
                     </div>
-                    <div className="">
-                        <Accordion
-                            data={[
-                                {
-                                    heading:(
-                                        <div className="text-sm py-3 px-2">choose from previous</div>
-                                    ),
-                                    para:(
-                                        <div className="flex flex-col gap-4 p-4 rounded-lg [box-shadow:0px_0px_4px_1px_var(--color-gray-300)_inset]">
-                                            {
-                                                addressDummyData.map((adrs) => (
-                                                    <button className="border border-gray-200 flex justify-between items-center h-12 text-xs p-2 rounded-md group hover:bg-primary-100"
-                                                        onClick={() => onClickAddressBadgesHandler(adrs)}
-                                                    >
-                                                        <span className="">{adrs.address1}, {adrs.address2}, {adrs.landmark}, {adrs.city}, {adrs.state}, {adrs.country}, {adrs.pincode}</span>
-                                                        <span>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 group-hover:translate-x-4 ease-out duration-300">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                                            </svg>
-                                                        </span>
-                                                    </button>
-                                                ))
-                                            }
-                                        </div>
-                                    )
-                                }
-                            ]}
-                            closeManually={isAccordionManuallyClosed}
-                            setCloseManually={setIsAccordionManuallyClosed}
-                        />
-                        {/*<Accordion
-                            data={
-                                addressDummyData.map((adrs) => (
-                                    {
-                                        heading:(
-                                            <div className="text-xs p-2">{adrs.address1}, {adrs.address2}, {adrs.landmark}, {adrs.city}, {adrs.state}, {adrs.country}, {adrs.pincode}</div>
-                                        ),
-                                        para:(
-                                            <div className="text-xs grid grid-cols-2 px-4">
-                                                <div className="">address1</div><div className="">{adrs.address1}</div>
-                                                <div className="">address2</div><div className="">{adrs.address2}</div>
-                                                <div className="">landmark</div><div className="">{adrs.landmark}</div>
-                                                <div className="">city</div><div className="">{adrs.city}</div>
-                                                <div className="">state</div><div className="">{adrs.state}</div>
-                                                <div className="">country</div><div className="">{adrs.country}</div>
-                                                <div className="">pincode</div><div className="">{adrs.pincode}</div>
-                                            </div>
-                                        )
-                                    }
-                                ))
-                            }
-                        />*/}
 
-                    </div>
+
+                    {
+                        previousAddresses.length !== 0 &&
+                            <div className="">
+                                <Accordion
+                                    data={[
+                                        {
+                                            heading:(
+                                                <div className="text-sm py-3 px-2">choose from previous</div>
+                                            ),
+                                            para:(
+                                                <div className="flex flex-col gap-4 p-4 rounded-lg [box-shadow:0px_0px_4px_1px_var(--color-gray-300)_inset]">
+                                                    {
+                                                        previousAddresses.map((adrs) => (
+                                                            <button className="border border-gray-200 flex justify-between items-center h-12 text-xs p-2 rounded-md group hover:bg-primary-100"
+                                                                onClick={() => onClickAddressBadgesHandler(adrs)}
+                                                            >
+                                                                <span className="">{adrs.address1}, {adrs.address2}, {adrs.landmark}, {adrs.city}, {adrs.state}, {adrs.country}, {adrs.pincode}</span>
+                                                                <span>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 group-hover:translate-x-4 ease-out duration-300">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                                                    </svg>
+                                                                </span>
+                                                            </button>
+                                                        ))
+                                                    }
+                                                </div>
+                                            )
+                                        }
+                                    ]}
+                                    closeManually={isAccordionManuallyClosed}
+                                    setCloseManually={setIsAccordionManuallyClosed}
+                                />
+                                {/*<Accordion
+                                    data={
+                                        addressDummyData.map((adrs) => (
+                                            {
+                                                heading:(
+                                                    <div className="text-xs p-2">{adrs.address1}, {adrs.address2}, {adrs.landmark}, {adrs.city}, {adrs.state}, {adrs.country}, {adrs.pincode}</div>
+                                                ),
+                                                para:(
+                                                    <div className="text-xs grid grid-cols-2 px-4">
+                                                        <div className="">address1</div><div className="">{adrs.address1}</div>
+                                                        <div className="">address2</div><div className="">{adrs.address2}</div>
+                                                        <div className="">landmark</div><div className="">{adrs.landmark}</div>
+                                                        <div className="">city</div><div className="">{adrs.city}</div>
+                                                        <div className="">state</div><div className="">{adrs.state}</div>
+                                                        <div className="">country</div><div className="">{adrs.country}</div>
+                                                        <div className="">pincode</div><div className="">{adrs.pincode}</div>
+                                                    </div>
+                                                )
+                                            }
+                                        ))
+                                    }
+                                />*/}
+
+                            </div>
+                    }
+
+
                     <div className="">
                         <input type="text" name="address1" placeholder="Flat, House no, Building, Apartment..."
                             value={addressFormData.address1}
@@ -268,6 +279,10 @@ function AddressFormModal() {
                             onChange={onChangeAddressFormHandler}
                         />
 
+                        <label htmlFor="saveAddressConfirmation" className="ring-1 ring-gray-200 w-full my-2 px-3 py-2 rounded-md flex items-center gap-2">
+                            <input id="saveAddressConfirmation" type="checkbox" name="saveAddressConfirmation" checked={saveAddressConfirmation} onChange={() => setSaveAddressConfirmation(!saveAddressConfirmation)} />
+                            <span className="text-gray-600 -translate-y-0.25">save this address for future</span>
+                        </label>
 
                         <div>
                             {

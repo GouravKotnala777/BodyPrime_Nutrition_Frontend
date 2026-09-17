@@ -195,6 +195,7 @@ export interface CreateOrderFormType{
     itemsPrice:number; taxPrice:number; shippingPrice:number; discount:number; totalPrice:number;
     phone:string;
     orderStatus:"pending"|"processing"|"shipped"|"delivered"|"cancelled";
+    saveAddressConfirmation:boolean;
 };
 export interface ReviewTypes {
     productID:string;
@@ -210,3 +211,15 @@ export type ReviewTypesPopulated = Pick<ReviewTypes, "rating"|"comment"|"isVerif
     userID:Pick<UserTypes, "name">;
 };
 export type CreateReviewBodyTypes = Pick<ReviewTypes, "rating"|"comment">&{productID:string;};
+
+export interface AddressTypes{
+    userID:string;
+    address1:string;
+    address2:string;
+    landmark:string;
+    city:string;
+    state:string;
+    country:string;
+    pincode:string;
+};
+export type AddressFormTypes = Omit<AddressTypes, "userID">;
