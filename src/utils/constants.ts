@@ -94,6 +94,24 @@ export const FILTER_SUB_CATEGORIES_OBJECT = {
         {heading:"Fortified Oat", subCategory:"milk"}
     ]
 }
+export const SUGGESSIONS_TRENDING_SEARCHES = [
+    {heading:"Whey Proteins", category:"protein", subCategory:"whey"},
+    {heading:"Creatine", category:"pre-workout", subCategory:"ctreatine"},
+    {heading:"Mass Gainers", category:"weight", subCategory:"mass gainer"},
+    {heading:"Fat Lose", category:"weight", subCategory:"fat burner"}
+];
+export const SUGGESSION_BADGES = [
+    {heading:"I want to gain weight", category:"weight", subCategory:"mass gainer"},
+    {heading:"I want to loose fat", category:"weight", subCategory:"fat burner"},
+    {heading:"I want to grow muscles", category:"protein", subCategory:"whey"},
+    {heading:"I want to increase my reps", category:"pre-workout", subCategory:"creatine"},
+    {heading:"I want to make my bones strong", category:"pre-workout", subCategory:"creatine"},
+    {heading:"I want to increase my immunity", category:"wellness", subCategory:"immune"},
+    {heading:"I feel dezzyness during workout", category:"pre-workout", subCategory:"electrolytes"},
+    {heading:"I feel lack of focus during workout", category:"pre-workout", subCategory:"caffeine"},
+    {heading:"Something for my eye sight", category:"fatty acids", subCategory:"fish oil"}
+];
+
 //const CATEGORIES = [
 //    ["protein", "Mass Gainer", "Fat Burner", "Beauty Wellness", "Vitamins", "Minerals", "pre-workout", "fatty acids", "ayurvedic", "other"]
 //    {heading:"Plant Protein", category:"protein", subCategory:"plant"},
