@@ -108,9 +108,12 @@ export interface OrderTypes {
         name:string;
         price:number;
         quantity: number;
+        images:string[];
     }[];
     shippingInfo: {
-        address: string;
+        address1: string;
+        address2: string;
+        landmark: string;
         city: string;
         state: string;
         country: string;
@@ -145,13 +148,15 @@ export interface OrderTypesPopulates {
         mobile:string;
     };
     products: {
-        productID: Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images">;
+        productID: Pick<ProductTypes, "_id"|"images">;
         name:string;
         price:number;
         quantity: number;
     }[];
     shippingInfo: {
-        address: string;
+        address1: string;
+        address2: string;
+        landmark: string;
         city: string;
         state: string;
         country: string;
@@ -185,7 +190,7 @@ export interface CreateOrderFormType{
         price:number;
         quantity: number;
     }[];
-    address:string; city:string; state:string; country:string; pincode:string;
+    address1:string; address2:string; landmark:string; city:string; state:string; country:string; pincode:string;
     method:"COD"|"Stripe"; transactionID?:string; status:PaymentStatusType;
     itemsPrice:number; taxPrice:number; shippingPrice:number; discount:number; totalPrice:number;
     phone:string;

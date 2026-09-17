@@ -1,5 +1,5 @@
 import { apiHandler, toastHandler } from "../utils/functions";
-import type { CreateOrderFormType, OrderTypes, PaymentStatusType } from "../utils/types";
+import type { CreateOrderFormType, OrderTypes, OrderTypesPopulates, PaymentStatusType } from "../utils/types";
 
 
 
@@ -18,10 +18,10 @@ export async function allOrders() {
     }
 };
 
-export async function myOrders() {
+export async function myOrders({skip}:{skip:number;}) {
     try {
-        const res = await apiHandler<null, OrderTypes[]>({
-            endpoint:"/order/my_orders",
+        const res = await apiHandler<null, OrderTypesPopulates[]>({
+            endpoint:`/order/my_orders?skip=${skip}`,
             method:"GET",
             contentType:"application/json"
         });
