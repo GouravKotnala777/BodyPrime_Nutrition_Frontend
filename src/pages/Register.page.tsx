@@ -53,6 +53,16 @@ function Register() {
                     onChange={onChangeHandler}
                 />
             </div>
+            <div className="border border-primary-200 bg-primary-50 text-gray-700 w-full max-w-xs flex items-center my-2 rounded-md">
+                <div className="text-gray-500 bg-primary-200 text-nowrap px-3 pr-4 py-2 flex items-center gap-1 rounded-l-md cursor-default">
+                    <img src="/indian_flag.svg" alt="/indian_flag.svg" />
+                    <span>+91</span>
+                </div>
+                <input type="text" name="mobile" placeholder="10-digit number"
+                    className="w-full px-3 py-2 rounded-r-md"
+                    onChange={onChangeHandler}
+                />
+            </div>
             <div className="w-full max-w-xs">
                 <input type="text" name="mobile" placeholder="Mobile"
                     className="border border-primary-200 bg-primary-50 text-gray-700 w-full px-3 py-2 rounded-md"
