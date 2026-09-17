@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
 
 //interface AccordionProptypes{
 //    data:{heading:string; para:string}[];
@@ -6,6 +6,8 @@ import { useState, type ReactNode } from "react";
 interface AccordionProptypes{
     data:{heading:ReactNode; para:ReactNode}[];
     chevronSize?:"xs"|"sm"|"md"|"lg"|"xl";
+    closeManually?:boolean;
+    setCloseManually?:Dispatch<SetStateAction<boolean>>;
 };
 
 const applyChevronSize = {
@@ -17,9 +19,15 @@ const applyChevronSize = {
 };
 
 
-function Accordion({data, chevronSize="md"}:AccordionProptypes) {
+function Accordion({data, chevronSize="md", closeManually, setCloseManually}:AccordionProptypes) {
     const [activeCords, setActiveCords] = useState<Record<string, boolean>>({});
-    
+
+    useEffect(() => {
+        if (closeManually) {
+            setActiveCords({});
+            (setCloseManually&&setCloseManually(false));
+        }
+    }, [closeManually]);
 
     return(
         <div className="transition-all ease-in-out duration-300">
