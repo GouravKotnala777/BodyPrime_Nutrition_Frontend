@@ -33,6 +33,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
     const [bestSellers, setBestSellers] = useState<ProductTypes[]>([]);
     const [isSearchFound, setIsSearchFound] = useState<boolean|null>(null);
     const [isSearching, setIsSearching] = useState<boolean>(false);
+    const [isAccNavigationMenu, setIsAccNavigationMenu] = useState<boolean>(false);
     const [searchedData, setSearchedData] = useState<{names:ProductTypes[]; categories:ProductTypes[]; brands:ProductTypes[]; tags:ProductTypes[];}>({
         names:[
             //{_id:"12345678901", brand:"brand1", category:"protein", images:[], name:"product1", price:1000, size:100, tag:["brand1", "protein"], numReviews:0, weight:"100gm", rating:0}
@@ -183,10 +184,10 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             onChange={searchInpOnChnageHandler}
                         />
                         <button className="px-3 py-3 border-primary-400 cursor-pointer hover:text-primary-500 transition-all ease-in-out duration-300"
-                            //style={{
-                            //    filter:searchQry?"blur(0px)":"blur(2px)",
-                            //    transform:searchQry?"scale(1)":"scale(0)"
-                            //}}
+                            style={{
+                                filter:searchQry?"blur(0px)":"blur(2px)",
+                                transform:searchQry?"scale(1)":"scale(0)"
+                            }}
                             onClick={searchInputClearHandler}
                         >
                             {
@@ -405,7 +406,10 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
 
             {/* login and cart */}
             <div className="flex items-center gap-0 sm:gap-4">
-                <div className="hidden p-2 xs:flex items-center gap-1 text-gray-800 hover:bg-primary-300/50 rounded-md cursor-default font-semibold relative group">
+                <div className="hidden p-2 xs:flex items-center gap-1 text-gray-800 hover:bg-primary-300/50 rounded-md cursor-default font-semibold relative"
+                    onMouseEnter={() => setIsAccNavigationMenu(true)}
+                    onMouseLeave={() => setIsAccNavigationMenu(false)}
+                >
                     {/*<BiUser />*/}
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-9 bg-primary-200 font-semibold p-2 text-primary-800 rounded-full">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
@@ -420,10 +424,12 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                     </svg>
 
 
-                    {/* account navigation dialog */}
-                    <div className="border border-gray-200 hidden absolute right-0 top-full flex-col p-3 gap-3 sm:p-4 sm:gap-4 rounded-lg bg-white group-hover:flex">
+                    {/* account navigation menu */}
+                    <div className={`border border-gray-200 ${isAccNavigationMenu?"flex":"hidden"} absolute right-0 top-full flex-col p-3 gap-3 sm:p-4 sm:gap-4 rounded-lg bg-white`}>
                         {/* profile access*/}
-                        <NavLink to={isUserAuthenticated()?"/my_profile":"/login"} className="border border-gray-200 flex rounded-md hover:bg-primary-100 group/right-arrow">
+                        <NavLink to={isUserAuthenticated()?"/my_profile":"/login"} className="border border-gray-200 flex rounded-md hover:bg-primary-100 group/right-arrow"
+                            onClick={() => setIsAccNavigationMenu(false)}
+                        >
                             <div className="p-3">
                                 <div className="w-15 h-15 grid place-items-center rounded-full bg-primary-100/50 p-1.5">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.6" stroke="currentColor" className="size-full bg-primary-200 font-semibold p-3 text-primary-800 rounded-full">
@@ -453,7 +459,9 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
 
                         {/* orders, address, location access*/}
                         <div className="flex justify-between">
-                            <NavLink to="/my_orders" className="border border-gray-200 rounded-md text-center px-3 py-1.5 hover:bg-primary-100">
+                            <NavLink to="/my_orders" className="border border-gray-200 rounded-md text-center px-3 py-1.5 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div className="w-min mx-auto">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path d="M15 12h-5"/>
@@ -464,16 +472,20 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Your Orders</div>
                             </NavLink>
-                            <NavLink to="####" className="border border-gray-200 rounded-md text-center px-3 py-1.5 hover:bg-primary-100">
+                            <NavLink to="####" className="border border-gray-200 rounded-md text-center px-3 py-1.5 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div className="w-min mx-auto">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                                     </svg>
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Address</div>
                             </NavLink>
-                            <NavLink to="/about" className="border border-gray-200 rounded-md text-center px-3 py-1.5 hover:bg-primary-100">
+                            <NavLink to="/about" className="border border-gray-200 rounded-md text-center px-3 py-1.5 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div className="w-min mx-auto">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path d="M15 21v-5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5"/>
@@ -497,13 +509,17 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Wallet</div>
                             </NavLink>*/}
-                            <NavLink to="/inventory" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                            <NavLink to="/inventory" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div>
                                     <MdOutlineInventory2 className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1" />
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Inventory</div>
                             </NavLink>
-                            <NavLink to="/cart" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                            <NavLink to="/cart" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
@@ -512,16 +528,20 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Cart</div>
                                 <div className="text-primary-500/80 bg-primary-100/50 w-6 h-6 rounded-full text-center content-center text-sm">{calculateTotalCartItems()}</div>
                             </NavLink>
-                            <NavLink to="/wishlist" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                            <NavLink to="/wishlist" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                     </svg>
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Wishlist</div>
                                 <div className="text-primary-500/80 bg-primary-100/50 w-6 h-6 rounded-full text-center content-center text-sm">{wishlistData.length}</div>
                             </NavLink>
-                            <NavLink to="/authenticity" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                            <NavLink to="/authenticity" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
@@ -530,7 +550,9 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Authenticity</div>
                             </NavLink>
-                            <NavLink to="####" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                            <NavLink to="####" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/>
@@ -539,7 +561,9 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Customer Service</div>
                             </NavLink>
-                            <NavLink to="/my_profile" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                            <NavLink to="/my_profile" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path d="M11.5 15H7a4 4 0 0 0-4 4v2"/>
@@ -548,11 +572,13 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                     </svg>
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Your Profile</div></NavLink>
-                            <NavLink to="/settings" className="flex items-center gap-2 p-3 hover:bg-primary-100">
+                            <NavLink to="/settings" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                     </svg>
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Settings</div></NavLink>
