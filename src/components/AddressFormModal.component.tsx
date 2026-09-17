@@ -1,16 +1,62 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import type { UserTypes } from "../utils/types";
+import { loadStripe } from "@stripe/stripe-js";
+import { useCart } from "../contexts/CartContext";
+import { createOrder } from "../apis/order.api";
+import { useUser } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "./CheckoutForm.component";
+import Accordion from "./Accordion.component";
+
+interface AddressFormInterface{
+    address1:string;
+    address2:string;
+    landmark:string;
+    city:string;
+    state:string;
+    country:string;
+    pincode:string;
+};
+
+const addressDummyData = [
+    {address1:"New bhoor colony", address2:"", landmark:"", city:"Old Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
+    {address1:"Ho.No.371, lal mandir ke pichhe", address2:"", landmark:"", city:"Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
+    {address1:"Baselwa colony", address2:"", landmark:"", city:"Old Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
+    {address1:"Parwatiya colony", address2:"", landmark:"", city:"Dabua, Faridabad", country:"India", phone:"08882732859", pincode:"121009", state:"Haryana"}
+];
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
 
 function AddressFormModal() {
+    const {userData} = useUser();
+    const {cartData, setCartData, calculateTotalCartValue} = useCart();
     const [isAddressFormModalOpen, setIsAddressFormModalOpen] = useState<boolean>(false);
-    const [addressFormData, setAddressFormData] = useState({});
-    const [userFormData, setUserFormData] = useState<Pick<UserTypes, "name"|"email"|"mobile">>({name:"", email:"", mobile:""});
+    const [addressFormData, setAddressFormData] = useState<AddressFormInterface>({address1:"", address2:"", landmark:"", city:"", state:"", country:"", pincode:""});
+    //const [shippingType, setShippingType] = useState<"Express"|"Standard"|"Regular">("Regular");
+    const [priceSummary, setPriceSummary] = useState<{
+        itemsPrice: number;
+        taxPrice: number;
+        shippingPrice: number;
+        discount: number;
+        totalPrice: number;
+    }>({itemsPrice:0,
+        taxPrice:0,
+        shippingPrice:0,
+        discount:0,
+        totalPrice:0});
+    const navigate = useNavigate();
+    const [paymentInfo, setPaymentInfo] = useState<{
+            method:"COD"|"Stripe";
+            transactionID?:string;
+            status:"canceled"|"processing"|"requires_action"|"requires_capture"|"requires_confirmation"|"requires_payment_method"|"succeeded";
+        }>({method:"COD", status:"processing", transactionID:""});
+    const [isAccordionManuallyClosed, setIsAccordionManuallyClosed] = useState<boolean>(false);
+
+
 
     function onChangeAddressFormHandler(e:ChangeEvent<HTMLInputElement>) {
         setAddressFormData({...addressFormData, [e.target.name]:e.target.value});
-    };
-    function onChangeUserFormHandler(e:ChangeEvent<HTMLInputElement>) {
-        setUserFormData({...userFormData, [e.target.name]:e.target.value});
     };
     function onClickLocationHandler() {
         const navigator = new Navigator()
@@ -26,9 +72,67 @@ function AddressFormModal() {
         setIsAddressFormModalOpen(false);
     };
     function receiveAddressFormModalEvent(event:Event) {
-        const eventData = (event as CustomEvent<{isAddressFormModalOpen:boolean;}>).detail; // it will be true always whenever event emits it sends {isAddressFormModalOpen:true} (for open modal don't have access to close it) not false so i think property name is not appropriate
+        const eventData = (event as CustomEvent<{
+            isAddressFormModalOpen:boolean;
+            //shippingType:"Express"|"Standard"|"Regular";
+            paymentInfo:{
+                method:"COD"|"Stripe";
+                transactionID?:string;
+                status:"canceled"|"processing"|"requires_action"|"requires_capture"|"requires_confirmation"|"requires_payment_method"|"succeeded";
+            };
+            priceSummary:{
+                itemsPrice: number;
+                taxPrice: number;
+                shippingPrice: number;
+                discount: number;
+                totalPrice: number;
+            };
+        }>).detail; // it will be true always whenever event emits it sends {isAddressFormModalOpen:true} (for open modal don't have access to close it) not false so i think property name is not appropriate
         setIsAddressFormModalOpen(eventData.isAddressFormModalOpen);
+        setPaymentInfo(eventData.paymentInfo);
+        //setShippingType(eventData.shippingType);
+        setPriceSummary(eventData.priceSummary);
     };
+
+    async function createOrderHandler() {
+        const transformedCartData = cartData.map((p) => ({
+            name:p.name,
+            price:p.price,
+            productID:p._id,
+            quantity:p.quantity
+        }));
+
+        const res = await createOrder({
+            products:transformedCartData,
+            ...paymentInfo,
+            ...priceSummary,
+            ...addressFormData,
+            phone:userData?.mobile as string,
+            orderStatus:"processing"
+        });
+        console.log(res);
+
+        
+        if (res.success && res.jsonData.newOrder.paymentInfo.method === "COD") {
+            setCartData([]);
+            closeAddressFormModal();
+            navigate("/home");
+        }
+
+        return res;
+    };
+
+    function onClickAddressBadgesHandler(address:AddressFormInterface) {
+        setAddressFormData(address);
+        setIsAccordionManuallyClosed(true);
+        //setTimeout(() => {
+        //    setIsAccordionManuallyClosed(false);
+        //}, 1000);
+    }
+
+    //useEffect(() => {
+    //    calculatePriceSummaryHandler();
+    //}, [cartData, shippingType]);
 
     useEffect(() => {
         window.addEventListener("toggleAddressFormModal", receiveAddressFormModalEvent);
@@ -41,29 +145,86 @@ function AddressFormModal() {
     }, [isAddressFormModalOpen]);
 
     return(
-        <div className={`border border-red-500 bg-black/70 fixed top-0 left-0 w-full h-full grid place-items-end sm:place-items-center ${isAddressFormModalOpen?"scale-y-100 opacity-100":"scale-y-0 opacity-0"}`}
+        <div className={`bg-black/70 fixed top-0 left-0 w-full h-full grid place-items-end sm:place-items-center ${isAddressFormModalOpen?"scale-y-100 opacity-100":"scale-y-0 opacity-0"}`}
             onClick={closeAddressFormModal}
         >
-            <div className="border border-violet-500 bg-white w-full sm:max-w-110 mt-0 sm:mt-10 p-4 rounded-t-xl sm:rounded-xl"
+            <div className="bg-white w-full sm:max-w-110 mt-0 sm:mt-10 rounded-t-xl sm:rounded-xl"
                 onClick={(e) => e.stopPropagation()}
             >
-                <div>
+                <div className="h-100 overflow-y-scroll scrollbar-thin p-4">
                     <div className="flex justify-between items-center">
                         <div className="text-gray-400 font-semibold">Enter address details</div>
                         <button className="border border-red-100 text-red-500 bg-red-50 hover:bg-red-300 hover:text-red-50 font-semibold text-sm rounded-md w-8 h-8 mb-2 transition-colors ease-in duration-75"
                             onClick={closeAddressFormModal}
                         >X</button>
                     </div>
-                    <div>
+                    <div className="">
+                        <Accordion
+                            data={[
+                                {
+                                    heading:(
+                                        <div className="text-sm py-3 px-2">choose from previous</div>
+                                    ),
+                                    para:(
+                                        <div className="flex flex-col gap-4 p-4 rounded-lg [box-shadow:0px_0px_4px_1px_var(--color-gray-300)_inset]">
+                                            {
+                                                addressDummyData.map((adrs) => (
+                                                    <button className="border border-gray-200 flex justify-between items-center h-12 text-xs p-2 rounded-md group hover:bg-primary-100"
+                                                        onClick={() => onClickAddressBadgesHandler(adrs)}
+                                                    >
+                                                        <span className="">{adrs.address1}, {adrs.address2}, {adrs.landmark}, {adrs.city}, {adrs.state}, {adrs.country}, {adrs.pincode}</span>
+                                                        <span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 group-hover:translate-x-4 ease-out duration-300">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                                            </svg>
+                                                        </span>
+                                                    </button>
+                                                ))
+                                            }
+                                        </div>
+                                    )
+                                }
+                            ]}
+                            closeManually={isAccordionManuallyClosed}
+                            setCloseManually={setIsAccordionManuallyClosed}
+                        />
+                        {/*<Accordion
+                            data={
+                                addressDummyData.map((adrs) => (
+                                    {
+                                        heading:(
+                                            <div className="text-xs p-2">{adrs.address1}, {adrs.address2}, {adrs.landmark}, {adrs.city}, {adrs.state}, {adrs.country}, {adrs.pincode}</div>
+                                        ),
+                                        para:(
+                                            <div className="text-xs grid grid-cols-2 px-4">
+                                                <div className="">address1</div><div className="">{adrs.address1}</div>
+                                                <div className="">address2</div><div className="">{adrs.address2}</div>
+                                                <div className="">landmark</div><div className="">{adrs.landmark}</div>
+                                                <div className="">city</div><div className="">{adrs.city}</div>
+                                                <div className="">state</div><div className="">{adrs.state}</div>
+                                                <div className="">country</div><div className="">{adrs.country}</div>
+                                                <div className="">pincode</div><div className="">{adrs.pincode}</div>
+                                            </div>
+                                        )
+                                    }
+                                ))
+                            }
+                        />*/}
+
+                    </div>
+                    <div className="">
                         <input type="text" name="address1" placeholder="Flat, House no, Building, Apartment..."
+                            value={addressFormData.address1}
                             className="ring-1 ring-gray-200 w-full my-2 px-3 py-2 rounded-md"
                             onChange={onChangeAddressFormHandler}
                         />
                         <input type="text" name="address2" placeholder="Sector, Area, Street, Colony..."
+                            value={addressFormData.address2}
                             className="ring-1 ring-gray-200 w-full my-2 px-3 py-2 rounded-md"
                             onChange={onChangeAddressFormHandler}
                         />
                         <input type="text" name="landmark" placeholder="Landmark (Optional)"
+                            value={addressFormData.landmark}
                             className="ring-1 ring-gray-200 w-full my-2 px-3 py-2 rounded-md"
                             onChange={onChangeAddressFormHandler}
                         />
@@ -84,49 +245,49 @@ function AddressFormModal() {
                                 <span>Use my location</span>
                             </button>
                             <input type="text" name="pincode" placeholder="6-digit Pincode"
+                                value={addressFormData.pincode}
                                 className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
                                 onChange={onChangeAddressFormHandler}
                             />
                         </div>
                         <div className="flex justify-between my-4 gap-4">
                             <input type="text" name="city" placeholder="City"
+                                value={addressFormData.city}
                                 className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
                                 onChange={onChangeAddressFormHandler}
                             />
                             <input type="text" name="state" placeholder="State"
+                                value={addressFormData.state}
                                 className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
                                 onChange={onChangeAddressFormHandler}
                             />
                         </div>
-
-                        {/* user details form */}
-                        <div className="flex justify-between my-2 gap-4">
-                            <input type="text" name="firstName" placeholder="First Name"
-                                className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
-                                onChange={onChangeUserFormHandler}
-                            />
-                            <input type="text" name="lastName" placeholder="Last Name"
-                                className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
-                                onChange={onChangeUserFormHandler}
-                            />
-                        </div>
-                        <input type="text" name="email" placeholder="Your Email Address"
+                        <input type="text" name="country" placeholder="Country"
+                            value={addressFormData.country}
                             className="ring-1 ring-gray-200 w-full my-2 px-3 py-2 rounded-md"
-                            onChange={onChangeUserFormHandler}
+                            onChange={onChangeAddressFormHandler}
                         />
-                        <div className="ring-1 ring-gray-200 flex items-center my-2 rounded-md">
-                            <div className="text-gray-500 bg-gray-100 text-nowrap px-3 pr-4 py-2 flex items-center gap-1 rounded-l-md">
-                                <img src="/indian_flag.svg" alt="/indian_flag.svg" />
-                                <span>+91</span>
-                            </div>
-                            <input type="text" name="mobile" placeholder="10-digit number"
-                                className="w-full px-3 pl-2 py-2 rounded-r-md"
-                                onChange={onChangeUserFormHandler}
-                            />
+
+
+                        <div>
+                            {
+                                paymentInfo.method === "Stripe"?
+                                    <Elements stripe={stripePromise}>
+                                        <CheckoutForm
+                                            createOrderHandler={createOrderHandler}
+                                            totalCartValue={calculateTotalCartValue()}
+                                            navigate={navigate}
+                                            setCartData={setCartData}
+                                        />
+                                    </Elements>
+                                    :
+                                    <button className="bg-orange-100 hover:bg-orange-50 text-orange-800 font-semibold mt-4 mb-0.25 w-full px-2 py-2.5 rounded-md flex justify-center items-center gap-1 transition-colors ease-out duration-300"
+                                        onClick={createOrderHandler}
+                                    >
+                                        <span className="">Save and deliver here</span>
+                                    </button>
+                            }
                         </div>
-                        <button className="bg-orange-100 hover:bg-orange-50 text-orange-800 font-semibold mt-4 mb-0.25 w-full px-2 py-2.5 rounded-md flex justify-center items-center gap-1 transition-colors ease-out duration-300">
-                            <span className="">Save and deliver here</span>
-                        </button>
                     </div>
                 </div>                
             </div>

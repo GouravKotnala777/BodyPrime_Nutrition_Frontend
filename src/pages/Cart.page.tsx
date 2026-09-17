@@ -2,13 +2,19 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { addToCart, removeFromCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { converKgtolbs } from "../utils/functions";
 import Skeletan from "../components/Skeletan";
 import Spinner from "../components/Spinner.component";
+import ImageWithFallback from "../components/ImageWithFallback.component";
 //import AddressFormModal from "../components/AddressFormModal.component";
 
 const off = 0;
+const shippingTypeOptions = {
+    Express:500,
+    Standard:300,
+    Regular:0
+};
 
 function Cart() {
     const {isUserAuthenticated} = useUser();
@@ -16,6 +22,23 @@ function Cart() {
     //const [targetedProduct, setTargetedProduct] = useState<string>("");
     const [processState, setProcessState] = useState<"loading"|"success"|"error"|null>(null);
     const navigate = useNavigate();
+    const [shippingType, setShippingType] = useState<"Express"|"Standard"|"Regular">("Regular");
+    const [priceSummary, setPriceSummary] = useState<{
+        itemsPrice: number;
+        taxPrice: number;
+        shippingPrice: number;
+        discount: number;
+        totalPrice: number;
+    }>({itemsPrice:0,
+        taxPrice:0,
+        shippingPrice:0,
+        discount:0,
+        totalPrice:0});
+    const [paymentInfo, setPaymentInfo] = useState<{
+            method:"COD"|"Stripe";
+            transactionID?:string;
+            status:"canceled"|"processing"|"requires_action"|"requires_capture"|"requires_confirmation"|"requires_payment_method"|"succeeded";
+        }>({method:"COD", status:"processing", transactionID:""});
 
     function clicked(state:"success"|"error") {
         setProcessState("loading");
@@ -101,12 +124,42 @@ function Cart() {
     };
 
     function emitAddressFormModalEvent() {
-        const event = new CustomEvent<{isAddressFormModalOpen:boolean;}>("toggleAddressFormModal", {
-            detail:{isAddressFormModalOpen:true}
+        const event = new CustomEvent<{
+            isAddressFormModalOpen:boolean;
+            //shippingType:"Express"|"Standard"|"Regular";
+            paymentInfo:{
+                method:"COD"|"Stripe";
+                transactionID?:string;
+                status:"canceled"|"processing"|"requires_action"|"requires_capture"|"requires_confirmation"|"requires_payment_method"|"succeeded";
+            };
+            priceSummary:{
+                itemsPrice: number;
+                taxPrice: number;
+                shippingPrice: number;
+                discount: number;
+                totalPrice: number;
+            };
+        }>("toggleAddressFormModal", {
+            detail:{isAddressFormModalOpen:true, paymentInfo, priceSummary}
         });
 
         window.dispatchEvent(event);
-    };    
+    };
+
+    function calculatePriceSummaryHandler() {
+        const TAX_PERCENT = 18;
+        const itemsPrice = calculateTotalCartValue();
+        const taxPrice = (calculateTotalCartValue()*TAX_PERCENT)/100;
+        const shippingPrice = shippingTypeOptions[shippingType];
+        const discount = 0;
+        const totalPrice = Math.round(itemsPrice + taxPrice + shippingPrice - discount);
+        setPriceSummary({
+            itemsPrice, taxPrice, shippingPrice, discount, totalPrice
+        });
+    };
+    useEffect(() => {
+        calculatePriceSummaryHandler();
+    }, [cartData, shippingType]);
     
     return(
         <section className="p-0 sm:p-4">
@@ -214,8 +267,10 @@ function Cart() {
                                                 cartData.map((p) => (
                                                     <div className="border-b border-gray-100 flex gap-4 mt-15 pb-4">
                                                         <NavLink to={`/single_product/${p._id}`} target="_blank" className="relative size-35 group">
-                                                            <img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`} className="w-full h-full min-w-20" />
-                                                            <div className="w-full h-full bg-pink-200 grid place-items-center rounded-md absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity ease-out duration-300  [box-shadow:0px_0px_5px_2px_white_inset]">
+                                                            <div className="w-full h-full min-w-25 rounded-md overflow-hidden">
+                                                                <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`} fallbackSrc={`/placeholders/no_product.jpg`} />
+                                                            </div>
+                                                            <div className="w-full h-full bg-pink-200 grid place-items-center rounded-md absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity ease-out duration-300 [box-shadow:0px_0px_5px_2px_white_inset]">
                                                                 <svg
                                                                     xmlns="http://www.w3.org/2000/svg"
                                                                     viewBox="0 0 24 24"
@@ -311,7 +366,7 @@ function Cart() {
                     {
                         calculateTotalCartItems() ?
                             <div className="">
-                                <div className="text-gray-700 text-lg font-semibold">Price Details</div>
+
                                 <div className="flex items-center gap-2 my-4">
                                     <span className="text-gray-700">Item Total ({calculateTotalCartItems()})</span>
                                     {off?<span className="text-green-700">Saved ₹3100 isse thik karna h</span>:<></>}
@@ -320,7 +375,25 @@ function Cart() {
                                         {off?<div className="text-gray-500 line-through">₹{calculateTotalCartValue()}</div>:<></>}
                                     </div>
                                 </div>
-                                <div className="flex gap-1 my-5">
+
+                                {/* shipping types */}
+                                <div className="">
+                                    <div className="text-gray-400 mb-4">Shipping type</div>
+                                    <div className="flex flex-col gap-4">
+                                        <div className="ring-1 ring-gray-200 text-gray-700 w-full rounded-md">
+                                            <label className="w-full flex justify-between px-3 py-2"><input type="radio" name="shippingType" value="Express" onChange={(e) => setShippingType(e.target.value as "Express")} /> Express Shipping (1-3 days) : ₹500/-</label>
+                                        </div>
+                                        <div className="ring-1 ring-gray-200 text-gray-700 w-full rounded-md">
+                                            <label className="w-full flex justify-between px-3 py-2"><input type="radio" name="shippingType" value="Standard" onChange={(e) => setShippingType(e.target.value as "Standard")} /> Standard Shipping (3-5 days) : ₹300/-</label>
+                                        </div>
+                                        <div className="ring-1 ring-gray-200 text-gray-700 w-full rounded-md">
+                                            <label className="w-full flex justify-between px-3 py-2"><input type="radio" name="shippingType" value="Regular" onChange={(e) => setShippingType(e.target.value as "Regular")} /> Regular Shipping (6-7 days) : ₹0/-</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div className="border flex gap-1 my-5">
                                     <div>
                                         <div className="text-gray-700">Shipping Charges</div>
                                         <div className="text-sm text-gray-500">Free Shipping on orders above ₹350</div>
@@ -328,10 +401,45 @@ function Cart() {
                                     <span className="text-gray-500 line-through ml-auto">₹50</span>
                                     <span className="text-green-600">FREE</span>
                                 </div>
+
+
+                                <div className="border border-gray-200 text-gray-600 text-sm flex flex-col gap-1.5 p-4 rounded-md">
+                                    <div className="flex justify-between">
+                                        <span>Item Price</span>
+                                        <span>₹{priceSummary.itemsPrice}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Tax Price (18%)</span>
+                                        <span>₹{priceSummary.taxPrice}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Shipping Price ({shippingType})</span>
+                                        <span>₹{priceSummary.shippingPrice}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Discount</span>
+                                        <span>₹{priceSummary.discount}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span>Total Price</span>
+                                        <span>₹{priceSummary.totalPrice}</span>
+                                    </div>
+                                </div>
+
+                                <div className="my-4">
+                                    <div className="text-gray-400">Mode of Payment</div>
+                                    <div className="text-gray-700 flex justify-around">
+                                        <label className="flex items-center gap-2 p-2">Stripe <input type="radio" name="paymentMethod" value="Stripe" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "Stripe"})} /></label>
+                                        <label className="flex items-center gap-2 p-2">Cash On Delivery <input type="radio" name="paymentMethod" value="COD" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "COD"})} /></label>
+                                    </div>
+                                </div>
+
+
+
                                 <div className="flex flex-col gap-2.5 mt-8">
                                     <div className="flex gap-1.5 text-gray-700">
                                         <span>Total Payable</span>
-                                        <span className="text-gray-800 text-lg font-semibold">₹{calculateTotalCartValue()}</span>
+                                        <span className="text-gray-800 text-lg"><span className="font-thin">₹</span><span className="font-semibold">{priceSummary.totalPrice}</span></span>
                                     </div>
                                     <button className="bg-secondary-100 hover:bg-secondary-50 text-secondary-800 font-semibold w-full py-2.5 rounded-md hidden sm:flex justify-center items-center gap-1 transition-colors ease-out duration-300 group"
                                         onClick={emitAddressFormModalEvent}
