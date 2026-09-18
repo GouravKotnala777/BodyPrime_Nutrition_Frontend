@@ -1,205 +1,294 @@
 import { useEffect, useState, type ChangeEvent } from "react";
-import { BiDownArrow, BiUpArrow } from "react-icons/bi";
-import { FaLocationDot } from "react-icons/fa6";
-import { createOrder } from "../apis/order.api";
-import { useCart } from "../contexts/CartContext";
-import { useUser } from "../contexts/UserContext";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-import CheckoutForm from "../components/CheckoutForm.component";
-import { useNavigate } from "react-router-dom";
+import { createAddress, deleteMyAddress, getMyAddresses } from "../apis/address.api";
+import Spinner from "../components/Spinner.component";
+import type { AddressFormTypes } from "../utils/types";
+import toast from "react-hot-toast";
+import Skeletan from "../components/Skeletan";
 
-const addressDummyData = [
-    {address:"New bhoor colony", city:"Old Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
-    {address:"Ho.No.371, lal mandir ke pichhe", city:"Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
-    {address:"Baselwa colony", city:"Old Faridabad", country:"India", phone:"08882732859", pincode:"121002", state:"Haryana"},
-    {address:"Parwatiya colony", city:"Dabua, Faridabad", country:"India", phone:"08882732859", pincode:"121009", state:"Haryana"}
-];
-const shippingTypeOptions = {
-    Express:500,
-    Standard:300,
-    Regular:0
-};
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+let timer = 0;
 
 function Address() {
-    const {cartData, setCartData, calculateTotalCartValue} = useCart();
-    const {userData} = useUser();
-    const [shippingInfo, setShippingInfo] = useState<{address:string; city:string; state:string; country:string; pincode:string;}>({address:"", city:"", state:"", country:"", pincode:""});
-    const [isAddressFormHidden, setIsAddressFormHidden] = useState<boolean>(true);
-    const [isPreviousAddressHidden, setIsPreviousAddressHidden] = useState<boolean>(true);
-    const [shippingType, setShippingType] = useState<"Express"|"Standard"|"Regular">("Regular");
-    const navigate = useNavigate();
-    const [priceSummary, setPriceSummary] = useState<{
-        itemsPrice: number;
-        taxPrice: number;
-        shippingPrice: number;
-        discount: number;
-        totalPrice: number;
-    }>({itemsPrice:0,
-        taxPrice:0,
-        shippingPrice:0,
-        discount:0,
-        totalPrice:0});
-    const [paymentInfo, setPaymentInfo] = useState<{
-        method:"COD"|"Stripe";
-        transactionID?:string;
-        status:"canceled"|"processing"|"requires_action"|"requires_capture"|"requires_confirmation"|"requires_payment_method"|"succeeded";
-    }>({method:"COD", status:"processing", transactionID:""});
+    const [addressFormData, setAddressFormData] = useState<AddressFormTypes>({_id:"", address1:"", address2:"", landmark:"", city:"", state:"", country:"", pincode:""});
+    const [address, setAddress] = useState<{_id:string, address1:string; address2:string; landmark:string; city:string; state:string; country:string; pincode:string;}[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [processingAddress, setProcessingAddress] = useState<string>("");
+    const [isAddressCreating, setIsAddressCreating] = useState<boolean>(false);
+  
 
-
-    function calculatePriceSummaryHandler() {
-        const itemsPrice = calculateTotalCartValue();
-        const taxPrice = (calculateTotalCartValue()*18)/100;
-        const shippingPrice = shippingTypeOptions[shippingType];
-        const discount = 0;
-        const totalPrice = itemsPrice + taxPrice + shippingPrice - discount;
-        setPriceSummary({
-            itemsPrice, taxPrice, shippingPrice, discount, totalPrice
-        });
+    function onChangeAddressFormHandler(e:ChangeEvent<HTMLInputElement>) {
+        setAddressFormData({...addressFormData, [e.target.name]:e.target.value});
     };
-
-
-    function addressOnChangeHandler(e:ChangeEvent<HTMLInputElement>) {
-        setShippingInfo({...shippingInfo, [e.target.name]:e.target.value})
+    function onClickLocationHandler() {
+        const navigator = new Navigator()
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                console.log(position);
+                console.log("abhi is position ko server me bhejna reh raha hai");
+            },
+            (err) => {console.log(err);},
+        )
     };
-
-    function createAddressHandler() {
-        setIsAddressFormHidden(true);
-    };
-
-    
-    async function createOrderHandler() {
-        const transformedCartData = cartData.map((p) => ({
-            name:p.name,
-            price:p.price,
-            productID:p._id,
-            quantity:p.quantity
-        }));
-
-        const res = await createOrder({
-            products:transformedCartData,
-            ...paymentInfo,
-            ...priceSummary,
-            ...shippingInfo,
-            phone:userData?.mobile as string,
-            orderStatus:"processing"
-        });
-        console.log(res);
-
-        
-        if (res.success && res.jsonData.newOrder.paymentInfo.method === "COD") {
-            setCartData([]);
-            navigate("/home");
+    async function getMyAddressesHandler() {
+        const res = await getMyAddresses();
+        if (res.success) {
+            console.log(res);
+            setAddress(res.jsonData);
         }
 
-        return res;
     };
-    
+    async function createAddressHandler() {
+        try {
+            if (!addressFormData.address1 || !addressFormData.address2 || !addressFormData.city || !addressFormData.state || !addressFormData.country || !addressFormData.pincode) {
+                throw new Error("All fields are required");
+            }
+            if (addressFormData.pincode.length < 6 || addressFormData.pincode.length > 6) {
+                throw new Error("Pincode must be 6 digit");
+            }
+            clearTimeout(timer);
+            setIsAddressCreating(true);
+            timer = setTimeout(async() => {
+                const res = await createAddress(addressFormData);
+                if (res.success) {
+                    setAddress(prev => [...prev, res.jsonData]);
+                    setIsAddressCreating(false);
+                    setAddressFormData({_id:"", address1:"", address2:"", landmark:"", city:"", state:"", country:"", pincode:""});
+                }
+            }, 2000);
+        } catch (error) {
+            toast.error(new Error(error as string).message, {position:"top-center", duration:2000});
+            return;
+        }
+    };
+    async function deleteMyAddressHandler({addressID}:{addressID:string}) {
+        setProcessingAddress(addressID);
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            setProcessingAddress("");
+            deleteMyAddress({addressID});
+            setAddress((prev) => prev.filter((adrs) => adrs._id !== addressID));
+        }, 2000);
+    };
+
     useEffect(() => {
-        calculatePriceSummaryHandler();
-    }, [cartData, shippingType]);
+        let timera = 0;
+        setIsLoading(true);
+
+        timera = setTimeout(() => {
+            setIsLoading(false);
+            getMyAddressesHandler();
+        }, 2000);
+
+        return() => clearTimeout(timera);
+    }, []);
 
     return(
-        <section className="">
-            <div className="">
-                <h3 className="text-2xl text-center py-2 font-semibold">Deliver to this address</h3>
-                <div className="border-amber-400 mb-3">
-                    <h4>{shippingInfo.address}, {shippingInfo.city}, {shippingInfo.state}, {shippingInfo.country}, {shippingInfo.pincode}</h4>
-                </div>
+        <section className="flex gap-4 p-4">
+            {/* left part */}
+            <div className="border border-gray-200 basis-2/3 rounded-2xl py-4">
 
-                <button className="flex items-center gap-2 text-center text-[1rem] text-blue-600 my-3 underline underline-offset-1" onClick={() => setIsPreviousAddressHidden(!isPreviousAddressHidden)}>Select from previous <span>{isPreviousAddressHidden?<BiDownArrow/>:<BiUpArrow/>}</span></button>
-                <div style={{
-                    height:isPreviousAddressHidden?"0":"340px",
-                    //height:"max-content",
-                    transition:"0.5s",
-                    overflow:"hidden"
-                }}>
-                    <h3 className="text-2xl text-center py-2 font-semibold">Select shipping address</h3>
-                    <div className="border-amber-400 flex flex-col gap-4">
+                {
+                    isLoading ?
+                        <div className="h-[80vh] flex flex-col items-center gap-4 overflow-hidden">
+                            {
+                                [0,1].map((_, index) => (
+                                    <div key={index} className="border border-gray-200 grid grid-cols-2 px-6 py-4 rounded-lg w-full max-w-100 gap-4 leading-5 relative">
+                                        <div className="text-gray-700 font-semibold h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-600">
+                                            <div className="flex flex-col gap-2">
+                                                <div className="h-4 rounded-sm overflow-hidden"><Skeletan /></div>
+                                                <div className="w-[70%] h-4 rounded-sm overflow-hidden"><Skeletan /></div>
+                                                <div className="w-[90%] h-4 rounded-sm overflow-hidden"><Skeletan /></div>
+                                                <div className="w-[40%] h-4 rounded-sm overflow-hidden"><Skeletan /></div>
+                                            </div>
+                                        </div>
+                                        <div className="text-gray-700 font-semibold h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-600">
+                                            <div className="flex flex-col gap-2">
+                                                <div className="h-4 rounded-sm overflow-hidden"><Skeletan /></div>
+                                                <div className="w-[90%] h-4 rounded-sm overflow-hidden"><Skeletan /></div>
+                                                <div className="h-4 rounded-sm overflow-hidden"><Skeletan /></div>
+                                                <div className="w-[60%] h-4 rounded-sm overflow-hidden"><Skeletan /></div>
+                                            </div>
+                                        </div>
+                                        <div className="text-gray-700 font-semibold h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-600 h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-700 font-semibold h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-600 h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-700 font-semibold h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-600 h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-700 font-semibold h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-600 w-[70%] h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-700 font-semibold h-7 rounded-md overflow-hidden"><Skeletan /></div>
+                                        <div className="text-gray-600 w-[60%] h-7 rounded-md overflow-hidden"><Skeletan /></div>
+
+                                        {/* delete button */}
+                                        <div className="border border-gray-200 absolute right-2 bottom-2 w-10 h-10 rounded-md grid place-items-center">
+                                            <Spinner type="secondary" color="var(--color-gray-300)" />    
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                        :
+                        <div className="flex flex-col items-center gap-4">
+                            {
+                                address.map((adrs) => (
+                                    <div key={adrs._id} className="border border-gray-200 grid grid-cols-2 px-6 py-4 rounded-lg w-full max-w-100 gap-4 leading-5 relative">
+                                        <div className="text-gray-700 font-semibold">Address1</div><div className="text-gray-600">{adrs.address1} Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim, autem.</div>
+                                        <div className="text-gray-700 font-semibold">Address2</div><div className="text-gray-600">{adrs.address2} Lorem ipsum dolor sit.</div>
+                                        <div className="text-gray-700 font-semibold">Landmark</div><div className="text-gray-600">{adrs.landmark}</div>
+                                        <div className="text-gray-700 font-semibold">City</div><div className="text-gray-600">{adrs.city}</div>
+                                        <div className="text-gray-700 font-semibold">State</div><div className="text-gray-600">{adrs.state}</div>
+                                        <div className="text-gray-700 font-semibold">Country</div><div className="text-gray-600">{adrs.country}</div>
+                                        <div className="text-gray-700 font-semibold">Pincode</div><div className="text-gray-600">{adrs.pincode}</div>
+
+                                        {/* delete button */}
+                                        <button className="border border-red-100 text-primary-400 absolute right-2 bottom-2 w-10 h-10 rounded-md grid place-items-center cursor-pointer hover:bg-primary-100 hover:text-primary-500 transition-colors ease-out duration-300"
+                                            onClick={() => deleteMyAddressHandler({addressID:adrs._id})}
+                                        >
+                                            {
+                                                (processingAddress === adrs._id) ?
+                                                    <Spinner color="var(--color-primary-400)" />
+                                                    :
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                    </svg>
+                                            }
+                                        </button>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                }
+            </div>
+
+            {/* right part */}
+            <div className="basis-1/3 relative">
+                <div className="border border-gray-200 flex flex-col gap-4 p-4 rounded-2xl sticky top-20 righ-0">
+                    <input type="text" name="address1" placeholder="Flat, House no, Building, Apartment..."
+                        value={addressFormData.address1}
+                        className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
+                        onChange={onChangeAddressFormHandler}
+                    />
+                    <input type="text" name="address2" placeholder="Sector, Area, Street, Colony..."
+                        value={addressFormData.address2}
+                        className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
+                        onChange={onChangeAddressFormHandler}
+                    />
+                    <input type="text" name="landmark" placeholder="Landmark (Optional)"
+                        value={addressFormData.landmark}
+                        className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
+                        onChange={onChangeAddressFormHandler}
+                    />
+                    <div className="flex justify-between gap-4">
+                        <button className="ring-1 ring-orange-200/80 bg-orange-100 hover:bg-orange-50 px-3 py-2 text-orange-800 w-full flex items-center gap-2 rounded-md"
+                            onClick={onClickLocationHandler}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"
+                                className="size-4.5"
+                            >
+                                <line x1="2" x2="5" y1="12" y2="12"/>
+                                <line x1="19" x2="22" y1="12" y2="12"/>
+                                <line x1="12" x2="12" y1="2" y2="5"/>
+                                <line x1="12" x2="12" y1="19" y2="22"/>
+                                <circle cx="12" cy="12" r="7"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span>Use my location</span>
+                        </button>
+                        <input type="text" name="pincode" placeholder="6-digit Pincode"
+                            value={addressFormData.pincode}
+                            className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
+                            onChange={onChangeAddressFormHandler}
+                        />
+                    </div>
+                    <div className="flex justify-between gap-4">
+                        <input type="text" name="city" placeholder="City"
+                            value={addressFormData.city}
+                            className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
+                            onChange={onChangeAddressFormHandler}
+                        />
+                        <input type="text" name="state" placeholder="State"
+                            value={addressFormData.state}
+                            className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
+                            onChange={onChangeAddressFormHandler}
+                        />
+                    </div>
+                    <input type="text" name="country" placeholder="Country"
+                        value={addressFormData.country}
+                        className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"
+                        onChange={onChangeAddressFormHandler}
+                    />
+                    <button className="relative bg-orange-100 hover:bg-orange-50 text-orange-800 font-semibold w-full px-2 py-2.5 rounded-md flex justify-center items-center gap-1 transition-colors ease-out duration-300"
+                        onClick={createAddressHandler}
+                    >
                         {
-                            addressDummyData.map((item) => (
-                                <div className="border-[1px] border-[#f44769] flex gap-4 pl-2 py-2 rounded-[8px] active:bg-[#f4476a58]" onClick={() => {setShippingInfo(item); setIsAddressFormHidden(true); setIsPreviousAddressHidden(true);}}>
-                                    <FaLocationDot className="text-2xl" />
-                                    <span>{item.address}, {item.city}, {item.state}, {item.country}, {item.pincode}, {item.phone}</span>
+                            isAddressCreating ?
+                            <>
+                                <div className={`${(!isLoading)?"opacity-100 scale-100 blur-0":"opacity-0 scale-0 blur-sm"} h-full absolute top-0 -left-0.25 w-full transition-all ease-in-out duration-300`}>
+                                    <div className="w-full h-full flex justify-center items-center gap-1.25">
+                                        <div className="size-1.5 bg-secondary-800 rounded-2xl"
+                                            style={{
+                                                animation:"up-down-dot-loading 1s 0s linear infinite"
+                                            }}
+                                        ></div>
+                                        <div className="size-1.5 bg-secondary-800 rounded-2xl"
+                                            style={{
+                                                animation:"up-down-dot-loading 1s 0.2s linear infinite"
+                                            }}
+                                        ></div>
+                                        <div className="size-1.5 bg-secondary-800 rounded-2xl"
+                                            style={{
+                                                animation:"up-down-dot-loading 1s 0.4s linear infinite"
+                                            }}
+                                        ></div>
+                                    </div>
                                 </div>
-                            ))
-                        }
-                    </div>
-                </div>
-
-                <button className="flex items-center gap-2 text-center text-[1rem] text-blue-600 my-3 underline underline-offset-1" onClick={() => setIsAddressFormHidden(!isAddressFormHidden)}>Add new address <span>{isAddressFormHidden?<BiDownArrow/>:<BiUpArrow/>}</span></button>
-
-                <div className="flex flex-col gap-3 mt-3" style={{
-                    height:isAddressFormHidden?"0":"340px",
-                    //height:"max-content",
-                    transition:"0.5s",
-                    overflow:"hidden"
-                }}>
-                    <input type="text" name="address" placeholder="Address" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" onChange={addressOnChangeHandler} />
-                    <input type="text" name="city" placeholder="City" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" onChange={addressOnChangeHandler} />
-                    <input type="text" name="state" placeholder="State" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" onChange={addressOnChangeHandler} />
-                    <input type="text" name="country" placeholder="Country" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" onChange={addressOnChangeHandler} />
-                    <input type="text" name="pincode" placeholder="Pincode" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" onChange={addressOnChangeHandler} />
-                    <input type="text" name="phone" placeholder="Phone" className="border-[1px] border-[#f44769] px-5 py-2 rounded-[4px]" onChange={addressOnChangeHandler} />
-                    <button className="py-3 rounded-4xl bg-[#4d80ff] text-white text-xl font-semibold" onClick={createAddressHandler}>Save</button>
-                </div>
-
-                <h3 className="text-2xl text-center py-2 font-semibold">Shipping type</h3>
-                <div className="border-amber-400 flex flex-col gap-4">
-                    <div className="border-[1px] border-[#f44769] flex gap-4 px-2 rounded-[8px] active:bg-[#f4476a58]">
-                        <label className="w-full flex justify-between py-2"><input type="radio" name="shippingType" value="Express" onChange={(e) => setShippingType(e.target.value as "Express")} /> Express Shipping (1-3 days) : ₹500/-</label>
-                    </div>
-                    <div className="border-[1px] border-[#f44769] flex gap-4 px-2 rounded-[8px] active:bg-[#f4476a58]">
-                        <label className="w-full flex justify-between py-2"><input type="radio" name="shippingType" value="Standard" onChange={(e) => setShippingType(e.target.value as "Standard")} /> Standard Shipping (3-5 days) : ₹300/-</label>
-                    </div>
-                    <div className="border-[1px] border-[#f44769] flex gap-4 px-2 rounded-[8px] active:bg-[#f4476a58]">
-                        <label className="w-full flex justify-between py-2"><input type="radio" name="shippingType" value="Regular" onChange={(e) => setShippingType(e.target.value as "Regular")} /> Regular Shipping (6-7 days) : ₹0/-</label>
-                    </div>
-                    <div className="flex justify-between rounded-[8px] active:bg-[#f4476a58]">
-                        <h4>Total</h4> <span>₹{priceSummary.totalPrice} + {shippingType} {`(₹${shippingTypeOptions[shippingType]})`} = ₹{priceSummary.totalPrice}/-</span>
-                    </div>
-                </div>
-
-                <div className="my-4">
-                    <h4 className="text-[1rem] text-gray-800 py-2">Mode of Payment :</h4>
-                    <div className="flex justify-around">
-                        <label className="flex items-center gap-2 p-2">Stripe <input type="radio" name="paymentMethod" value="Stripe" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "Stripe"})} /></label>
-                        <label className="flex items-center gap-2 p-2">Cash On Delivery <input type="radio" name="paymentMethod" value="COD" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "COD"})} /></label>
-                    </div>
-                </div>
-
-
-                <h1>
-                    {
-                        paymentInfo.method === "Stripe"?
-                            <Elements stripe={stripePromise}>
-                                <CheckoutForm
-                                    createOrderHandler={createOrderHandler}
-                                    totalCartValue={calculateTotalCartValue()}
-                                    navigate={navigate}
-                                    setCartData={setCartData}
-                                />
-                            </Elements>
+                                
+                                <span className="opacity-0">A</span>
+                            </>
                             :
-                            <div>
-                                <button className="p-2 w-full text-2xl bg-yellow-400 rounded-2xl"
-                                    onClick={createOrderHandler}
-                                >Proceed</button>
-                            </div>
-                    }
-                </h1>
+                            <span className="">Add Address</span>
+                        }
 
-
-                
-
-
-                {/*<button onClick={createOrderHandler}>Confirm pay ₹{priceSummary.totalPrice}</button>*/}
-
-
+                    </button>
+                </div>
             </div>
         </section>
+        //<section className="border border-gray-200 w-full max-w-3xl mx-auto rounded-xl p-4">
+        //    <div className="flex flex-col items-center gap-4">
+        //        {
+        //            address.map((adrs) => (
+        //                <div className="border border-gray-200 grid grid-cols-2 px-6 py-4 rounded-lg w-full max-w-100 gap-4 leading-5 relative">
+        //                    <div className="text-gray-700 font-semibold">Address1</div><div className="text-gray-600">{adrs.address1} Lorem, ipsum dolor sit amet consectetur adipisicing elit. Enim, autem.</div>
+        //                    <div className="text-gray-700 font-semibold">Address2</div><div className="text-gray-600">{adrs.address2} Lorem ipsum dolor sit.</div>
+        //                    <div className="text-gray-700 font-semibold">Landmark</div><div className="text-gray-600">{adrs.landmark}</div>
+        //                    <div className="text-gray-700 font-semibold">City</div><div className="text-gray-600">{adrs.city}</div>
+        //                    <div className="text-gray-700 font-semibold">State</div><div className="text-gray-600">{adrs.state}</div>
+        //                    <div className="text-gray-700 font-semibold">Country</div><div className="text-gray-600">{adrs.country}</div>
+        //                    <div className="text-gray-700 font-semibold">Pincode</div><div className="text-gray-600">{adrs.pincode}</div>
+
+        //                    {/* delete button */}
+        //                    <button className="border border-red-200 text-primary-400 absolute right-2 bottom-2 w-10 h-10 rounded-md grid place-items-center cursor-pointer hover:bg-primary-100 hover:text-primary-500 transition-colors ease-out duration-300"
+        //                        onClick={() => deleteMyAddressHandler({addressID:adrs._id})}
+        //                    >
+        //                        {
+        //                            isAddressDeleting ?
+        //                                <Spinner color="var(--color-primary-400)" />
+        //                                :
+        //                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
+        //                                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+        //                                </svg>
+        //                        }
+        //                    </button>
+        //                </div>
+        //            ))
+        //        }
+                
+        //    </div>
+        //</section>
     )
 };
 

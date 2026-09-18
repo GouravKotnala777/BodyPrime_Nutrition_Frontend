@@ -213,6 +213,7 @@ export type ReviewTypesPopulated = Pick<ReviewTypes, "rating"|"comment"|"isVerif
 export type CreateReviewBodyTypes = Pick<ReviewTypes, "rating"|"comment">&{productID:string;};
 
 export interface AddressTypes{
+    _id:string;
     userID:string;
     address1:string;
     address2:string;

@@ -1,5 +1,5 @@
 import { apiHandler, toastHandler } from "../utils/functions";
-import type { AddressTypes } from "../utils/types";
+import type { AddressFormTypes, AddressTypes } from "../utils/types";
 
 export async function getMyAddresses() {
     try {
@@ -7,6 +7,21 @@ export async function getMyAddresses() {
             endpoint:"/address/get_my_addresses",
             method:"GET",
             contentType:"application/json"
+        });
+        return data;
+    } catch (error) {
+        console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
+        throw error;
+    }
+};
+export async function createAddress(formData:AddressFormTypes) {
+    try {
+        const data = await apiHandler<AddressFormTypes, AddressTypes>({
+            endpoint:"/address/create_address",
+            method:"POST",
+            contentType:"application/json",
+            body:formData
         });
         return data;
     } catch (error) {

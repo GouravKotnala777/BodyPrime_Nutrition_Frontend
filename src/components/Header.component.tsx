@@ -472,7 +472,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Your Orders</div>
                             </NavLink>
-                            <NavLink to="####" className="border border-gray-200 rounded-md text-center px-3 py-1.5 hover:bg-primary-100"
+                            <NavLink to="/address" className="border border-gray-200 rounded-md text-center px-3 py-1.5 hover:bg-primary-100"
                                 onClick={() => setIsAccNavigationMenu(false)}
                             >
                                 <div className="w-min mx-auto">
