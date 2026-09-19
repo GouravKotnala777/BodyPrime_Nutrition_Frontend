@@ -96,7 +96,7 @@ export const FILTER_SUB_CATEGORIES_OBJECT = {
 }
 export const SUGGESSIONS_TRENDING_SEARCHES = [
     {heading:"Whey Proteins", category:"protein", subCategory:"whey"},
-    {heading:"Creatine", category:"pre-workout", subCategory:"ctreatine"},
+    {heading:"Creatine", category:"pre-workout", subCategory:"creatine"},
     {heading:"Mass Gainers", category:"weight", subCategory:"mass gainer"},
     {heading:"Fat Lose", category:"weight", subCategory:"fat burner"}
 ];

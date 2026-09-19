@@ -242,7 +242,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                                     </NavLink>
                                                 ))
                                             }
-                                            <NavLink to={`/searched_products/name/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
+                                            <NavLink reloadDocument={true} to={`/searched_products/name/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -265,7 +265,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                                     </NavLink>
                                                 ))
                                             }
-                                            <NavLink to={`/searched_products/brand/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
+                                            <NavLink reloadDocument={true} to={`/searched_products/brand/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -288,7 +288,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                                     </NavLink>
                                                 ))
                                             }
-                                            <NavLink to={`/searched_products/category/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
+                                            <NavLink reloadDocument={true} to={`/searched_products/category/${searchQry}`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
                                         </div>
                                     </div>
                             }
@@ -326,7 +326,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                         <div className="flex flex-wrap gap-4">
                                             {
                                                 SUGGESSION_BADGES.map(({heading, category, subCategory}) => (
-                                                    <NavLink to={`/searched_products/category/${category}/${subCategory}`} className="border border-dashed border-gray-200 text-gray-600 bg-gray-50/60 w-max pl-3 pr-2.5 pt-1 pb-1.5 text-sm flex items-center gap-1.5 rounded-full hover:border-primary-200 hover:text-primary-600 hover:bg-primary-50 scale-95 hover:scale-100 cursor-pointer transition-all ease-out duration-300" onClick={searchInputClearHandler}>
+                                                    <NavLink target="_blank" reloadDocument={true} to={`/searched_products/category/${category}/${subCategory}`} className="border border-dashed border-gray-200 text-gray-600 bg-gray-50/60 w-max pl-3 pr-2.5 pt-1 pb-1.5 text-sm flex items-center gap-1.5 rounded-full hover:border-primary-200 hover:text-primary-600 hover:bg-primary-50 scale-95 hover:scale-100 cursor-pointer transition-all ease-out duration-300" onClick={searchInputClearHandler}>
                                                         <span>{heading}</span>
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
@@ -354,7 +354,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             <div className="flex flex-col">
                                 {
                                     SUGGESSIONS_TRENDING_SEARCHES.map(({heading, category, subCategory}, index) => (
-                                        <NavLink to={`/searched_products/category/${category}/${subCategory}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInputClearHandler}>
+                                        <NavLink reloadDocument={true} to={`/searched_products/category/${category}/${subCategory}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInputClearHandler}>
                                             <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
                                             <div>
                                                 <div className="text-gray-700 font-semibold">{heading}</div>
@@ -369,7 +369,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             </div>
                             <div className="flex justify-between items-center">
                                 <div className="text-lg font-semibold text-gray-800">Bestseller Products</div>
-                                <NavLink to={`/searched_products/soldCount/null/null`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>See All</NavLink>
+                                <NavLink reloadDocument={true} to={`/searched_products/soldCount/null/null`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>See All</NavLink>
                             </div>
 
                             
