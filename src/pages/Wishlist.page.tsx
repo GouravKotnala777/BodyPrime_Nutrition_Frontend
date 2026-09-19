@@ -96,7 +96,7 @@ function Wishlist() {
         const res = await addToWishlist({productID, variant});
 
         if (res.success) {
-            setWishlistData(wishlistData.filter((p) => (p._id !== productID && p.variant !== variant)));
+            setWishlistData(wishlistData.filter((p) => (p._id === productID && p.variant !== variant)));
         }
     };
 
@@ -106,10 +106,11 @@ function Wishlist() {
         <section className="p-4">
             <div className="flex flex-col sm:flex-row gap-4 relative">
                 {/* left part */}
+                {/*<pre>{JSON.stringify(wishlistData, null, `\t`)}</pre>*/}
                 <div className="border border-gray-200 flex-1 rounded-xl p-4">
                     <div className="text-gray-400 text-lg font-semibold">Wishlisted Products</div>
                     {
-                        wishlistData[0]._id === "initialProductId" ?
+                        wishlistData[0]?._id === "initialProductId" ?
                             [0,1,2].map((iter) => (
                                 <div key={iter} className="border-b border-gray-100 flex gap-4 mt-15 pb-4">
                                     <div className="relative size-35 group">
@@ -161,7 +162,7 @@ function Wishlist() {
                             <div>
                                 {/*<pre className="text-xs">{JSON.stringify(wishlistData, null, `\t`)}</pre>*/}
                                 {
-                                    wishlistData.length !== 0 ?
+                                    wishlistData.length === 0 ?
                                         <div className="text-center pt-10 max-w-2xl mx-auto">
                                             <img src="/empty_wishlist.webp" alt="/empty_wishlist.webp"
                                                 className="w-full max-w-50 h-50 mx-auto"

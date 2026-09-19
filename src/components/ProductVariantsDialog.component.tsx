@@ -182,7 +182,7 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
             if (!selectedProduct) return Error("selectedProduct not found");
             clicked("success");
             if (res.jsonData.quantity < 1) {
-                setCartData(cartData.filter(p => (p._id !== res.jsonData.products && p.variant !== res.jsonData.variant)));
+                setCartData(cartData.filter(p => (p._id === res.jsonData.products && p.variant !== res.jsonData.variant)));
             }
             else{
                 selectedProduct.quantity = res.jsonData.quantity;

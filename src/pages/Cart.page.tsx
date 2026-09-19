@@ -89,15 +89,15 @@ function Cart() {
             const res = await removeFromCart({productID, variant, quantity});
     
             if (res.success) {
-                const selectedProduct = cartData.find((p) => p._id === res.jsonData.products);
-                
+                const selectedProduct = cartData.find((p) => (p._id === res.jsonData.products && p.variant === res.jsonData.variant));
+   
                 if (!selectedProduct) return Error("selectedProduct not found");
                 if (res.jsonData.quantity < 1) {
-                    setCartData(cartData.filter(p => p._id !== res.jsonData.products));
+                    setCartData((prev) => (prev.filter((p) => (p._id === selectedProduct._id && p.variant !== selectedProduct.variant))));
                 }
                 else{
                     selectedProduct.quantity = res.jsonData.quantity;
-                    setCartData(cartData.map(p => p._id === res.jsonData.products?{...p, quantity:res.jsonData.quantity}:p));
+                    setCartData((prev) => (prev.map(p => (p._id === res.jsonData.products && p.variant === res.jsonData.variant)?{...p, quantity:res.jsonData.quantity}:p)));
                     "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
                 }
                 clicked("success");
