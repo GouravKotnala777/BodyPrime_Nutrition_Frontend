@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, type ChangeEvent, type Dispatch, type MouseEvent, type ReactNode, type SetStateAction } from "react";
 import type { LocalCartTypes, WishlistTypes } from "../utils/types";
+import toast from "react-hot-toast";
 
 
 interface CartContextPropTypes{
@@ -45,6 +46,8 @@ export function CartProvider({children}:{children:ReactNode;}) {
             else{
                 localStorageCartData.push({_id, name, brand, category, price, quantity, weight, flavor, images, variant});
             }
+
+            toast.success("Product added to cart");
             
             localStorage.setItem("cart", JSON.stringify(localStorageCartData));
             setCartData(localStorageCartData);
@@ -131,7 +134,9 @@ export function CartProvider({children}:{children:ReactNode;}) {
 
     function calculateTotalCartItems() {
         return cartData.reduce((acc, iter) => {
-            acc += iter.quantity;
+            if (iter._id !== "initialProductId") {
+                acc += iter.quantity;
+            }
             return acc;
         }, 0);
     };
