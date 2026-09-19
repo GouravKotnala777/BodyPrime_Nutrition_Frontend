@@ -107,7 +107,7 @@ function Delivery() {
                                             </div>
                                             <div className="my-2 flex items-center gap-3">
                                                 <span><CiLocationOn /></span>
-                                                <p>{o.shippingInfo.address}, {o.shippingInfo.city}, {o.shippingInfo.state}, {o.shippingInfo.pincode}, {o.shippingInfo.country}</p>
+                                                <p>{o.shippingInfo.address1}, {o.shippingInfo.address2}, {o.shippingInfo.landmark}, {o.shippingInfo.city}, {o.shippingInfo.state}, {o.shippingInfo.pincode}, {o.shippingInfo.country}</p>
                                             </div>
                                             <div className="my-2 flex items-center gap-3">
                                                 <span></span>
@@ -212,7 +212,7 @@ function Delivery() {
                                             </div>
                                             <div className="my-2 flex items-center gap-3">
                                                 <span><CiLocationOn /></span>
-                                                <p>{o.shippingInfo.address}, {o.shippingInfo.city}, {o.shippingInfo.state}, {o.shippingInfo.pincode}, {o.shippingInfo.country}</p>
+                                                <p>{o.shippingInfo.address1}, {o.shippingInfo.address2}, {o.shippingInfo.landmark} {o.shippingInfo.city}, {o.shippingInfo.state}, {o.shippingInfo.pincode}, {o.shippingInfo.country}</p>
                                             </div>
                                             <div className="my-2 flex items-center gap-3">
                                                 <span></span>

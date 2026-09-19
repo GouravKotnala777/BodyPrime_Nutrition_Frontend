@@ -11,7 +11,11 @@ interface HandlePageUIWithStatePropTypes{
 
 function HandlePageUIWithState({isLoading, isSuccess, error, errorChildren, children}:HandlePageUIWithStatePropTypes) {
 
-    if (isLoading) return <Spinner text="Loading..." width="100px" fontWeight="bold" thickness="4px" />
+    if (isLoading) return (
+        <div className="w-min mx-auto mt-50">
+            <Spinner text="Loading..." width="100px" fontWeight="bold" thickness="4px" />
+        </div>
+    )
     if (error) return (
         errorChildren ?
             errorChildren
