@@ -15,7 +15,7 @@ interface ProductVariantDialogPropTypes{
     setWishlistData:Dispatch<SetStateAction<WishlistTypes[]>>;
     addToLocalCart:(product:LocalCartTypes) => void;
     removeProductFromLocalCart:({_id, variant, quantity}:{_id:string; variant:string; quantity:number;})=>void;
-}
+};
 
 function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserAuthenticated, setCartData}:ProductVariantDialogPropTypes) {
     const [isProductVariantOptionsOpen, setIsProductVariantOptionsOpen] = useState<boolean>(false);
@@ -325,7 +325,9 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                                         </div>
                                     </div>
 
-                                    <NavLink to="/cart" className="border border-green-300 bg-green-50 relative min-w-10 h-full rounded-lg grid place-items-center pointer-events-auto target-apply-cart-animation">
+                                    <NavLink to="/cart" className="border border-green-300 bg-green-50 relative min-w-10 h-full rounded-lg grid place-items-center pointer-events-auto target-apply-cart-animation"
+                                        onClick={() => setIsProductVariantOptionsOpen(false)}
+                                    >
                                         {/* cart icon */}
                                         <div className="relative w-full h-full grid place-items-center overflow-hidden">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
