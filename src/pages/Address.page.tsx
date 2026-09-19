@@ -84,11 +84,12 @@ function Address() {
     }, []);
 
     return(
-        <section className="flex gap-4 p-4">
+        <section className="flex flex-col sm:flex-row gap-4 p-4">
             {/* left part */}
-            <div className="border border-gray-200 basis-2/3 rounded-2xl py-4">
+            <div className="border-0 sm:border border-gray-200 basis-2/3 rounded-2xl py-4">
 
                 {
+                    // loading
                     isLoading ?
                         <div className="h-[80vh] flex flex-col items-center gap-4 overflow-hidden">
                             {
@@ -166,7 +167,7 @@ function Address() {
 
             {/* right part */}
             <div className="basis-1/3 relative">
-                <div className="border border-gray-200 flex flex-col gap-4 p-4 rounded-2xl sticky top-20 righ-0">
+                <div className="border border-gray-200 w-full max-w-100 mx-auto flex flex-col gap-4 p-4 rounded-2xl sticky top-20 righ-0">
                     <input type="text" name="address1" placeholder="Flat, House no, Building, Apartment..."
                         value={addressFormData.address1}
                         className="ring-1 ring-gray-200 w-full px-3 py-2 rounded-md"

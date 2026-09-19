@@ -440,7 +440,7 @@ function Cart() {
 
 
                                 {/* total payable */}
-                                <div className="flex flex-col gap-2.5">
+                                <div className="flex flex-col gap-2.5 mb-10 sm:mb-0">
                                     <div className="flex gap-1.5 text-gray-700">
                                         <span>Total Payable</span>
                                         <span className="text-gray-800 text-lg"><span className="font-thin">₹</span><span className="font-semibold">{priceSummary.totalPrice}</span></span>
@@ -472,7 +472,7 @@ function Cart() {
                             <div className="flex flex-col gap-1">
                                 <span className="">
                                     <span className="text-gray-700 text-3xl">₹</span>
-                                    <span className="text-gray-800 text-3xl font-bold">10997</span>
+                                    <span className="text-gray-800 text-3xl font-bold">{priceSummary.totalPrice}</span>
                                 </span>
                                 <button className="text-gray-400 flex items-center" onClick={() => handlePageSectionJump("price_details")}>
                                     <span>See Price Details</span>
