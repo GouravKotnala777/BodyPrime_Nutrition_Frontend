@@ -61,11 +61,6 @@ function SearchedProducts() {
         flavors:[]
     });
 
-
-    function navigateToInventoryHandler() {
-        navigate("/inventory", {state:{tab:"add"}});
-    };
-
     async function getProductsFromNextBtn(){
         // it will fetch products whenever we click next button
         // it is dependent on skip
@@ -758,13 +753,13 @@ function SearchedProducts() {
                                 products.length === 0 ?
                                     <div className="">
                                         <img src="/empty_cart2.png" alt="/empty_cart2.png" className="w-xl mx-auto" />
-                                        <h1 className="text-2xl text-center font-bold text-gray-800 py-1">No Product!</h1>
-                                        <p className=" text-center text-gray-400 font-semibold py-1/2">It looks like there is no product yet.</p>
+                                        <h1 className="text-2xl text-center font-bold text-gray-800 py-1">Product Not Found!</h1>
+                                        <p className=" text-center text-gray-400 font-semibold py-1/2">It looks like {searchField} of {searchQuery} and subCategory of {subCategory} does not exist</p>
                                         <div className="my-8">
                                             <button className="bg-primary-100 hover:bg-primary-50 text-primary-800 font-semibold w-full max-w-70 mx-auto py-3 rounded-md flex justify-center items-center gap-1 transition-colors ease-out duration-300 group"
-                                                onClick={navigateToInventoryHandler}
+                                                onClick={() => navigate("/home")}
                                             >
-                                                <span className="ml-4 -translate-y-0.25">Add New Products</span>
+                                                <span className="ml-4 -translate-y-0.25">Continue Shopping</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 group-hover:translate-x-4 ease-out duration-300">
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                                                 </svg>
