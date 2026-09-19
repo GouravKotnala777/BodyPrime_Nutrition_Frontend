@@ -304,7 +304,7 @@ function Inventory() {
                             ))
                         }
                     </select>
-                    <select name="subCategory" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeUpdateHandler}>
+                    <select name="subCategory" defaultValue={selectedProduct?.subCategory}  className="px-5 py-2 text-gray-500" onChange={onChangeUpdateHandler}>
                         <option value="null" disabled>--select subCategory--</option>
                         {
                             FILTER_SUB_CATEGORIES_OBJECT[createProductForm.category].map((iter) => (
@@ -313,7 +313,7 @@ function Inventory() {
                             ))
                         }
                     </select>
-                    <select name="dietaryType" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeUpdateHandler}>
+                    <select name="dietaryType" defaultValue={selectedProduct?.dietaryType} className="px-5 py-2 text-gray-500" onChange={onChangeUpdateHandler}>
                         <option value="null" disabled>--select dietaryType--</option>
                         <option value="veg">veg</option>
                         <option value="nonveg">nonveg</option>

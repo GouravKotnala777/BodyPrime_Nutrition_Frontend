@@ -52,7 +52,7 @@ function ReviewSummery({productID, averageRating, totalRatings, numOfReviews, ra
         <div className="flex flex-col gap-10">
             <div className="flex justify-between items-center mt-6">
                 <div className="text-lg">Ratings & Reviews</div>
-                <button className="bg-linear-90 from-blue-200 via-blue-50 to-blue-200 text-blue-600 py-1 px-4 rounded-sm hover:opacity-80" onClick={emitRatingFormModelEvent}>Rate Product</button>
+                <button className="bg-secondary-100 text-secondary-800 py-1 px-4 rounded-sm hover:bg-secondary-50 transition-colors ease-out duration-300" onClick={emitRatingFormModelEvent}>Rate Product</button>
             </div>
             <div className="flex justify-around items-center">
                 <div className="flex flex-col gap-2 w-max">
