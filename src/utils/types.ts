@@ -223,4 +223,4 @@ export interface AddressTypes{
     country:string;
     pincode:string;
 };
-export type AddressFormTypes = Omit<AddressTypes, "userID">;
+export type AddressFormTypes = Omit<AddressTypes, "_id"|"userID">;

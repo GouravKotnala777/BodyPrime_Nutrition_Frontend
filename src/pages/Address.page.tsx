@@ -10,7 +10,7 @@ import Skeletan from "../components/Skeletan";
 let timer = 0;
 
 function Address() {
-    const [addressFormData, setAddressFormData] = useState<AddressFormTypes>({_id:"", address1:"", address2:"", landmark:"", city:"", state:"", country:"", pincode:""});
+    const [addressFormData, setAddressFormData] = useState<AddressFormTypes>({address1:"", address2:"", landmark:"", city:"", state:"", country:"", pincode:""});
     const [address, setAddress] = useState<{_id:string, address1:string; address2:string; landmark:string; city:string; state:string; country:string; pincode:string;}[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [processingAddress, setProcessingAddress] = useState<string>("");
@@ -53,7 +53,7 @@ function Address() {
                 if (res.success) {
                     setAddress(prev => [...prev, res.jsonData]);
                     setIsAddressCreating(false);
-                    setAddressFormData({_id:"", address1:"", address2:"", landmark:"", city:"", state:"", country:"", pincode:""});
+                    setAddressFormData({address1:"", address2:"", landmark:"", city:"", state:"", country:"", pincode:""});
                 }
             }, 2000);
         } catch (error) {
