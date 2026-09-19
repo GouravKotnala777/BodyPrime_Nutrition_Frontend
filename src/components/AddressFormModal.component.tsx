@@ -40,6 +40,7 @@ function AddressFormModal() {
         }>({method:"COD", status:"processing", transactionID:""});
     const [isAccordionManuallyClosed, setIsAccordionManuallyClosed] = useState<boolean>(false);
     const [saveAddressConfirmation, setSaveAddressConfirmation] = useState<boolean>(false);
+    const [isOrdering, setIsOrdering] = useState<boolean>(false);
 
 
 
@@ -83,6 +84,7 @@ function AddressFormModal() {
     };
 
     async function createOrderHandler() {
+        setIsOrdering(true);
         const transformedCartData = cartData.map((p) => ({
             name:p.name,
             price:p.price,
@@ -100,14 +102,20 @@ function AddressFormModal() {
             saveAddressConfirmation
 
         });
-        console.log(res);
+        setTimeout(() => {
+            console.log(res);
 
-        
-        if (res.success && res.jsonData.newOrder.paymentInfo.method === "COD") {
-            setCartData([]);
-            closeAddressFormModal();
-            navigate("/home");
-        }
+            if (res.success && res.jsonData.newOrder.paymentInfo.method === "COD") {
+                setCartData([]);
+                setIsOrdering(false);
+                closeAddressFormModal();
+                navigate("/my_orders");
+            }
+            else{
+                setIsOrdering(false);
+            }
+        }, 2000);
+
 
         return res;
     };
@@ -196,29 +204,6 @@ function AddressFormModal() {
                                     closeManually={isAccordionManuallyClosed}
                                     setCloseManually={setIsAccordionManuallyClosed}
                                 />
-                                {/*<Accordion
-                                    data={
-                                        addressDummyData.map((adrs) => (
-                                            {
-                                                heading:(
-                                                    <div className="text-xs p-2">{adrs.address1}, {adrs.address2}, {adrs.landmark}, {adrs.city}, {adrs.state}, {adrs.country}, {adrs.pincode}</div>
-                                                ),
-                                                para:(
-                                                    <div className="text-xs grid grid-cols-2 px-4">
-                                                        <div className="">address1</div><div className="">{adrs.address1}</div>
-                                                        <div className="">address2</div><div className="">{adrs.address2}</div>
-                                                        <div className="">landmark</div><div className="">{adrs.landmark}</div>
-                                                        <div className="">city</div><div className="">{adrs.city}</div>
-                                                        <div className="">state</div><div className="">{adrs.state}</div>
-                                                        <div className="">country</div><div className="">{adrs.country}</div>
-                                                        <div className="">pincode</div><div className="">{adrs.pincode}</div>
-                                                    </div>
-                                                )
-                                            }
-                                        ))
-                                    }
-                                />*/}
-
                             </div>
                     }
 
@@ -296,10 +281,37 @@ function AddressFormModal() {
                                         />
                                     </Elements>
                                     :
-                                    <button className="bg-orange-100 hover:bg-orange-50 text-orange-800 font-semibold mt-4 mb-0.25 w-full px-2 py-2.5 rounded-md flex justify-center items-center gap-1 transition-colors ease-out duration-300"
+                                    <button className="relative bg-orange-100 hover:bg-orange-50 text-orange-800 font-semibold mt-4 mb-0.25 w-full px-2 py-2.5 rounded-md flex justify-center items-center gap-1 transition-colors ease-out duration-300"
                                         onClick={createOrderHandler}
                                     >
-                                        <span className="">Save and deliver here</span>
+                                        {
+                                            isOrdering ?
+                                            <>
+                                                <div className={`"opacity-100 scale-100 blur-0" h-full absolute top-0 -left-0.25 w-full transition-all ease-in-out duration-300`}>
+                                                    <div className="w-full h-full flex justify-center items-center gap-1.25">
+                                                        <div className="size-1.5 bg-secondary-800 rounded-2xl"
+                                                            style={{
+                                                                animation:"up-down-dot-loading 1s 0s linear infinite"
+                                                            }}
+                                                        ></div>
+                                                        <div className="size-1.5 bg-secondary-800 rounded-2xl"
+                                                            style={{
+                                                                animation:"up-down-dot-loading 1s 0.2s linear infinite"
+                                                            }}
+                                                        ></div>
+                                                        <div className="size-1.5 bg-secondary-800 rounded-2xl"
+                                                            style={{
+                                                                animation:"up-down-dot-loading 1s 0.4s linear infinite"
+                                                            }}
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <span className="opacity-0">A</span>
+                                            </>
+                                            :
+                                            <span className="">Save and deliver here</span>
+                                        }
                                     </button>
                             }
                         </div>
