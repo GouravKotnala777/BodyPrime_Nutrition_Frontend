@@ -58,7 +58,7 @@ function Search({setIsSearchActive}:SearchPropTypes) {
             }
             {
                 searchedData.tags.map((p) => (
-                    p.tag.map((t) => (
+                    p.tags.map((t) => (
                         <NavLink to={"/"}
                             className="block p-2 active:bg-[#f4466958]"
                         >{t}</NavLink>
