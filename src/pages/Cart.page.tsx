@@ -38,7 +38,7 @@ function Cart() {
             method:"COD"|"Stripe";
             transactionID?:string;
             status:"canceled"|"processing"|"requires_action"|"requires_capture"|"requires_confirmation"|"requires_payment_method"|"succeeded";
-        }>({method:"COD", status:"processing", transactionID:""});
+        }>({method:"Stripe", status:"processing", transactionID:""});
 
     function clicked(state:"success"|"error") {
         setProcessState("loading");
@@ -365,9 +365,9 @@ function Cart() {
                 <div id="price_details" className="border border-gray-200 min-w-70 h-min rounded-xl sticky top-21 right-0 p-4">{/*give mb-15 sm:mb-0*/}
                     {
                         calculateTotalCartItems() ?
-                            <div className="">
+                            <div className="flex flex-col gap-5">
 
-                                <div className="flex items-center gap-2 my-4">
+                                <div className="flex items-center gap-2">
                                     <span className="text-gray-700">Item Total ({calculateTotalCartItems()})</span>
                                     {off?<span className="text-green-700">Saved ₹3100 isse thik karna h</span>:<></>}
                                     <div className="ml-auto">
@@ -378,65 +378,69 @@ function Cart() {
 
                                 {/* shipping types */}
                                 <div className="">
-                                    <div className="text-gray-400 mb-4">Shipping type</div>
+                                    <div className="text-gray-400 mb-2">Shipping type</div>
                                     <div className="flex flex-col gap-4">
                                         <div className="ring-1 ring-gray-200 text-gray-700 w-full rounded-md">
-                                            <label className="w-full flex justify-between px-3 py-2"><input type="radio" name="shippingType" value="Express" onChange={(e) => setShippingType(e.target.value as "Express")} /> Express Shipping (1-3 days) : ₹500/-</label>
+                                            <label className="w-full flex justify-between px-3 py-2"><input type="radio" name="shippingType" value="Express" checked={shippingType === "Express"} onChange={(e) => setShippingType(e.target.value as "Express")} /> Express Shipping (1-3 days) : ₹500/-</label>
                                         </div>
                                         <div className="ring-1 ring-gray-200 text-gray-700 w-full rounded-md">
-                                            <label className="w-full flex justify-between px-3 py-2"><input type="radio" name="shippingType" value="Standard" onChange={(e) => setShippingType(e.target.value as "Standard")} /> Standard Shipping (3-5 days) : ₹300/-</label>
+                                            <label className="w-full flex justify-between px-3 py-2"><input type="radio" name="shippingType" value="Standard" checked={shippingType === "Standard"} onChange={(e) => setShippingType(e.target.value as "Standard")} /> Standard Shipping (3-5 days) : ₹300/-</label>
                                         </div>
                                         <div className="ring-1 ring-gray-200 text-gray-700 w-full rounded-md">
-                                            <label className="w-full flex justify-between px-3 py-2"><input type="radio" name="shippingType" value="Regular" onChange={(e) => setShippingType(e.target.value as "Regular")} /> Regular Shipping (6-7 days) : ₹0/-</label>
+                                            <label className="w-full flex justify-between px-3 py-2"><input type="radio" name="shippingType" value="Regular" checked={shippingType === "Regular"} onChange={(e) => setShippingType(e.target.value as "Regular")} /> Regular Shipping (6-7 days) : ₹0/-</label>
                                         </div>
                                     </div>
                                 </div>
 
-
-                                <div className="border flex gap-1 my-5">
+                                {/* baad me thik karunga */}
+                                {/*<div className="border flex gap-1 my-5">
                                     <div>
                                         <div className="text-gray-700">Shipping Charges</div>
                                         <div className="text-sm text-gray-500">Free Shipping on orders above ₹350</div>
                                     </div>
                                     <span className="text-gray-500 line-through ml-auto">₹50</span>
                                     <span className="text-green-600">FREE</span>
+                                </div>*/}
+
+                                {/* price summery */}
+                                <div>
+                                    <div className="text-gray-400 mb-2">Price Summery</div>
+                                    <div className="border-1 border-dashed border-gray-200 text-gray-600 text-sm flex flex-col gap-1.5 p-4 rounded-md">
+                                        <div className="flex justify-between">
+                                            <span>Item Price</span>
+                                            <span>₹{priceSummary.itemsPrice}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>Tax Price (18%)</span>
+                                            <span>₹{priceSummary.taxPrice}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>Shipping Price ({shippingType})</span>
+                                            <span>₹{priceSummary.shippingPrice}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>Discount</span>
+                                            <span>₹{priceSummary.discount}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span>Total Price</span>
+                                            <span>₹{priceSummary.totalPrice}</span>
+                                        </div>
+                                    </div>
                                 </div>
 
-
-                                <div className="border border-gray-200 text-gray-600 text-sm flex flex-col gap-1.5 p-4 rounded-md">
-                                    <div className="flex justify-between">
-                                        <span>Item Price</span>
-                                        <span>₹{priceSummary.itemsPrice}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>Tax Price (18%)</span>
-                                        <span>₹{priceSummary.taxPrice}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>Shipping Price ({shippingType})</span>
-                                        <span>₹{priceSummary.shippingPrice}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>Discount</span>
-                                        <span>₹{priceSummary.discount}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>Total Price</span>
-                                        <span>₹{priceSummary.totalPrice}</span>
-                                    </div>
-                                </div>
-
-                                <div className="my-4">
+                                {/* mode of payment */}
+                                <div className="">
                                     <div className="text-gray-400">Mode of Payment</div>
                                     <div className="text-gray-700 flex justify-around">
-                                        <label className="flex items-center gap-2 p-2">Stripe <input type="radio" name="paymentMethod" value="Stripe" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "Stripe"})} /></label>
-                                        <label className="flex items-center gap-2 p-2">Cash On Delivery <input type="radio" name="paymentMethod" value="COD" onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "COD"})} /></label>
+                                        <label className="flex items-center gap-2 p-2">Stripe <input type="radio" name="paymentMethod" value="Stripe" checked={paymentInfo.method === "Stripe"} onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "Stripe"})} /></label>
+                                        <label className="flex items-center gap-2 p-2">Cash On Delivery <input type="radio" name="paymentMethod" value="COD" checked={paymentInfo.method === "COD"} onChange={(e) => setPaymentInfo({...paymentInfo, method:e.target.value as "COD"})} /></label>
                                     </div>
                                 </div>
 
 
-
-                                <div className="flex flex-col gap-2.5 mt-8">
+                                {/* total payable */}
+                                <div className="flex flex-col gap-2.5">
                                     <div className="flex gap-1.5 text-gray-700">
                                         <span>Total Payable</span>
                                         <span className="text-gray-800 text-lg"><span className="font-thin">₹</span><span className="font-semibold">{priceSummary.totalPrice}</span></span>
