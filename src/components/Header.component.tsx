@@ -7,7 +7,7 @@ import { BsArrowRight } from "react-icons/bs";
 import { getProducts, searchProducts } from "../apis/product.api";
 import type { ProductTypes } from "../utils/types";
 import { MdOutlineInventory2 } from "react-icons/md";
-import { SUGGESSION_BADGES, SUGGESSIONS_TRENDING_SEARCHES } from "../utils/constants";
+import { ALL_BRANDS, FILTER_CATEGORIES_OBJECT, SUGGESSION_BADGES, SUGGESSIONS_TRENDING_SEARCHES } from "../utils/constants";
 import ImageWithFallback from "./ImageWithFallback.component";
 import Spinner from "./Spinner.component";
 
@@ -18,8 +18,8 @@ export interface HeaderPropTypes {
 };
 
 const productsBy = {
-    categories:["Performance Nutrition", "VItamins And Supplements", "Health Food And Drinks", "Workout Gear", "Nutrabay Top 10"],
-    brands:["asdkajsdlka", "asdasd asdasd", "sakdjasldk asd asdas", "askdlajsd asdkl", "asas asdasdasdad", "asdasdasds adasdasasd"]
+    categories:FILTER_CATEGORIES_OBJECT,
+    brands:ALL_BRANDS
 };
 
 const OFF = 20;
@@ -604,94 +604,140 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
             {/* hamburger sidebar */}
             <div className={`h-screen w-full flex fixed gap-0.5 sm:gap-2 top-0 ${isHamburgerSideBarOpen?"left-0":"-left-[150%]"} transition-all ease-in-out duration-300`}>
                 {/* hamburger sidebar content */}
-                <div className="flex flex-col bg-white">
-                    {
-                        isUserAuthenticated() ?
-                            <div className="text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200">
-                                <span>{loggedInUserName()}</span>
-                            </div>
-                            :
-                            <NavLink to="/login" className="text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200" onClick={hamburgerSideBarToggleHandler}>
-                                <span>Login/Register</span> <BsArrowRight />
-                            </NavLink>
-                    }
-                    <div className="grid grid-cols-3 text-sm sm:text-md">
-                        <NavLink to="/my_profile" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
-                            <div className="w-min mx-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                                </svg>
-                            </div>
-                            <div>My Account</div>
-                        </NavLink>
-                        <NavLink to="/my_orders" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
-                            <div className="w-min mx-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
-                                    <path d="M15 12h-5"/>
-                                    <path d="M15 8h-5"/>
-                                    <path d="M19 17V5a2 2 0 0 0-2-2H4"/>
-                                    <path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>
-                                </svg>
-                            </div>
-                            <div>Your Orders</div>
-                        </NavLink>
-                        <NavLink to="/cart" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
-                            <div className="w-min mx-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                                </svg>
-                            </div>
-                            <div>Your Cart</div>
-                        </NavLink>
-                        <NavLink to="/authenticity" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
-                            <div className="w-min mx-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
-                                    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
-                                    <path d="m9 12 2 2 4-4"/>
-                                </svg>
-                            </div>
-                            <div>Authenticity</div>
-                        </NavLink>
-                        <NavLink to="/####" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
-                            <div className="w-min mx-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
-                                    <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
-                                    <path d="m15 9-6 6"/>
-                                    <path d="M9 9h.01"/>
-                                    <path d="M15 15h.01"/>
-                                </svg>
-                            </div>
-                            <div>Offers</div>
-                        </NavLink>
-                        <NavLink to="/support" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
-                            <div className="w-min mx-auto">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
-                                    <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/>
-                                    <path d="M21 16v2a4 4 0 0 1-4 4h-5"/>
-                                </svg>
-                            </div>
-                            <div>Support</div>
-                        </NavLink>
-                    </div>
-                    <div className="flex justify-around p-4 text-md sm:text-lg">
-                        <button name="categories" className={`border-b-3 font-semibold ${selectedTab==="categories"?"border-primary-500 text-gray-800":"border-transparent text-gray-400"}`} onClick={categoryBrandTabHandler}>CATEGORIES</button>
-                        <button name="brands" className={`border-b-3 font-semibold ${selectedTab==="brands"?"border-primary-500 text-gray-800":"border-transparent text-gray-400"}`} onClick={categoryBrandTabHandler}>BRANDS</button>
-                    </div>
-                    <div className="flex-1 overflow-x-hidden overflow-y-scroll text-sm sm:text-md">
+                <div className="bg-white">
+                    <div className="h-[92%] flex flex-col ">
                         {
-                            productsBy[selectedTab].map((iter, ind) => (
-                                <NavLink to="####" key={ind} className="flex items-center gap-2 p-3 hover:bg-primary-100 cursor-pointer" onClick={hamburgerSideBarToggleHandler}>
-                                    <div>O</div><div className="text-gray-500 text-shadow-xs text-shadow-gray-100">{iter}</div>
+                            isUserAuthenticated() ?
+                                <div className="text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200">
+                                    <span>{loggedInUserName()}</span>
+                                </div>
+                                :
+                                <NavLink to="/login" className="text-gray-700 text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200" onClick={hamburgerSideBarToggleHandler}>
+                                    <span>Login/Register</span> <BsArrowRight />
                                 </NavLink>
-                            ))
                         }
+                        
+                        {/* navigation grid */}
+                        <div className="border border-gray-200 grid grid-cols-3 text-sm sm:text-md">
+                            <NavLink to="/my_profile" className="text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
+                                <div className="w-min mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                    </svg>
+                                </div>
+                                <div>My Account</div>
+                            </NavLink>
+                            <NavLink to="/my_orders" className="border-x border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
+                                <div className="w-min mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path d="M15 12h-5"/>
+                                        <path d="M15 8h-5"/>
+                                        <path d="M19 17V5a2 2 0 0 0-2-2H4"/>
+                                        <path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>
+                                    </svg>
+                                </div>
+                                <div>Your Orders</div>
+                            </NavLink>
+                            <NavLink to="/cart" className="text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
+                                <div className="w-min mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                    </svg>
+                                </div>
+                                <div>Your Cart</div>
+                            </NavLink>
+
+
+                            <NavLink to="/address" className="border-y border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
+                                <div className="w-min mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                    </svg>
+                                </div>
+                                <div>Address</div>
+                            </NavLink>
+                            <NavLink to="/wishlist" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
+                                <div className="w-min mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                    </svg>
+                                </div>
+                                <div>Wishlist</div>
+                            </NavLink>
+                            <NavLink to="/inventory" className="border-y border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
+                                <MdOutlineInventory2 className="w-min mx-auto size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1" />
+                                <div>Inventory</div>
+                            </NavLink>
+
+
+                            <NavLink to="/authenticity" className="text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
+                                <div className="w-min mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+                                        <path d="m9 12 2 2 4-4"/>
+                                    </svg>
+                                </div>
+                                <div>Authenticity</div>
+                            </NavLink>
+                            <NavLink to="/####" className="border-x border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
+                                <div className="w-min mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/>
+                                        <path d="m15 9-6 6"/>
+                                        <path d="M9 9h.01"/>
+                                        <path d="M15 15h.01"/>
+                                    </svg>
+                                </div>
+                                <div>Offers</div>
+                            </NavLink>
+                            <NavLink to="/support" className="text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
+                                <div className="w-min mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z"/>
+                                        <path d="M21 16v2a4 4 0 0 1-4 4h-5"/>
+                                    </svg>
+                                </div>
+                                <div>Support</div>
+                            </NavLink>
+                        </div>
+
+                        {/* tabs */}
+                        <div className="flex justify-around p-4 text-md sm:text-lg">
+                            <button name="categories" className={`border-b-3 font-semibold ${selectedTab==="categories"?"border-primary-400 text-gray-700":"border-transparent text-gray-400"} transition-all ease-in-out duration-300`} onClick={categoryBrandTabHandler}>CATEGORIES</button>
+                            <button name="brands" className={`border-b-3 font-semibold ${selectedTab==="brands"?"border-primary-400 text-gray-700":"border-transparent text-gray-400"} transition-all ease-in-out duration-300`} onClick={categoryBrandTabHandler}>BRANDS</button>
+                        </div>
+
+                        <div className="flex-1 overflow-x-hidden overflow-y-scroll sm:scrollbar-thin [box-shadow:0px_0px_4px_1px_var(--color-gray-300)_inset]">
+                            <div className="text-sm sm:text-md">
+                                {
+                                    productsBy[selectedTab].map(({heading, fieldName, queryName}, index) => (
+                                        <NavLink to={`/searched_products/${fieldName}/${queryName}/null`} key={index} target="_blank" className="flex items-center gap-2 p-3 hover:bg-primary-100 cursor-pointer" onClick={hamburgerSideBarToggleHandler}>
+                                            <div>O</div><div className="text-gray-500 text-shadow-xs text-shadow-gray-100">{heading}</div>
+                                        </NavLink>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                        <NavLink to="/" className="border border-gray-200 flex items-center w-full text-primary-400 tracking-widest font-mono text-shadow-md text-shadow-primary-200/80 group" onClick={hamburgerSideBarToggleHandler}>
+                            <div className="flex flex-col gap-1 p-4 text-center flex-1">
+                                <p>BodyPrime Nutrition</p>
+                                <p className="flex justify-center items-center text-[6px]">
+                                    <span className="text-gray-400">made with</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-4 fill-primary-500 text-primary-500/80 p-1 animate-bounce">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                    </svg>
+                                    <span className="text-gray-400 translate-x-0.25">by gourav kotnala</span>
+                                </p>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="text-gray-400 size-5 -translate-x-3 sm:-translate-x-8 group-hover:-translate-x-3 ease-in-out duration-300">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </NavLink>
                     </div>
-                    <NavLink to="/" className="border border-gray-200 w-full p-4 text-center text-primary-400 tracking-widest font-mono text-shadow-md text-shadow-primary-200/80" onClick={hamburgerSideBarToggleHandler}>
-                        BodyPrime Nutrition
-                    </NavLink>
                 </div>
                 {/* hamburger sidebar closer */}
-                <div className="flex-1" onClick={hamburgerSideBarToggleHandler}>
+                <div className="flex-1 translate-2" onClick={hamburgerSideBarToggleHandler}>
                     <button className="size-10 sm:size-15 rounded-full bg-white hover:bg-primary-300 text-primary-500 font-bold">X</button>
                 </div>
                 

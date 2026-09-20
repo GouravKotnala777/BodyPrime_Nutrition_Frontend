@@ -8,17 +8,31 @@ export const buttonNames = {
 export const MIN_PRICE_INITIALLY = 0;
 export const MAX_PRICE_INITIALLY = 10000;
 
-//["protein", "Mass Gainer", "Fat Burner", "Beauty Wellness", "Vitamins", "Minerals", "pre-workout", "fatty acids", "ayurvedic", "other"]
+
+export const ALL_BRANDS = [ // second property name appropriate nahi hai it should be query or brand lekin fir conflict karega or objects ke saath
+    {heading:"Optimum Nutrition", fieldName:"brand", queryName:"optimum nutrition"},
+    {heading:"MuscleBlaze", fieldName:"brand", queryName:"muscleblaze"},
+    {heading:"MyProtein", fieldName:"brand", queryName:"myprotein"},
+    {heading:"MuscleTech", fieldName:"brand", queryName:"muscletech"},
+    {heading:"Asitis Nutrition", fieldName:"brand", queryName:"asitis"},
+    {heading:"GNC", fieldName:"brand", queryName:"gnc"},
+    {heading:"Dymatize", fieldName:"brand", queryName:"dymatize"},
+    {heading:"Nutrabay", fieldName:"brand", queryName:"nutrabay"},
+    {heading:"Isopure", fieldName:"brand", queryName:"isopure"},
+    {heading:"Monster", fieldName:"brand", queryName:"monster"},
+    {heading:"OneScience", fieldName:"brand", queryName:"onescience"},
+    {heading:"Labrada", fieldName:"brand", queryName:"labrada"},
+];
 export const FILTER_CATEGORIES_OBJECT = [
-    {heading:"Protein", category:"protein"},
-    {heading:"Weight Management", category:"weight"},
-    {heading:"Pre-Workout", category:"pre-workout"},
-    {heading:"Vitamins", category:"vitamins"},
-    {heading:"Minerals", category:"minerals"},
-    {heading:"Essential Fatty Acids", category:"fatty acids"},
-    {heading:"Ayurvedic", category:"ayurvedic"},
-    {heading:"Digestive Health", category:"wellness"},
-    {heading:"Health Foods", category:"health food"},
+    {heading:"Protein", fieldName:"category", queryName:"protein"},
+    {heading:"Weight Management", fieldName:"category", queryName:"weight"},
+    {heading:"Pre-Workout", fieldName:"category", queryName:"pre-workout"},
+    {heading:"Vitamins", fieldName:"category", queryName:"vitamins"},
+    {heading:"Minerals", fieldName:"category", queryName:"minerals"},
+    {heading:"Essential Fatty Acids", fieldName:"category", queryName:"fatty acids"},
+    {heading:"Ayurvedic", fieldName:"category", queryName:"ayurvedic"},
+    {heading:"Digestive Health", fieldName:"category", queryName:"wellness"},
+    {heading:"Health Foods", fieldName:"category", queryName:"health food"},
 ];
 export const FILTER_SUB_CATEGORIES_OBJECT = {
     protein:[
