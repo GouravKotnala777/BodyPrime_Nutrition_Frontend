@@ -10,9 +10,9 @@ import Skeletan from "../components/Skeletan";
 //import { capitalizeString } from "../utils/functions";
 import { BiFilter } from "react-icons/bi";
 import FilterControlPanel from "../components/FilterControlPanel.component";
-import { FILTER_CATEGORIES_OBJECT, FILTER_SUB_CATEGORIES_OBJECT, MAX_PRICE_INITIALLY, MIN_PRICE_INITIALLY } from "../utils/constants";
+import { ALL_BRANDS, FILTER_CATEGORIES_OBJECT, FILTER_SUB_CATEGORIES_OBJECT, MAX_PRICE_INITIALLY, MIN_PRICE_INITIALLY } from "../utils/constants";
 
-interface FilterInterface{
+export interface FilterInterface{
     dietaryTypes:("veg"|"nonveg"|"vegan")[];
     categories:string[];
     subCategories:string[];
@@ -606,10 +606,10 @@ function SearchedProducts() {
                                                 className="border border-gray-200 bg-white text-sm w-full mt-4 px-3 py-3 sm:py-2.5 rounded-sm"
                                             />
                                             <div className="text-sm flex flex-col gap-2 h-40 max-h-min px-4 py-3 overflow-y-scroll scrollbar-thin">
-                                                {    FILTER_CATEGORIES_OBJECT.map(({heading, category}) => (
-                                                        <div key={category} className="flex items-center gap-2 hover:text-primary-400">
-                                                            <input id={category} type="checkbox" name="categories" value={category} checked={filters.categories.includes(category)} onChange={filterOnChangeHandler} />
-                                                            <label htmlFor={category} className="w-full">{heading}</label>
+                                                {    FILTER_CATEGORIES_OBJECT.map(({heading, queryName}, index) => (
+                                                        <div key={index} className="flex items-center gap-2 hover:text-primary-400">
+                                                            <input id={queryName} type="checkbox" name="categories" value={queryName} checked={filters.categories.includes(queryName)} onChange={filterOnChangeHandler} />
+                                                            <label htmlFor={queryName} className="w-full">{heading}</label>
                                                         </div>
                                                     ))
                                                 }
@@ -674,10 +674,10 @@ function SearchedProducts() {
                                             />
                                             <div className="text-sm flex flex-col gap-2 h-40 max-h-min px-4 py-3 overflow-y-scroll scrollbar-thin">
                                                 {
-                                                    ["brand1", "brand2", "Viado's Himalayan Organics", "Neuherbs", "HealthyHey Nutrition", "Dr. Morepen", "HealthAid", "Zeroharm", "Nutrabay", "Optimum", "Patoni"].map((brand) => (
-                                                        <div key={brand} className="flex items-center gap-2 hover:text-primary-400">
-                                                            <input id={brand} type="checkbox" name="brands" value={brand} checked={filters.brands.includes(brand)} onChange={filterOnChangeHandler} />
-                                                            <label htmlFor={brand} className="w-full">{brand}</label>
+                                                    ALL_BRANDS.map(({heading, queryName}) => (
+                                                        <div key={queryName} className="flex items-center gap-2 hover:text-primary-400">
+                                                            <input id={queryName} type="checkbox" name="brands" value={queryName} checked={filters.brands.includes(queryName)} onChange={filterOnChangeHandler} />
+                                                            <label htmlFor={queryName} className="w-full">{heading}</label>
                                                         </div>
                                                     ))
                                                 }
@@ -826,7 +826,7 @@ function SearchedProducts() {
 
 
                 {/* filters controller panel for mobiles only */}
-                <FilterControlPanel filterOnChangeHandler={filterOnChangeHandler} clearFiltersHandler={clearFiltersHandler} min={min} setMin={setMin} max={max} setMax={setMax} />
+                <FilterControlPanel filterOnChangeHandler={filterOnChangeHandler} clearFiltersHandler={clearFiltersHandler} min={min} setMin={setMin} max={max} setMax={setMax} filters={filters} />
 
                 
 

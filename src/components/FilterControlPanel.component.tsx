@@ -1,6 +1,8 @@
 import { useEffect, useState, type ChangeEvent, type Dispatch, type SetStateAction } from "react";
 import { capitalizeString } from "../utils/functions";
 import RangeInput from "./RangeInput.component";
+import { ALL_BRANDS, FILTER_CATEGORIES_OBJECT, FILTER_SUB_CATEGORIES_OBJECT } from "../utils/constants";
+import type { FilterInterface } from "../pages/SearchedProducts.page";
 
 interface FilterControlPanelPropInterface{
     clearFiltersHandler():void;
@@ -9,9 +11,10 @@ interface FilterControlPanelPropInterface{
     setMin:Dispatch<SetStateAction<number>>;
     max:number;
     setMax:Dispatch<SetStateAction<number>>;
+    filters:FilterInterface;
 };
 
-function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, setMin, max, setMax}:FilterControlPanelPropInterface) {
+function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, setMin, max, setMax, filters}:FilterControlPanelPropInterface) {
     const [selectedFilter, setSelectedFilter] = useState<string>("preference");
     const [isFilterControlPanelOpen, setIsFilterControlPanelOpen] = useState<boolean>(false);
 
@@ -53,7 +56,7 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                         {/* left part */}
                         <div className="border border-gray-200 w-25 flex flex-col">
                             {
-                                ["preference", "category", "price", "brand", "rating", "flavor"].map((iter) => (
+                                ["preference", "category", "Sub Category", "price", "brand", "rating", "flavor"].map((iter) => (
                                     <button key={iter} className={`border-r-4 ${selectedFilter===iter ? "text-primary-400":"border-transparent text-gray-800"} text-sm py-4`} onClick={() => setSelectedFilter(iter)}>{capitalizeString(iter)}</button>
                                 ))
                             }
@@ -68,15 +71,15 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                     selectedFilter === "preference" &&
                                         <div className="text-gray-700 text-md flex flex-col gap-10 px-4 py-3 ">
                                             <div className="text-gray-700 text-md flex items-center gap-4">
-                                                <input id="veg" type="checkbox" name="dietaryType" value="veg" onChange={filterOnChangeHandler} />
+                                                <input id="veg" type="checkbox" name="dietaryType" value="veg" checked={filters.dietaryTypes.includes("veg")} onChange={filterOnChangeHandler} />
                                                 <label htmlFor="veg">Vegetarian</label>
                                             </div>
                                             <div className="text-gray-700 text-md flex items-center gap-4">
-                                                <input id="nonveg" type="checkbox" name="dietaryType" value="nonveg" onChange={filterOnChangeHandler} />
+                                                <input id="nonveg" type="checkbox" name="dietaryType" value="nonveg" checked={filters.dietaryTypes.includes("nonveg")} onChange={filterOnChangeHandler} />
                                                 <label htmlFor="nonveg">Non-Vegetarian</label>
                                             </div>
                                             <div className="text-gray-700 text-md flex items-center gap-4">
-                                                <input id="vegan" type="checkbox" name="dietaryType" value="vegan" onChange={filterOnChangeHandler} />
+                                                <input id="vegan" type="checkbox" name="dietaryType" value="vegan" checked={filters.dietaryTypes.includes("vegan")} onChange={filterOnChangeHandler} />
                                                 <label htmlFor="vegan">Vegan</label>
                                             </div>
                                         </div>
@@ -86,17 +89,18 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                 {
                                     selectedFilter === "category" &&
                                         <div className="">
-                                            <div className="m-5">
+                                            {/* search element */}
+                                            {/*<div className="m-5">
                                                 <input name="brands" placeholder="Enter category name"
                                                     className="border border-gray-200 bg-white text-md w-full px-3 py-3 rounded-sm"
                                                 />
-                                            </div>
+                                            </div>*/}
                                             <div className="text-gray-700 text-md flex flex-col gap-10 h-full px-4 py-3 overflow-y-scroll scrollbar-thin">
                                                 {
-                                                    ["Protein", "Mass Gainer", "BCAAs", "EEAs", "Fat Burner", "Minerals", "Beauty Wellness", "Creatine", "Cartemine"].map((category) => (
-                                                        <div key={category} className="flex items-center gap-4">
-                                                            <input id={category} type="checkbox" name="category" value={category} onChange={filterOnChangeHandler} />
-                                                            <label htmlFor={category}>{category}</label>
+                                                    FILTER_CATEGORIES_OBJECT.map(({heading, queryName}, index) => (
+                                                        <div key={index} className="flex items-center gap-4">
+                                                            <input id={queryName} type="checkbox" name="category" value={queryName} checked={filters.categories.includes(queryName)} onChange={filterOnChangeHandler} />
+                                                            <label htmlFor={queryName}>{heading}</label>
                                                         </div>
                                                     ))
                                                 }
@@ -105,21 +109,35 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                 }
 
                                 {/* sub category part */}
-                                <div className="bg-primary-50/30 [box-shadow:0px_0px_4px_0px_var(--primary-300)_inset] rounded-lg">
-                                    <input name="subCategories" placeholder="Enter sub category name"
-                                        className="border border-gray-200 bg-white text-sm w-full mt-4 px-3 py-3 sm:py-2.5 rounded-sm"
-                                    />
-                                    <div className="text-sm flex flex-col gap-2 h-50 px-4 py-3 overflow-y-scroll scrollbar-thin">
-                                        {
-                                            ["whey", "plant", "yeast"].map((sub) => (
-                                                <div key={sub} className="flex items-center gap-2 hover:text-primary-400">
-                                                    <input id={sub} type="checkbox" name="subCategories" value={sub} onChange={filterOnChangeHandler} />
-                                                    <label htmlFor={sub} className="w-full">{sub}</label>
-                                                </div>
-                                            ))
-                                        }
-                                    </div>
-                                </div>
+                                {
+                                    selectedFilter === "Sub Category" &&
+                                        <div className="">
+                                            {/* search element */}
+                                            {/*<div className="m-5">
+                                                <input name="brands" placeholder="Enter category name"
+                                                    className="border border-gray-200 bg-white text-md w-full px-3 py-3 rounded-sm"
+                                                />
+                                            </div>*/}
+                                            <div className="text-gray-700 text-md flex flex-col gap-10 h-full px-4 py-3 overflow-y-scroll scrollbar-thin">
+                                            {
+                                                    filters.categories.map((category) => (
+                                                        (category !== ""
+                                                        &&
+                                                        FILTER_SUB_CATEGORIES_OBJECT[category as keyof typeof FILTER_SUB_CATEGORIES_OBJECT] !== null
+                                                        &&
+                                                        typeof FILTER_SUB_CATEGORIES_OBJECT[category as keyof typeof FILTER_SUB_CATEGORIES_OBJECT] === "object")
+                                                        &&
+                                                        FILTER_SUB_CATEGORIES_OBJECT[category as keyof typeof FILTER_SUB_CATEGORIES_OBJECT].map(({heading, subCategory}) => (
+                                                            <div key={subCategory} className="flex items-center gap-2 hover:text-primary-400">
+                                                                <input id={subCategory} type="checkbox" name="subCategories" value={subCategory} checked={filters.subCategories.includes(subCategory)} onChange={filterOnChangeHandler} />
+                                                                <label htmlFor={subCategory} className="w-full">{heading}</label>
+                                                            </div>
+                                                        ))
+                                                    ))
+                                                }
+                                            </div>
+                                        </div>
+                                }
 
                                 {/* price part */}
                                 {
@@ -152,10 +170,10 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                             </div>
                                             <div className="text-gray-700 text-md flex flex-col gap-10 h-full px-4 py-3 overflow-y-scroll scrollbar-thin">
                                                 {
-                                                    ["Viado's Himalayan Organics", "Neuherbs", "HealthyHey Nutrition", "Dr. Morepen", "HealthAid", "Zeroharm", "Nutrabay", "Optimum", "Patoni"].map((brand) => (
-                                                        <div key={brand} className="flex items-center gap-4">
-                                                            <input id={brand} type="checkbox" name="brands" value={brand} onChange={filterOnChangeHandler} />
-                                                            <label htmlFor={brand}>{brand}</label>
+                                                    ALL_BRANDS.map(({heading, queryName}) => (
+                                                        <div key={queryName} className="flex items-center gap-4">
+                                                            <input id={queryName} type="checkbox" name="brands" value={queryName} onChange={filterOnChangeHandler} />
+                                                            <label htmlFor={queryName}>{heading}</label>
                                                         </div>
                                                     ))
                                                 }
@@ -191,7 +209,7 @@ function FilterControlPanel({clearFiltersHandler, filterOnChangeHandler, min, se
                                                 {
                                                     ["Chocolate Milk", "Mango Shake", "Banana Shake", "Pista Badam", "Strawberry Milk", "Vanilla", "Butter Scotch", "Orange", "Unflavored", "Lemon"].map((flavor) => (
                                                         <div key={flavor} className="flex items-center gap-4">
-                                                            <input id={flavor} type="checkbox" name="flavor" value={flavor} onChange={filterOnChangeHandler} />
+                                                            <input id={flavor} type="checkbox" name="flavor" value={flavor} checked={filters.flavors.includes(flavor)} onChange={filterOnChangeHandler} />
                                                             <label htmlFor={flavor}>{flavor}</label>
                                                         </div>
                                                     ))

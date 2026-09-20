@@ -225,8 +225,8 @@ function Inventory() {
                         <select name="category" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeHandler}>
                             <option value="null" disabled>--select category--</option>
                             {
-                                FILTER_CATEGORIES_OBJECT.map((iter) => (
-                                    <option value={iter.category}>{iter.heading}</option>
+                                FILTER_CATEGORIES_OBJECT.map(({heading, queryName}, index) => (
+                                    <option key={index} value={queryName}>{heading}</option>
                                 ))
                             }
                         </select>
@@ -299,8 +299,8 @@ function Inventory() {
                     <select name="category" className="px-5 py-2 text-gray-500" defaultValue={selectedProduct?.category} onChange={onChangeUpdateHandler}>
                         <option value="null" disabled>--select category--</option>
                         {
-                            FILTER_CATEGORIES_OBJECT.map((iter) => (
-                                <option value={iter.category}>{iter.heading}</option>
+                            FILTER_CATEGORIES_OBJECT.map(({heading, queryName}, index) => (
+                                <option key={index} value={queryName}>{heading}</option>
                             ))
                         }
                     </select>
