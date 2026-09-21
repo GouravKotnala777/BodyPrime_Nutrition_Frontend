@@ -54,12 +54,12 @@ function ReviewSummery({productID, averageRating, totalRatings, numOfReviews, ra
                 <div className="text-lg">Ratings & Reviews</div>
                 <button className="bg-secondary-100 text-secondary-800 py-1 px-4 rounded-sm hover:bg-secondary-50 transition-colors ease-out duration-300" onClick={emitRatingFormModelEvent}>Rate Product</button>
             </div>
-            <div className="flex justify-around items-center">
+            <div className="flex justify-around items-center gap-4">
                 <div className="flex flex-col gap-2 w-max">
                     {/*<pre className="text-sm">{JSON.stringify(ratingsPercentage, null, `\t`)}</pre>*/}
                     <div className="text-gray-700 text-2xl font-semibold flex gap-1 items-end w-max mx-auto"><span className="">{averageRating}</span>/<span className="text-lg">5</span></div>
                     <div className="flex gap-1 text-yellow-400 w-max mx-auto"><RatingStars rating={averageRating} outOf={5} /></div>
-                    <div className="text-gray-500">{totalRatings} Ratings & {numOfReviews} Reviews</div>
+                    <div className="text-center text-gray-500">{totalRatings} Ratings & {numOfReviews} Reviews</div>
                 </div>
                 <div className="flex flex-col gap-2">
                     {/* five star bar */}

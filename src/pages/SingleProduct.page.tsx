@@ -439,7 +439,7 @@ function SingleProduct() {
                                             <Spinner color="var(--color-green-800)" type="secondary" />
                                         </div>
                                         :
-                                        `Add to Cart ${quantityInCart}`
+                                        "Add to Cart"
                                 }
                             </button>
                             {/* quantity stepper */}
@@ -492,7 +492,7 @@ function SingleProduct() {
                                     <div className="w-max flex gap-4 group fog-x">
                                         {/* only to give leftmost space */}
                                         <div className={`
-                                            shrink-0 w-10 pointer-events-none
+                                            shrink-0 w-2 pointer-events-none
                                         `}></div>
 
                                         {/* flavor items */}
@@ -514,6 +514,11 @@ function SingleProduct() {
                                                 >{flvr}</button>
                                             ))
                                         }
+
+                                        {/* only to give rightmost space */}
+                                        <div className={`
+                                            shrink-0 w-2 pointer-events-none
+                                        `}></div>
                                     </div>
                                 </div>
                             </div>
@@ -542,7 +547,7 @@ function SingleProduct() {
 
                                             {/* only to give leftmost space */}
                                             <div className={`
-                                                shrink-0 w-10 pointer-events-none
+                                                shrink-0 w-2 pointer-events-none
                                             `}></div>
 
                                             {/* weight items */}
@@ -579,6 +584,11 @@ function SingleProduct() {
                                                     </button>
                                                 ))
                                             }
+
+                                            {/* only to give rightmost space */}
+                                            <div className={`
+                                                shrink-0 w-2 pointer-events-none
+                                            `}></div>
                                         </div>
                                     </div>
                                 </div>

@@ -6,6 +6,7 @@ import Spinner from "./Spinner.component";
 import { addToCart, removeFromCart } from "../apis/cart.api";
 import type { LocalCartTypes, WishlistTypes } from "../utils/types";
 import { converKgtolbs } from "../utils/functions";
+import ImageWithFallback from "./ImageWithFallback.component";
 
 interface ProductVariantDialogPropTypes{
     totalCartItems:number;
@@ -215,11 +216,14 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                     onClick={() => setIsProductVariantOptionsOpen(false)}
                 >X</button>
                 
-                <div className="bg-white p-4 h-120 rounded-2xl">
-                    <div className="w-full h-full px-2 pt-8 pb-15 scrollbar-thin overflow-y-scroll">
-                        <NavLink to="####" className="border border-gray-200 text-gray-700 font-semibold flex items-center gap-4 rounded-md hover:bg-primary-100 transition-all ease-out duration-300 group">
+                <div className="bg-white p-4 h-145 rounded-2xl">
+                    <div className="w-full h-[90%] px-2 pt-4 pb-15 scrollbar-thin overflow-y-scroll">
+                        {/*<pre>{JSON.stringify(productVariantOptions.img, null, `\t`)}</pre>*/}
+                        <NavLink to={`/single_product/${productVariantOptions.product._id}`} target="_blank" className="border border-gray-200 text-gray-700 font-semibold flex items-center gap-4 rounded-md hover:bg-primary-100 transition-all ease-out duration-300 group">
                             <div className="w-20 h-25">
-                                <img src="/test-category.webp" alt="/test-category.webp" className="w-full h-full" />
+                                <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${productVariantOptions.img}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${productVariantOptions.img}`} fallbackSrc="/placeholders/no_product.jpg"
+                                    className="w-full h-full aspect-square rounded-lg"
+                                />
                             </div>
                             <div className="text-md sm:text-xl line-clamp-3 w-[75%] text-gray-700 sm:text-shadow-sm">{productVariantOptions.description.split("#").join(" ")} {selectedFlavorVariant} {selectedWeightVariant.weight}</div>
                             <div className="ml-auto -translate-x-8 text-xl group-hover:-translate-x-4 transition-all ease-out duration-300"><BsArrowRight /></div>
@@ -269,12 +273,127 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                                     </button>
                                 ))
                                 }
+                                {
+                                productVariantOptions["variants"][selectedFlavorVariant]?.map(({weight, price, stock}, index) => (
+                                    <button
+                                        key={index}
+                                        disabled={stock===0}
+                                        className={`
+                                            border
+                                            ${stock===0&&"border-dashed opacity-50"}
+                                            ${selectedWeightVariant.weight===weight?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
+                                            text-left rounded-sm overflow-hidden hover:scale-95 transition-all ease-in-out duration-300
+                                            `}
+                                        onClick={()=>setSelectedWeightVariant({weight, index})}
+                                    >
+                                        <div className={`border-b p-2 ${selectedWeightVariant.weight===weight?"border-b-primary-300":"border-b-gray-300"}`}>{weight} ({converKgtolbs(weight)} lb)</div>
+                                        <div className="bg-white p-2">
+                                            <div>
+                                                <span className="text-gray-700 text-xl font-semibold">₹{price}</span><span className="text-gray-500 text-sm"> (₹360/100g)</span>
+                                            </div>
+                                            <div className="text-gray-400 text-sm">Save ₹100</div>
+                                        </div>
+                                    </button>
+                                ))
+                                }
+                                {
+                                productVariantOptions["variants"][selectedFlavorVariant]?.map(({weight, price, stock}, index) => (
+                                    <button
+                                        key={index}
+                                        disabled={stock===0}
+                                        className={`
+                                            border
+                                            ${stock===0&&"border-dashed opacity-50"}
+                                            ${selectedWeightVariant.weight===weight?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
+                                            text-left rounded-sm overflow-hidden hover:scale-95 transition-all ease-in-out duration-300
+                                            `}
+                                        onClick={()=>setSelectedWeightVariant({weight, index})}
+                                    >
+                                        <div className={`border-b p-2 ${selectedWeightVariant.weight===weight?"border-b-primary-300":"border-b-gray-300"}`}>{weight} ({converKgtolbs(weight)} lb)</div>
+                                        <div className="bg-white p-2">
+                                            <div>
+                                                <span className="text-gray-700 text-xl font-semibold">₹{price}</span><span className="text-gray-500 text-sm"> (₹360/100g)</span>
+                                            </div>
+                                            <div className="text-gray-400 text-sm">Save ₹100</div>
+                                        </div>
+                                    </button>
+                                ))
+                                }
+                                {
+                                productVariantOptions["variants"][selectedFlavorVariant]?.map(({weight, price, stock}, index) => (
+                                    <button
+                                        key={index}
+                                        disabled={stock===0}
+                                        className={`
+                                            border
+                                            ${stock===0&&"border-dashed opacity-50"}
+                                            ${selectedWeightVariant.weight===weight?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
+                                            text-left rounded-sm overflow-hidden hover:scale-95 transition-all ease-in-out duration-300
+                                            `}
+                                        onClick={()=>setSelectedWeightVariant({weight, index})}
+                                    >
+                                        <div className={`border-b p-2 ${selectedWeightVariant.weight===weight?"border-b-primary-300":"border-b-gray-300"}`}>{weight} ({converKgtolbs(weight)} lb)</div>
+                                        <div className="bg-white p-2">
+                                            <div>
+                                                <span className="text-gray-700 text-xl font-semibold">₹{price}</span><span className="text-gray-500 text-sm"> (₹360/100g)</span>
+                                            </div>
+                                            <div className="text-gray-400 text-sm">Save ₹100</div>
+                                        </div>
+                                    </button>
+                                ))
+                                }
+                                {
+                                productVariantOptions["variants"][selectedFlavorVariant]?.map(({weight, price, stock}, index) => (
+                                    <button
+                                        key={index}
+                                        disabled={stock===0}
+                                        className={`
+                                            border
+                                            ${stock===0&&"border-dashed opacity-50"}
+                                            ${selectedWeightVariant.weight===weight?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
+                                            text-left rounded-sm overflow-hidden hover:scale-95 transition-all ease-in-out duration-300
+                                            `}
+                                        onClick={()=>setSelectedWeightVariant({weight, index})}
+                                    >
+                                        <div className={`border-b p-2 ${selectedWeightVariant.weight===weight?"border-b-primary-300":"border-b-gray-300"}`}>{weight} ({converKgtolbs(weight)} lb)</div>
+                                        <div className="bg-white p-2">
+                                            <div>
+                                                <span className="text-gray-700 text-xl font-semibold">₹{price}</span><span className="text-gray-500 text-sm"> (₹360/100g)</span>
+                                            </div>
+                                            <div className="text-gray-400 text-sm">Save ₹100</div>
+                                        </div>
+                                    </button>
+                                ))
+                                }
+                                {
+                                productVariantOptions["variants"][selectedFlavorVariant]?.map(({weight, price, stock}, index) => (
+                                    <button
+                                        key={index}
+                                        disabled={stock===0}
+                                        className={`
+                                            border
+                                            ${stock===0&&"border-dashed opacity-50"}
+                                            ${selectedWeightVariant.weight===weight?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
+                                            text-left rounded-sm overflow-hidden hover:scale-95 transition-all ease-in-out duration-300
+                                            `}
+                                        onClick={()=>setSelectedWeightVariant({weight, index})}
+                                    >
+                                        <div className={`border-b p-2 ${selectedWeightVariant.weight===weight?"border-b-primary-300":"border-b-gray-300"}`}>{weight} ({converKgtolbs(weight)} lb)</div>
+                                        <div className="bg-white p-2">
+                                            <div>
+                                                <span className="text-gray-700 text-xl font-semibold">₹{price}</span><span className="text-gray-500 text-sm"> (₹360/100g)</span>
+                                            </div>
+                                            <div className="text-gray-400 text-sm">Save ₹100</div>
+                                        </div>
+                                    </button>
+                                ))
+                                }
                             </div>
                         </div>
 
                         {/*<pre>{JSON.stringify(cartData, null, `\t`)}</pre>*/}
 
-                        <div className="absolute left-0 bottom-0 w-full rounded-b-2xl pointer-events-none">
+                        <div className="absolute left-0 bottom-15 sm:bottom-0 w-full rounded-b-2xl pointer-events-none">
                             <div className="mx-5 py-5"
                                 style={{
                                     background:"linear-gradient(0deg, white 70%, transparent 100%)"

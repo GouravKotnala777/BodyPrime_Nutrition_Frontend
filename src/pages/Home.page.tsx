@@ -51,7 +51,7 @@ function Home() {
             {/* first row */}
             <div className="text-xl sm:text-2xl flex gap-2 font-semibold items-center my-5">
                 <div>Performance Nutrition</div>
-                <NavLink to="####" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
+                <NavLink to="/searched_products/null/null/null" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
                     <div>All</div>
                     <div className="bg-primary-100 rounded-full w-10 h-10 text-center content-center pl-1"><MdKeyboardArrowRight className="text-3xl group-hover:translate-x-2 transition-transform ease-in-out duration-300" /></div>
                 </NavLink>
@@ -76,7 +76,7 @@ function Home() {
             {/* second row */}
             <div className="text-xl sm:text-2xl flex gap-2 font-semibold items-center my-5">
                 <div>Vitamins</div>
-                <NavLink to="####" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
+                <NavLink to="/searched_products/category/vitamins/null" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
                     <div>All</div>
                     <div className="bg-primary-100 rounded-full w-10 h-10 text-center content-center pl-1"><MdKeyboardArrowRight className="text-3xl group-hover:translate-x-2 transition-transform ease-in-out duration-300" /></div>
                 </NavLink>
@@ -102,11 +102,12 @@ function Home() {
             {/* third row */}
             <div className="text-xl sm:text-2xl flex gap-2 font-semibold items-center my-5">
                 <div>Health Foods</div>
-                <NavLink to="####" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
+                <NavLink to="/searched_products/category/health food/null" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
                     <div>All</div>
                     <div className="bg-primary-100 rounded-full w-10 h-10 text-center content-center pl-1"><MdKeyboardArrowRight className="text-3xl group-hover:translate-x-2 transition-transform ease-in-out duration-300" /></div>
                 </NavLink>
             </div>
+
             <div className="">
                 <div className="flex justify-between items-center flex-wrap gap-2">
                     {

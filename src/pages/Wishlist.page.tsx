@@ -298,39 +298,6 @@ function Wishlist() {
                     }
                 </div>
             </div>
-
-            {/* bottom fixed container for smaller devices only */}
-            {
-                wishlistData.length === 0 ?
-                    <></>
-                    :
-                    <div className="bg-white block sm:hidden fixed left-0 bottom-0 w-full px-4 py-2 [box-shadow:0px_0px_10px_2px_var(--color-gray-400)]">
-                        <div className="flex justify-between">
-                            <div className="flex flex-col gap-1">
-                                <span className="">
-                                    <span className="text-gray-700 text-3xl">₹</span>
-                                    <span className="text-gray-800 text-3xl font-bold">10997</span>
-                                </span>
-                                <button className="text-gray-400 flex items-center"
-                                    //onClick={() => handlePageSectionJump("price_details")}
-                                >
-                                    <span>See Price Details</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4 translate-y-0.25">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <button className="bg-orange-100 text-orange-800 font-semibold w-50 rounded-md flex justify-center items-center gap-1"
-                                //onClick={emitAddressFormModalEvent}
-                            >
-                                <span className="ml-4">Add Address</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5 translate-y-0.25">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-            }
         </section>
 
 
