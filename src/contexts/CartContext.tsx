@@ -29,8 +29,8 @@ export function CartProvider({children}:{children:ReactNode;}) {
     const [wishlistData, setWishlistData] = useState<WishlistTypes[]>([{_id:"initialProductId", brand:"initialBrand", category:"protein", images:[], name:"initialProduct", price:10, variant:"initialProductId#unflavored#1kg#10"}]);
 
     function fetchLocalCartProducts() {
+        //console.log("fetching local cart......");
         const cart:LocalCartTypes[] = JSON.parse(localStorage.getItem("cart")||"[]");
-        setCartData(cart);
         return cart;
     };
 
@@ -47,7 +47,7 @@ export function CartProvider({children}:{children:ReactNode;}) {
                 localStorageCartData.push({_id, name, brand, category, price, quantity, weight, flavor, images, variant});
             }
 
-            toast.success("Product added to cart");
+            toast.success("Product added to cart", {position:"top-center", duration:3000});
             
             localStorage.setItem("cart", JSON.stringify(localStorageCartData));
             setCartData(localStorageCartData);
@@ -74,10 +74,11 @@ export function CartProvider({children}:{children:ReactNode;}) {
                 product);
             }
             else{
-                updatedCart = prev.filter((product) => product._id !== _id);
+                updatedCart = prev.filter((product) => (product._id === _id && product.variant !== variant));
             };
 
-            console.log(updatedCart);
+            toast.success("product removed from cart", {position:"top-center", duration:3000})
+
             localStorage.setItem("cart", JSON.stringify(updatedCart));
 
             return updatedCart;

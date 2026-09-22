@@ -7,6 +7,7 @@ import { converKgtolbs } from "../utils/functions";
 import Skeletan from "../components/Skeletan";
 import Spinner from "../components/Spinner.component";
 import ImageWithFallback from "../components/ImageWithFallback.component";
+import type { LocalCartTypes } from "../utils/types";
 //import AddressFormModal from "../components/AddressFormModal.component";
 
 const off = 0;
@@ -18,10 +19,11 @@ const shippingTypeOptions = {
 
 function Cart() {
     const {isUserAuthenticated} = useUser();
-    const {cartData, setCartData, removeProductFromLocalCart, calculateTotalCartItems, calculateTotalCartValue} = useCart();
+    const {cartData, setCartData, addToLocalCart, removeProductFromLocalCart, calculateTotalCartItems, calculateTotalCartValue} = useCart();
     //const [targetedProduct, setTargetedProduct] = useState<string>("");
     const [processState, setProcessState] = useState<"loading"|"success"|"error"|null>(null);
     const navigate = useNavigate();
+    //const [isLoading, setIsLoading] = useState<boolean>(true);
     const [shippingType, setShippingType] = useState<"Express"|"Standard"|"Regular">("Regular");
     const [priceSummary, setPriceSummary] = useState<{
         itemsPrice: number;
@@ -59,21 +61,26 @@ function Cart() {
         }, 2000);
     };
 
-    async function addToCartHandler({productID, variant, quantity}:{productID:string; variant:string; quantity:number;}) {
+    async function addToCartHandler(product:LocalCartTypes) {
         try {
             //setTargetedProduct(productID);
-            const res = await addToCart({productID, variant, quantity});
-    
-            const selectedProduct = cartData.find((p) => p._id === res.jsonData.products._id);
-    
-            if (!selectedProduct) return Error("selectedProduct not found");
-    
-            if (res.jsonData.quantity < 10) {
-                setCartData(cartData.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p));
-            } else {
-                return Error("Cannot add more than 10 products");
+            if (isUserAuthenticated()) {
+                const res = await addToCart({productID:product._id, variant:product.variant, quantity:product.quantity});
+        
+                const selectedProduct = cartData.find((p) => p._id === res.jsonData.products._id);
+        
+                if (!selectedProduct) return Error("selectedProduct not found");
+        
+                if (res.jsonData.quantity < 10) {
+                    setCartData(cartData.map((p) => p._id === res.jsonData.products._id?{...p, quantity:res.jsonData.quantity}:p));
+                } else {
+                    return Error("Cannot add more than 10 products");
+                }
+                console.log(res);
             }
-            console.log(res);
+            else{
+                addToLocalCart(product);                
+            }
         } catch (error) {
             console.log(error);
         }
@@ -85,27 +92,30 @@ function Cart() {
     async function removeFromCartHandler({productID, variant, quantity}:{productID:string; variant:string; quantity:number;}) {
         try {
             //setTargetedProduct(productID);
-            
-            const res = await removeFromCart({productID, variant, quantity});
-    
-            if (res.success) {
-                const selectedProduct = cartData.find((p) => (p._id === res.jsonData.products && p.variant === res.jsonData.variant));
-   
-                if (!selectedProduct) return Error("selectedProduct not found");
-                if (res.jsonData.quantity < 1) {
-                    setCartData((prev) => (prev.filter((p) => (p._id === selectedProduct._id && p.variant !== selectedProduct.variant))));
+            if (isUserAuthenticated()) {
+                const res = await removeFromCart({productID, variant, quantity});
+        
+                if (res.success) {
+                    const selectedProduct = cartData.find((p) => (p._id === res.jsonData.products && p.variant === res.jsonData.variant));
+       
+                    if (!selectedProduct) return Error("selectedProduct not found");
+                    if (res.jsonData.quantity < 1) {
+                        setCartData((prev) => (prev.filter((p) => (p._id === selectedProduct._id && p.variant !== selectedProduct.variant))));
+                    }
+                    else{
+                        selectedProduct.quantity = res.jsonData.quantity;
+                        setCartData((prev) => (prev.map(p => (p._id === res.jsonData.products && p.variant === res.jsonData.variant)?{...p, quantity:res.jsonData.quantity}:p)));
+                        "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
+                    }
+                    clicked("success");
                 }
                 else{
-                    selectedProduct.quantity = res.jsonData.quantity;
-                    setCartData((prev) => (prev.map(p => (p._id === res.jsonData.products && p.variant === res.jsonData.variant)?{...p, quantity:res.jsonData.quantity}:p)));
-                    "agar product ki quantity kam hui lekin poora remove nahi hua to usse handle karna hai"
+                    clicked("error");
                 }
-                clicked("success");
             }
             else{
-                clicked("error");
+                removeProductFromLocalCart({_id:productID, variant, quantity});
             }
-    
         } catch (error) {
             console.log(error);
             clicked("error");
@@ -243,9 +253,9 @@ function Cart() {
                                     </div>
                             ))
                             :
-                            // empty cart
                             <div>
                                 {
+                                    // empty cart
                                     cartData.length === 0 ?
                                         <div>
                                             <img src="/empty_cart.jpg" alt="/empty_cart.jpg" className="w-full max-w-110 h-100 sm:h-110 mx-auto" />
@@ -328,7 +338,7 @@ function Cart() {
                                                                             <div className="basis-1/3 h-full text-lg content-center text-gray-700 bg-white">{p.quantity}</div>
                                                                             <button className="border border-green-300 border-l-transparent rounded-r-md basis-1/3 h-full content-center bg-green-100 hover:bg-green-50"
                                                                                 disabled={!!processState}
-                                                                            onClick={()=>addToCartHandler({productID:p._id, variant:p.variant, quantity:1})}
+                                                                                onClick={()=>addToCartHandler({...p, quantity:1})}
                                                                             >
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-5 mx-auto text-green-700">
                                                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -339,14 +349,7 @@ function Cart() {
                                                                 </div>
                                                                 <div className="flex justify-between gap-4">
                                                                     <button className="border border-gray-200 text-gray-500 bg-gray-50 px-3 py-1 pb-1.5 rounded-sm hover:opacity-70">Save for later</button>
-                                                                    <button className="border border-red-200 text-red-500 bg-red-50 px-3 py-1 pb-1.5 rounded-sm hover:opacity-70" onClick={() => {
-                                                                        if (isUserAuthenticated()) {
-                                                                            removeFromCartHandler({productID:p._id, variant:p.variant, quantity:p.quantity});
-                                                                        }
-                                                                        else{
-                                                                            removeProductFromLocalCart({_id:p._id, variant:p.variant, quantity:1})
-                                                                        }
-                                                                    }}>Remove</button>
+                                                                    <button className="border border-red-200 text-red-500 bg-red-50 px-3 py-1 pb-1.5 rounded-sm hover:opacity-70" onClick={() => removeFromCartHandler({productID:p._id, variant:p.variant, quantity:p.quantity})}>Remove</button>
                                                                 </div>
                                                             </div>
                                                         </div>

@@ -46,35 +46,65 @@ function App() {
   const [lastScrollY, setLastScrollY] = useState<number>(0);
   //const [selectedProduct, setSelectedProduct] = useState<string|null>(null);
       
-  async function myProfileHandler(signal?:AbortSignal) {
-    console.log("fetching profile......");
-    const res = await myProfile(signal);
+  async function myProfileHandler() {
+    //console.log("fetching profile......");
+    const res = await myProfile();
+    console.log(res);
+    
+    fetchCartDataHandler(res.jsonData?.isVerified||false);
     if (res.success) {
       setUser(res.jsonData);
     }
   };
 
-  async function getCartHandler() {
-    console.log("fetching cart......");
+  async function fetchCartDataHandler(isUserAuthenticated:boolean) {
+    //console.log(isUserAuthenticated);
     
-      const res = await getCart();
-      if (res.success) {
-        setCartData(transformCartDataForRes(res.jsonData).products);
+    setTimeout(async() => {
+      //console.log(isUserAuthenticated);
+      if (isUserAuthenticated) {
+        await transferFromLocalCartToRemote();
+        await fetchRemoteCartProducts();
       }
+      else{
+        const localCartData = fetchLocalCartProducts();
+        setCartData(localCartData);
+      }
+      getWishlistHandler();
+    }, 3000);
+  };
+
+  async function fetchRemoteCartProducts() {
+    //console.log("fetching remote cart......");
+    
+    const res = await getCart();
+    if (res.success) {
+      setCartData(transformCartDataForRes(res.jsonData).products);
+    }
+  };
+
+  async function transferFromLocalCartToRemote() {
+    const localCartData = fetchLocalCartProducts();
+    if (localCartData.length !== 0) {
+      for (const {_id, variant, quantity} of localCartData) {
+        const data = await addToCart({productID:_id, variant, quantity});
+        if (data.success) {
+          removeProductFromLocalCart({_id, variant, quantity});
+        }
+      }
+      clearLocalCart();
+    }
   };
 
   async function getWishlistHandler() {
     console.log("fetching widhlist......");
     const res = await getWishlist();
 
-    if (!res.success) {
-      console.log("error from getWishlistHandler");
-      console.log(res.message);
-      return;
-    }
-
     if (res.success) {
       setWishlistData(transformWishlistDataForRes(res.jsonData).products);
+    }else{
+      console.log("error from getWishlistHandler");
+      console.log(res.message);
     }
   };
 
@@ -112,35 +142,6 @@ function App() {
     //return() => clearTimeout(timer);
     //return() => {controller.abort()}
   }, []);
-
-  useEffect(() => {
-    let timer = 0;
-
-    timer = setTimeout(() => {
-      (async () => {
-        if (isUserAuthenticated()) {
-          const localCartData = fetchLocalCartProducts();
-    
-          if (localCartData.length !== 0) {
-            for (const {_id, variant, quantity} of localCartData) {
-                const data = await addToCart({productID:_id, variant, quantity});
-                if (data.success) {
-                  removeProductFromLocalCart({_id, variant, quantity});
-                }
-            }
-            clearLocalCart();
-          }
-          getCartHandler();
-          getWishlistHandler();
-        }
-        else{
-          fetchLocalCartProducts();
-        }
-      })();
-    }, 2000);
-
-    return() => clearTimeout(timer);
-  }, [isUserAuthenticated()]);
 
   return (
     <BrowserRouter>
