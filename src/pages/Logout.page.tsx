@@ -33,7 +33,7 @@ function Logout() {
             <div className="text-lg sm:text-2xl text-gray-800 font-bold text-center mt-10 py-2 sm:py-4">
                 <div>Logout Page</div>
             </div>
-            <div className="flex flex-col w-full gap-15">
+            <div className="flex flex-col w-full max-w-xs gap-15">
                 <div className="flex gap-2 text-xl mx-auto">
                     <input name="confirmation" type="checkbox" className="w-[1.2rem]" checked={isConfirmed} onChange={(e) => setIsConfirmed(e.target.checked)} />
                     <p className="">Do your really want to logout?</p>
@@ -42,7 +42,7 @@ function Logout() {
                     <button
                         className={`
                             border
-                            border-primary-300 bg-primary-200 text-primary-800 pb-0.75 hover:opacity-50
+                            border-primary-300 bg-primary-200 text-primary-800 pb-0.75 hover:bg-primary-100
                             text-center content-center h-full w-full rounded-lg
                             transition-all ease-in-out duration-300
                         `}
