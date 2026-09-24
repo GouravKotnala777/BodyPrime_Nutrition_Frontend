@@ -29,6 +29,7 @@ import Authenticity from './pages/Authenticity.page.tsx';
 import ProductVariantDialog from './components/ProductVariantsDialog.component.tsx';
 import RatingFormModal from './components/RatingFormModal.component.tsx';
 import AddressFormModal from './components/AddressFormModal.component.tsx';
+import Dashboard from './pages/Dashboard.page.tsx';
 
 //const dummyUser:UserTypes = {
 //  name:"Gourav",
@@ -185,6 +186,7 @@ function App() {
         {/* Show only for admin */}
         <Route path={"/inventory"} element={<ProtectedRoute children={<Inventory />} isUserAuthenticated={isUserAuthenticated()} isUserAdmin={isUserAdmin()} />} />
         <Route path={"/delivery"} element={<ProtectedRoute children={<Delivery />} isUserAuthenticated={isUserAuthenticated()} isUserAdmin={isUserAdmin()} />} />
+        <Route path={"/dashboard"} element={<ProtectedRoute children={<Dashboard />} isUserAuthenticated={isUserAuthenticated()} isUserAdmin={isUserAdmin()} />} />
 
 
 
