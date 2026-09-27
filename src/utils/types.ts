@@ -175,7 +175,7 @@ export interface OrderTypesPopulates {
         discount: number;
         totalPrice: number;
     };
-    orderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+    orderStatus: OrderStatusTypes;
     deliveredAt?: Date;
     otp?:string;
     otpExpiryTime:Date|null;
@@ -194,7 +194,7 @@ export interface CreateOrderFormType{
     method:"COD"|"Stripe"; transactionID?:string; status:PaymentStatusType;
     itemsPrice:number; taxPrice:number; shippingPrice:number; discount:number; totalPrice:number;
     phone:string;
-    orderStatus:"pending"|"processing"|"shipped"|"delivered"|"cancelled";
+    orderStatus:OrderStatusTypes;
     saveAddressConfirmation:boolean;
 };
 export interface ReviewTypes {
@@ -224,3 +224,17 @@ export interface AddressTypes{
     pincode:string;
 };
 export type AddressFormTypes = Omit<AddressTypes, "_id"|"userID">;
+export interface AreaChartInterface{
+    labels:string[];
+    label?:string;
+    data:(string|number)[];
+    borderColor:string;
+    backgroundColor:string;
+    borderWidth?:number;
+    tension?:number;
+    fill?:boolean;
+};
+export type DateRangeType = "today" | "week" | "month" | "custom";
+export type OrderSummaryDataType = {data:{_id:OrderStatusTypes; count:number;}[]; total:number;};
+
+//const obj:OrderSummaryDataType = 
