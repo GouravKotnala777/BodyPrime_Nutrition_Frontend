@@ -63,12 +63,6 @@ function Register() {
                     onChange={onChangeHandler}
                 />
             </div>
-            <div className="w-full max-w-xs">
-                <input type="text" name="mobile" placeholder="Mobile"
-                    className="border border-primary-200 bg-primary-50 text-gray-700 w-full px-3 py-2 rounded-md"
-                    onChange={onChangeHandler}
-                />
-            </div>
             <select name="gender" className="border border-primary-200 bg-primary-50 text-gray-700 w-full max-w-xs px-3 py-2 rounded-md" onChange={onChangeHandler}>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -80,7 +74,9 @@ function Register() {
                     className="bg-primary-50 text-gray-700 w-full px-3 py-2 rounded-l-md"
                     onChange={onChangeHandler}
                 />
-                <button className="w-10 h-full bg-primary-200 text-primary-800 px-3 py-2 relative hover:opacity-50 transition-all ease-in-out duration-300"
+                <button
+                    disabled={isProcessing}
+                    className="w-10 h-full bg-primary-200 text-primary-800 px-3 py-2 relative hover:opacity-50 transition-all ease-in-out duration-300"
                     onClick={()=>setIsPasswordVisible(!isPasswordVisible)}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`size-6 -translate-x-1 ${isPasswordVisible?"blur-0 opacity-100 scale-100":"blur-sm opacity-0 scale-50"} transition-all ease-in-out duration-300`}>
@@ -95,9 +91,12 @@ function Register() {
             </div>
             <div className="w-full max-w-xs h-10">
                 <button
+                    disabled={isProcessing}
                     className={`
                         border
-                        border-primary-300 bg-primary-200 text-primary-800 pb-0.75 hover:opacity-50
+                        border-primary-300 bg-primary-200 text-primary-800 pb-0.75
+                        hover:bg-primary-100 hover:border-primary-200
+                        ${isProcessing&&"opacity-40"}
                         text-center content-center h-full w-full rounded-lg
                         transition-all ease-in-out duration-300
                     `}
