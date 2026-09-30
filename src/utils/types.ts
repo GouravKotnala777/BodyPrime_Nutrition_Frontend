@@ -58,6 +58,7 @@ export interface ProductTypes {
     dietaryType:"veg"|"nonveg"|"vegan";
     flavor:string;
     warnings?:string[];
+    soldCount:number;
     variants:string[];
 };
 export type CreateProductFormTypes = Pick<ProductTypes, "name"|"brand"|"category"|"subCategory"|"price"|"flavor"|"description"|"dietaryType"|"tags"|"weight"|"warnings">;
@@ -235,6 +236,8 @@ export interface AreaChartInterface{
     fill?:boolean;
 };
 export type DateRangeType = "today" | "week" | "month" | "custom";
-export type OrderSummaryDataType = {data:{_id:OrderStatusTypes; count:number;}[]; total:number;};
+export type OrderSummaryDataType = {data:{_id:OrderStatusTypes; count:number;}[]; totalOrders:number;};
+export type UserSummaryDataType = {data:{_id:boolean; count:number;}[]; totalUsers:number;};
+export type ProductSummaryDataType = {data:Record<CategoryTypes, number>; totalProducts:number;};
 
 //const obj:OrderSummaryDataType = 

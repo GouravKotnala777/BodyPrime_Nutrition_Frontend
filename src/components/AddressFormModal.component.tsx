@@ -86,7 +86,7 @@ function AddressFormModal() {
     async function createOrderHandler() {
         setIsOrdering(true);
         const transformedCartData = cartData.map((p) => ({
-            name:p.name,
+            name:`${p.name}#${p.variant}`,
             price:p.price,
             productID:p._id,
             quantity:p.quantity
