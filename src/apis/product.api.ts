@@ -1,5 +1,5 @@
 import { apiHandler, toastHandler } from "../utils/functions";
-import type { CreateProductFormTypes, ProductTypes, UpdateProductFormTypes } from "../utils/types";
+import type { CreateProductFormTypes, ProductTypes, RestockProductFormTypes, UpdateProductFormTypes } from "../utils/types";
 
 
 
@@ -127,6 +127,22 @@ export async function addProductVariant(formData:UpdateProductFormTypes, product
         const data = await apiHandler<UpdateProductFormTypes, ProductTypes>({
             endpoint:`/product/add_variant?productID=${productID}`,
             method:"PUT",
+            contentType:"application/json",
+            body:formData
+        });
+        toastHandler(data);
+        return data;
+    } catch (error) {
+        console.log(error);
+        toastHandler({success:false, message:new Error(error as string).message});
+        throw error;
+    }
+};
+export async function restockProduct(formData:RestockProductFormTypes) {
+    try {
+        const data = await apiHandler<RestockProductFormTypes, {variants:string[]; outOfStocked:string[];}>({
+            endpoint:`/product/restock_product`,
+            method:"PATCH",
             contentType:"application/json",
             body:formData
         });

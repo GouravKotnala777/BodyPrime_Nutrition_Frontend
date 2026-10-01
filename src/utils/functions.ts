@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 
 interface APIHandlerTypes<BodyType> {
     endpoint:string;
-    method:"GET"|"POST"|"PUT"|"DELETE";
+    method:"GET"|"POST"|"PUT"|"PATCH"|"DELETE";
     contentType?:"application/json";
     body?:BodyType|FormData;
     signal?:AbortSignal;

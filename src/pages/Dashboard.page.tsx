@@ -4,12 +4,13 @@ import BarChart from "../components/charts/BarChart.component";
 import type { CategoryTypes, DateRangeType, OrderSummaryDataType, ProductSummaryDataType, ProductTypes, UserSummaryDataType } from "../utils/types";
 import { getUserSummaryData, getProductSummaryData, getOrderSummaryData, getBrandToCategoryStockData, getAllOutStockedProducts } from "../apis/dashboard.api";
 import { capitalizeString } from "../utils/functions";
-import { getProducts } from "../apis/product.api";
+import { getProducts, restockProduct } from "../apis/product.api";
 import DoughnutChart from "../components/charts/DoughnutChart.component";
 import { BiUser } from "react-icons/bi";
 import { FILTER_CATEGORIES_OBJECT } from "../utils/constants";
 import {motion, AnimatePresence} from "motion/react";
 import ImageWithFallback from "../components/ImageWithFallback.component";
+import Spinner from "../components/Spinner.component";
 
 type DashboardTabTypes = "Dashboard"|"Analytics"|"Orders"|"Customer"|"Reviews"|"Logout";
 const DASHBOARD_TABS:{heading:DashboardTabTypes; icon:ReactNode;}[] = [
@@ -59,7 +60,7 @@ const ORDER_DETAILS = [
     {orderID:"#83028", customerName:"Itachi Uchiha", mop:"transfer", location:"ahir wada", status:"Delivered", contact:8123092930},
 ];
 
-
+let timer = 0;
 function Dashboard() {
     const [activeTab, setActiveTab] = useState<DashboardTabTypes>("Dashboard");
     const [range, setRange] = useState<DateRangeType>("today");
@@ -71,6 +72,7 @@ function Dashboard() {
     const [productSummaryData, setProductSummaryData] = useState<ProductSummaryDataType>({data:{protein:0, weight:0, "pre-workout":0, "fatty acids":0, "health food":0, ayurvedic:0, minerals:0, vitamins:0, wellness:0}, totalProducts:0});
     const [categoryBrandStockData, setCategoryBrandStockData] = useState<{ brand: string; stock: number; }[]>([]);
     const [allOutStockedProductsData, setAllOutStockedProductsData] = useState<string[]>([]);
+    const [isRestocking, setIsRestocking] = useState<string>("");
 
 
     async function getOrderSummaryDataHandler() {
@@ -152,6 +154,29 @@ function Dashboard() {
                 setAllOutStockedProductsData(res.jsonData.map((p) => p.outOfStocked).flat());
             }
         } catch (error) {
+            console.log(error);
+            throw Error(error as string);
+        }
+    };
+    async function restockProductHandler(outOfStockedVariant:string, restockValue:number) {
+        // outOfStockedVariant contains 'productID#brand#category#sub-category#flavor#weight'
+
+        clearTimeout(timer);
+        setIsRestocking(outOfStockedVariant);
+        const productID = outOfStockedVariant.split("#")[0];
+        const flavor = outOfStockedVariant.split("#")[4];
+        const weight = outOfStockedVariant.split("#")[5];
+        try {
+            timer = setTimeout(async() => {
+                const res = await restockProduct({productID, flavor, weight, restockValue});
+                if (res.success) {
+                    console.log(res);
+                }
+                setAllOutStockedProductsData(allOutStockedProductsData.filter(i => i !== outOfStockedVariant));
+                setIsRestocking("");
+            }, 2000);
+        } catch (error) {
+            setIsRestocking("");
             console.log(error);
             throw Error(error as string);
         }
@@ -339,42 +364,55 @@ function Dashboard() {
                                                 View All
                                             </div>
                                         </div>
+
+                                        {
+                                            allOutStockedProductsData.length === 0 ?
+                                                <div className="border text-center">
+                                                    <div className="text-xl text-gray-700 font-semibold">All Is Well</div>
+                                                    <div className="text-gray-500">skdla salkdj lkasdj kas ld jlaskdj lksadjlk jlsd kj</div>
+                                                </div>
+                                                :
+                                                <>
+                                                    <div>
+                                                        <div className="text-gray-600">Restock a product by 3 stocks</div>
+                                                    </div>
+                                                    <div className="relative fog-y">
+                                                        <div className="h-50 overflow-x-hidden overflow-y-scroll scrollbar-thin pr-1">
+                                                            <AnimatePresence>
+                                                                {
+                                                                    allOutStockedProductsData.map((outStocked) => (
+                                                                        <motion.div key={outStocked} className="flex items-center gap-2 p-2"
+                                                                            layout
+                                                                            initial={{ opacity: 0 }}
+                                                                            animate={{ opacity: 1 }}
+                                                                            exit={{
+                                                                                opacity: 0,
+                                                                                x: -20,
+                                                                            }}
+                                                                            transition={{
+                                                                                layout: { duration: 0.3 },
+                                                                                opacity: { duration: 0.2 }
+                                                                            }}
+                                                                        >
+                                                                            <div className="w-12 h-12 grid place-items-center rounded-full overflow-hidden"><img src={"/placeholders/no_product.jpg"} alt={"/placeholders/no_product.jpg"} /></div>
+                                                                            {/*<div className="text-md text-gray-600 flex-1 truncate">{outStocked.split("#")[0]} {outStocked.split("#")[1]} {outStocked.split("#")[3]} {outStocked.split("#")[4]}</div>*/}
+                                                                            <div className="text-sm text-gray-600 flex-1 truncate">{outStocked.split("#")[1]} {outStocked.split("#")[2]} {outStocked.split("#")[4]} {outStocked.split("#")[5]}</div>
+                                                                            <div className="text-center content-center">
+                                                                                <button disabled={isRestocking!==""} className="border border-secondary-200 bg-secondary-50 tracking-wider text-secondary-600 text-xs w-14 px-1.5 pt-0.75 pb-1 rounded-md cursor-pointer hover:bg-white"
+                                                                                    onClick={()=>restockProductHandler(outStocked, 3)}
+                                                                                >
+                                                                                    {isRestocking===outStocked ? <div className="w-min h-4 mx-auto"><Spinner width="14px" thickness="1.5px" /></div>:"Restock"}
+                                                                                </button>
+                                                                            </div>
+                                                                        </motion.div>
+                                                                    ))
+                                                                }
+                                                            </AnimatePresence>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                        }
                                         
-                                        {/*<div>
-                                            <div className="text-gray-600">Lorem ipsum dolor sit amet.</div>
-                                        </div>*/}
-                                        <div className="relative fog-y">
-                                            <div className="h-50 overflow-x-hidden overflow-y-scroll scrollbar-thin pr-1">
-                                                <AnimatePresence>
-                                                    {
-                                                        allOutStockedProductsData.map((outStocked) => (
-                                                            <motion.div key={outStocked} className="flex items-center gap-2 p-2"
-                                                                layout
-                                                                initial={{ opacity: 0 }}
-                                                                animate={{ opacity: 1 }}
-                                                                exit={{
-                                                                    opacity: 0,
-                                                                    x: -20,
-                                                                }}
-                                                                transition={{
-                                                                    layout: { duration: 0.3 },
-                                                                    opacity: { duration: 0.2 }
-                                                                }}
-                                                            >
-                                                                <div className="w-12 h-12 grid place-items-center rounded-full overflow-hidden"><img src={"/placeholders/no_product.jpg"} alt={"/placeholders/no_product.jpg"} /></div>
-                                                                {/*<div className="text-md text-gray-600 flex-1 truncate">{outStocked.split("#")[0]} {outStocked.split("#")[1]} {outStocked.split("#")[3]} {outStocked.split("#")[4]}</div>*/}
-                                                                <div className="text-sm text-gray-600 flex-1 truncate">{outStocked.split("#")[1]} {outStocked.split("#")[2]} {outStocked.split("#")[4]} {outStocked.split("#")[5]}</div>
-                                                                <div className="w-12 h-12 text-center content-center">
-                                                                    <button className="border border-secondary-200 bg-secondary-50 tracking-wider text-secondary-600 text-xs px-1.5 pt-0.75 pb-1 rounded-md cursor-pointer hover:bg-white"
-                                                                        onClick={()=>setAllOutStockedProductsData(allOutStockedProductsData.filter(i => i !== outStocked))}
-                                                                    >Restore</button>
-                                                                </div>
-                                                            </motion.div>
-                                                        ))
-                                                    }
-                                                </AnimatePresence>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
 

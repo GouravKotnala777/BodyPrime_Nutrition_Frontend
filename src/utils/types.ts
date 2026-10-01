@@ -60,11 +60,13 @@ export interface ProductTypes {
     warnings?:string[];
     soldCount:number;
     variants:string[];
+    variant:string;
 };
 export type CreateProductFormTypes = Pick<ProductTypes, "name"|"brand"|"category"|"subCategory"|"price"|"flavor"|"description"|"dietaryType"|"tags"|"weight"|"warnings">;
 export type UpdateProductFormTypes = Partial<Pick<ProductTypes, "name"|"brand"|"category"|"subCategory"|"price"|"flavor"|"description"|"dietaryType"|"tags"|"weight"|"warnings">>;
+export type RestockProductFormTypes = Partial<Pick<ProductTypes, "flavor"|"weight">>&{productID:string; restockValue:number;};
 
-export type LocalCartTypes = (Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images">&{quantity: number; variant:string;});
+export type LocalCartTypes = (Pick<ProductTypes, "_id"|"name"|"brand"|"category"|"price"|"weight"|"flavor"|"images"|"variant">&{quantity: number; variant:string;});
 export interface CartTypes{
     userID:string;
     products:{
