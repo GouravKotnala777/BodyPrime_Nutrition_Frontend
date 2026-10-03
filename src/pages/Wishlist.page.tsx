@@ -7,6 +7,7 @@ import { addToWishlist } from "../apis/wishlist.api";
 //import Spinner from "../components/Spinner.component";
 import { converKgtolbs } from "../utils/functions";
 import Skeletan from "../components/Skeletan";
+import {motion, AnimatePresence} from "motion/react";
 
 const off = 20;
 function Wishlist() {
@@ -96,7 +97,7 @@ function Wishlist() {
         const res = await addToWishlist({productID, variant});
 
         if (res.success) {
-            setWishlistData(wishlistData.filter((p) => (p._id === productID && p.variant !== variant)));
+            setWishlistData(wishlistData.filter((p) => (p._id !== productID && p.variant !== variant)));
         }
     };
 
@@ -182,70 +183,84 @@ function Wishlist() {
                                         </div>
                                         :
                                         <div>
-                                            {
-                                                wishlistData.map((p) => (
-                                                    <div className="border-b border-gray-100 flex gap-4 mt-15 pb-4">
-                                                        <NavLink to={`/single_product/${p._id}`} target="_blank" className="relative size-35 group">
-                                                            <img src="/test-category.webp" alt="/test-category.webp" className="w-full h-full" />
-                                                            <div className="w-full h-full bg-pink-200 grid place-items-center rounded-md absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity ease-out duration-300  [box-shadow:0px_0px_5px_2px_white_inset]">
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 24 24"
-                                                                    strokeWidth="1.5"
-                                                                    fill="none"
-                                                                    stroke="currentColor"
-                                                                    className="size-6"
-                                                                >
-                                                                    <path
-                                                                        pathLength="1"
-                                                                        d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-                                                                        className="
-                                                                            fill-none
-                                                                            stroke-current
-                                                                            [stroke-dasharray:1]
-                                                                            [stroke-dashoffset:1]
-                                                                            transition-[stroke-dashoffset]
-                                                                            duration-700 delay-100
-                                                                            group-hover:[stroke-dashoffset:0]
-                                                                            ease-in-out
-                                                                        "
-                                                                    />
-                                                                </svg>
-                                                                {/*<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="text-white size-6">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                                                </svg>*/}
+                                            <AnimatePresence>
+                                                {
+                                                    wishlistData.map((p) => (
+                                                        <motion.div key={p._id}
+                                                            className="border-b border-gray-100 flex gap-4 mt-15 pb-4"
+                                                            layout
+                                                            initial={{ opacity: 0 }}
+                                                            animate={{ opacity: 1 }}
+                                                            exit={{
+                                                                opacity: 0,
+                                                                x: -20,
+                                                            }}
+                                                            transition={{
+                                                                layout: { duration: 0.3 },
+                                                                opacity: { duration: 0.2 }
+                                                            }}
+                                                        >
+                                                            <NavLink to={`/single_product/${p._id}`} target="_blank" className="relative size-35 group">
+                                                                <img src="/test-category.webp" alt="/test-category.webp" className="w-full h-full" />
+                                                                <div className="w-full h-full bg-pink-200 grid place-items-center rounded-md absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity ease-out duration-300  [box-shadow:0px_0px_5px_2px_white_inset]">
+                                                                    <svg
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        viewBox="0 0 24 24"
+                                                                        strokeWidth="1.5"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        className="size-6"
+                                                                    >
+                                                                        <path
+                                                                            pathLength="1"
+                                                                            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                                                                            className="
+                                                                                fill-none
+                                                                                stroke-current
+                                                                                [stroke-dasharray:1]
+                                                                                [stroke-dashoffset:1]
+                                                                                transition-[stroke-dashoffset]
+                                                                                duration-700 delay-100
+                                                                                group-hover:[stroke-dashoffset:0]
+                                                                                ease-in-out
+                                                                            "
+                                                                        />
+                                                                    </svg>
+                                                                    {/*<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="text-white size-6">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                                                    </svg>*/}
+                                                                </div>
+                                                            </NavLink>
+                                                            <div className="">
+                                                                <div className="text-gray-800">{p.name} {p.category} {p.brand} {p.variant.split("#")[1]} {p.variant.split("#")[2]}</div>
+                                                                <div className="text-gray-600">{p.variant.split("#")[2]} ({converKgtolbs(p.variant.split("#")[2])} lb), {p.variant.split("#")[1]}</div>
+                                                                <div className="flex items-center gap-2 my-2">
+                                                                    <span><span className="text-gray-700 text-xl">₹</span><span className="text-gray-800 text-2xl font-semibold">{(Number(p.variant.split("#")[3])*(off||100))/100}</span></span>
+                                                                    {off?<span className="text-gray-400 line-through">₹{p.variant.split("#")[3]}</span>:<></>}
+                                                                    {off?<span className="text-gray-600">({off}% off)</span>:<></>}
+                                                                </div>
+                                                                <div className="flex flex-wrap justify-end gap-4">
+                                                                    
+                                                                    <button className="border border-gray-200 text-gray-500 bg-gray-50 px-3 pt-1 pb-1.5 rounded-sm hover:opacity-70"
+                                                                        onClick={() => transferProductToCartHandler({productID:p._id, variant:p.variant})}
+                                                                    >Transfer to Cart</button>
+                                                                    <button className="border border-red-200 text-red-500 bg-red-50 px-3 pt-1 pb-1.5 rounded-sm hover:opacity-70"
+                                                                        onClick={() => removeFromWishlistHandler({productID:p._id, variant:p.variant})}
+                                                                    >Remove from Wishlist</button>
+                                                                    {/*<button className="border border-red-200 text-red-500 bg-red-50 px-3 py-1 rounded-sm hover:opacity-70" onClick={() => {
+                                                                        if (isUserAuthenticated()) {
+                                                                            removeFromCartHandler({productID:p._id, variant:p.variant, quantity:p.quantity});
+                                                                        }
+                                                                        else{
+                                                                            removeProductFromLocalCart({_id:p._id, variant:p.variant, quantity:1})
+                                                                        }
+                                                                    }}>Remove</button>*/}
+                                                                </div>
                                                             </div>
-                                                        </NavLink>
-                                                        <div className="">
-                                                            <div className="text-gray-800">{p.name} {p.category} {p.brand} {p.variant.split("#")[1]} {p.variant.split("#")[2]}</div>
-                                                            <div className="text-gray-600">{p.variant.split("#")[2]} ({converKgtolbs(p.variant.split("#")[2])} lb), {p.variant.split("#")[1]}</div>
-                                                            <div className="flex items-center gap-2 my-2">
-                                                                <span><span className="text-gray-700 text-xl">₹</span><span className="text-gray-800 text-2xl font-semibold">{(Number(p.variant.split("#")[3])*(off||100))/100}</span></span>
-                                                                {off?<span className="text-gray-400 line-through">₹{p.variant.split("#")[3]}</span>:<></>}
-                                                                {off?<span className="text-gray-600">({off}% off)</span>:<></>}
-                                                            </div>
-                                                            <div className="flex flex-wrap justify-end gap-4">
-                                                                
-                                                                <button className="border border-gray-200 text-gray-500 bg-gray-50 px-3 pt-1 pb-1.5 rounded-sm hover:opacity-70"
-                                                                    onClick={() => transferProductToCartHandler({productID:p._id, variant:p.variant})}
-                                                                >Transfer to Cart</button>
-                                                                <button className="border border-red-200 text-red-500 bg-red-50 px-3 pt-1 pb-1.5 rounded-sm hover:opacity-70"
-                                                                    onClick={() => removeFromWishlistHandler({productID:p._id, variant:p.variant})}
-                                                                >Remove from Wishlist</button>
-                                                                {/*<button className="border border-red-200 text-red-500 bg-red-50 px-3 py-1 rounded-sm hover:opacity-70" onClick={() => {
-                                                                    if (isUserAuthenticated()) {
-                                                                        removeFromCartHandler({productID:p._id, variant:p.variant, quantity:p.quantity});
-                                                                    }
-                                                                    else{
-                                                                        removeProductFromLocalCart({_id:p._id, variant:p.variant, quantity:1})
-                                                                    }
-                                                                }}>Remove</button>*/}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                ))
-                                            }
+                                                        </motion.div>
+                                                    ))
+                                                }
+                                            </AnimatePresence>
                                         </div>
 
                                 }

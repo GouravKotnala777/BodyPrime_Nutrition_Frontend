@@ -9,6 +9,7 @@ import Spinner from "../components/Spinner.component";
 import Skeletan from "../components/Skeletan";
 //import { capitalizeString } from "../utils/functions";
 import { BiFilter } from "react-icons/bi";
+import {motion} from "motion/react";
 import FilterControlPanel from "../components/FilterControlPanel.component";
 import { ALL_BRANDS, FILTER_CATEGORIES_OBJECT, FILTER_SUB_CATEGORIES_OBJECT, MAX_PRICE_INITIALLY, MIN_PRICE_INITIALLY } from "../utils/constants";
 
@@ -431,10 +432,10 @@ function SearchedProducts() {
 
     return(
         <section className="">
-            <div className="flex flex-col sm:flex-row gap-4 sm:p-4 bg-primary-50">
+            <div className="flex flex-col sm:flex-row gap-4 sm:p-4">
 
                 {/* upper part heading and apply filters button only for smaller devices */}
-                <div className="bg-white flex sm:hidden justify-between items-center py-2 px-2">
+                <div className="flex sm:hidden justify-between items-center py-2 px-2">
                     <div className="text-gray-500 font-semibold">Apply Filters</div>
                     <button className="flex items-center gap-2 py-2"
                         onClick={emitFilterControlPanelEvent}
@@ -447,7 +448,7 @@ function SearchedProducts() {
 
                 {/* left part only for larger devices */}
                 <div className="sm:border border-gray-200 bg-transparent sm:bg-white sm:sticky top-20 left-0 w-full sm:w-60 h-max rounded-2xl">
-                    <div className="hidden sm:block">
+                    <div className="hidden sm:block rounded-b-2xl overflow-hidden">
 
                         {/* heading and clear filters button only for larger devices */}
                         <div className="hidden sm:flex justify-between p-4">
@@ -728,7 +729,7 @@ function SearchedProducts() {
                     </div>
                 </div>
                 {/* right part */}
-                <div className="border border-gray-200 bg-white flex-1 rounded-t-2xl">
+                <div className="border border-gray-200 flex-1 rounded-t-2xl">
                     {/*<pre className="text-sm">{JSON.stringify({searchField, searchQuery}, null, `\t`)}</pre>*/}
 
                     {
@@ -773,9 +774,24 @@ function SearchedProducts() {
                                         <div className="flex flex-wrap justify-around gap-2 px-2 sm:p-4">
                                             {
                                                 products.map((product, index) => (
-                                                    <div key={index} className="w-full sm:max-w-60 mt-10">
-                                                        <ProductCard product={product} isVeg={product.dietaryType!=="nonveg"} isBestseller={false} isCartMutating={false} />
-                                                    </div>
+                                                        <motion.div key={product._id}
+                                                            className="w-full sm:max-w-60 mt-10"
+                                                            initial={{
+                                                                opacity: 0,
+                                                                y: 25,
+                                                            }}
+                                                            animate={{
+                                                                opacity: 1,
+                                                                y: 0,
+                                                            }}
+                                                            transition={{
+                                                                duration: 0.35,
+                                                                delay: 0.1*(index%5),
+                                                                ease: "easeOut",
+                                                            }}
+                                                        >
+                                                            <ProductCard product={product} isVeg={product.dietaryType!=="nonveg"} isBestseller={false} isCartMutating={false} />
+                                                        </motion.div>
                                                 ))
                                             }
                                         </div>
