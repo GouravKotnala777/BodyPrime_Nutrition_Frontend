@@ -25,7 +25,7 @@ function SingleProduct() {
     //const [images, setImages] = useState<FileList|null>(null);
     const [singleProduct, setSingleProduct] = useState<ProductTypes>({_id:"", brand:"brand1", category:"protein", subCategory:"", dietaryType:"veg",
         images:["/test-category.webp", "/placeholders/no_product.jpg", "/placeholders/no_user.png", "/offers.webp", "/fizzy_whey.webp", "/amino_acids.webp"],
-        name:"Product1", numReviews:0, price:800, rating:0, avgRating:4, tags:[], variants:[], weight:"1kg", description:"", flavor:"Unflavored", ingredients:[""], nutritionFacts:{calories:0, carbs:0, fat:0, protein:0, servingSize:"", servingsPerContainer:0}, stock:0, warnings:[]});
+        name:"Product1", numReviews:0, price:800, rating:0, avgRating:4, tags:[], variants:[], weight:"1kg", description:"", flavor:"Unflavored", ingredients:[""], nutritionFacts:{calories:0, carbs:0, fat:0, protein:0, servingSize:"", servingsPerContainer:0}, stock:0, warnings:[], soldCount:0, variant:""});
     const [allReviews, setAllReviews] = useState<ReviewTypesPopulated[]>([]);
     const [quantityInCart, setQuantityInCart] = useState<number>(0);
     const {isUserAuthenticated} = useUser();
