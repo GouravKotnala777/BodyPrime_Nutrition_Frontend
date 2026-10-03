@@ -235,9 +235,8 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                             <div className="flex flex-wrap gap-4">
                                 {
                                 Object.keys(productVariantOptions.variants).map((flvr) => (
-                                    <button key={flvr} disabled={productVariantOptions.variants[flvr][0].stock===0} className={`
+                                    <button key={flvr} className={`
                                         border px-2 py-1 rounded-sm
-                                        ${productVariantOptions.variants[flvr][0].stock===0&&"border-dashed opacity-50"}
                                         ${selectedFlavorVariant===flvr?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
                                         hover:scale-95 transition-all ease-in-out duration-300
                                     `} onClick={()=>{setSelectedFlavorVariant(flvr); setSelectedWeightVariant({weight:"", index:0})}}>{flvr}</button>
@@ -251,27 +250,27 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                             <div className="text-gray-400 text-lg font-semibold py-1 mt-2">Weight</div>
                             <div className="flex gap-4 flex-wrap">
                                 {
-                                productVariantOptions["variants"][selectedFlavorVariant]?.map(({weight, price, stock}, index) => (
-                                    <button
-                                        key={index}
-                                        disabled={stock===0}
-                                        className={`
-                                            border
-                                            ${stock===0&&"border-dashed opacity-50"}
-                                            ${selectedWeightVariant.weight===weight?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
-                                            text-left rounded-sm overflow-hidden hover:scale-95 transition-all ease-in-out duration-300
-                                            `}
-                                        onClick={()=>setSelectedWeightVariant({weight, index})}
-                                    >
-                                        <div className={`border-b p-2 ${selectedWeightVariant.weight===weight?"border-b-primary-300":"border-b-gray-300"}`}>{weight} ({converKgtolbs(weight)} lb)</div>
-                                        <div className="bg-white p-2">
-                                            <div>
-                                                <span className="text-gray-700 text-xl font-semibold">₹{price}</span><span className="text-gray-500 text-sm"> (₹360/100g)</span>
+                                    productVariantOptions["variants"][selectedFlavorVariant]?.map(({weight, price, stock}, index) => (
+                                        <button
+                                            key={index}
+                                            disabled={stock===0}
+                                            className={`
+                                                border
+                                                ${stock===0&&"border-dashed opacity-50"}
+                                                ${selectedWeightVariant.weight===weight?"border-primary-300 bg-primary-50 text-primary-500/70":"border-gray-300 bg-gray-50 text-gray-500"}
+                                                text-left rounded-sm overflow-hidden hover:scale-95 transition-all ease-in-out duration-300
+                                                `}
+                                            onClick={()=>setSelectedWeightVariant({weight, index})}
+                                        >
+                                            <div className={`border-b p-2 ${selectedWeightVariant.weight===weight?"border-b-primary-300":"border-b-gray-300"}`}>{weight} ({converKgtolbs(weight)} lb)</div>
+                                            <div className="bg-white p-2">
+                                                <div>
+                                                    <span className="text-gray-700 text-xl font-semibold">₹{price}</span><span className="text-gray-500 text-sm"> (₹360/100g)</span>
+                                                </div>
+                                                <div className="text-gray-400 text-sm">Save ₹100</div>
                                             </div>
-                                            <div className="text-gray-400 text-sm">Save ₹100</div>
-                                        </div>
-                                    </button>
-                                ))
+                                        </button>
+                                    ))
                                 }
                             </div>
                         </div>
@@ -279,11 +278,25 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                         {/*<pre>{JSON.stringify(cartData, null, `\t`)}</pre>*/}
 
                         <div className="absolute left-0 bottom-15 sm:bottom-0 w-full rounded-b-2xl pointer-events-none">
-                            <div className="mx-5 py-5"
+                            <div className="flex mx-5 py-5"
                                 style={{
                                     background:"linear-gradient(0deg, white 70%, transparent 100%)"
                                 }}
                             >
+                                {
+                                    productVariantOptions.variants[selectedFlavorVariant]?.[selectedWeightVariant.index]?.stock===0 &&
+                                        <div className="flex items-center gap-2">
+                                            <div className="border border-red-100 bg-red-50 p-1.5 relative w-min rounded-full translate-y-0.5">
+                                                <div className="size-1.5 bg-red-500 rounded-full">
+                                                </div>
+                                                <div className="absolute top-[50%] left-[50%] -translate-[50%] size-2.5 bg-red-400 rounded-full animate-ping -z-1">
+                                                </div>
+                                            </div>
+                                            <div className="text-red-400 text-sm">out of stock choose other variant</div>
+                                        </div>
+                                    
+                                }
+
                                 <div className="flex items-center gap-4 w-full sm:w-60 h-10 ml-auto">
                                     <div className={`
                                         relative w-full h-full overflow-hidden pointer-events-auto
@@ -291,15 +304,16 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                                     `}>
                                         {/* add to cart */}
                                         <button className={`
-                                            border border-green-300 bg-green-300 text-center content-center h-full w-full rounded-lg
-                                            transition-all ease-in-out duration-300 hover:opacity-50
+                                            border text-center content-center h-full w-full rounded-lg
+                                            ${productVariantOptions.variants[selectedFlavorVariant]?.[selectedWeightVariant.index]?.stock===0?"border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed":"border-green-300 bg-green-300 hover:bg-green-200 text-green-900"}
+                                            transition-all ease-in-out duration-300
                                         `}
-                                            disabled={!!processState}
+                                            disabled={!!processState || productVariantOptions.variants[selectedFlavorVariant]?.[selectedWeightVariant.index]?.stock===0}
                                             onClick={()=>{
                                                 onClickAddToCartHandlers()
                                             }}
                                         >
-                                            Add to Cart
+                                            Add To Cart
                                         </button>
 
                                         {/* quantity stepper */}
