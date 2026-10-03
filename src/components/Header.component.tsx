@@ -381,7 +381,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                                 <NavLink to={`/single_product/${product._id}`} key={index} className="border border-gray-100 w-30 rounded-md cursor-pointer hover:bg-primary-50 overflow-hidden group" onClick={searchInputClearHandler}>
                                                     <div className="h-30 p-1">
                                                         <div className="rounded-t-sm overflow-hidden">
-                                                            <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} fallbackSrc="/public/placeholders/no_product.jpg" />
+                                                            <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} fallbackSrc="/placeholders/no_product.jpg" />
                                                         </div>
                                                         {/*<img src={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${product.images[0]}`} className="w-50 h-full mx-auto group-hover:scale-110 transition-transform ease-in-out duration-300" />*/}
                                                     </div>
