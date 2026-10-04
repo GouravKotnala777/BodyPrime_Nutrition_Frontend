@@ -59,6 +59,17 @@ const ACCORDION_DATA:{tags:string[]; heading:string; para:string;}[] = [
     {tags:[""], heading:"What payment methods do you accept?", para:""}
 ];
 
+const SHORT_VIDEOS = [
+    "/shorts/short1.mp4",
+    "/shorts/short2.mp4",
+    "/shorts/short1.mp4",
+    "/shorts/short2.mp4",
+    "/shorts/short1.mp4",
+    "/shorts/short2.mp4",
+    "/shorts/short1.mp4",
+    "/shorts/short2.mp4",
+];
+
 function Landing() {
     //const [restartStatisticAnimation, setRestartStatisticAnimation] = useState<boolean>(false);
     //const statisticRef = useRef<HTMLDivElement|null>(null);
@@ -328,10 +339,10 @@ function Landing() {
             {/* short videos */}
             <PickerSlider
                 items={
-                    Array.from({length:7}).map((_, index) => (
+                    SHORT_VIDEOS.map((url, index) => (
                         <div className="w-full aspect-[9/16] group">
                             <video ref={(elem) => {videosRef.current[index] = elem}}
-                                src="/shorts/short1.mp4"
+                                src={url}
                                 className="h-full w-full object-cover"
                             />
                             <div className={`absolute top-[50%] left-[50%] -translate-[50%] bg-primary-400/30 rounded-full transition-opacity ${activeVideoIndex !== index ? "opacity-80 group-hover:opacity-100":"opacity-0"} ease-in-out duration-300 `}>
