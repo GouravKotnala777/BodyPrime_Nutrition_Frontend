@@ -31,7 +31,9 @@ function Footer() {
                         </div>
 
                         {/* logo */}
-                        <NavLink to="/home" className="my-5 sm:my-0 size-20 sm:size-25"><img src="logo.png" alt="logo.png" className="w-full" /></NavLink>
+                        <NavLink to="/home" className="bg-gray-800 w-20 rounded-full p-2 [box-shadow:0px_0px_10px_2px_var(--color-primary-400)_inset] hover:[box-shadow:0px_0px_4px_2px_var(--color-primary-400)_inset] transition-all ease-in-out duration-300">
+                            <img src="logo.png" alt="logo.png" className="translate-y-1.5" />
+                        </NavLink>
 
                         {/* socials */}
                         <div className="flex gap-10">

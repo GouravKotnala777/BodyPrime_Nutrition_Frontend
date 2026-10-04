@@ -599,7 +599,7 @@ function SingleProduct() {
                 <div className="">
                     <div className="text-lg my-3">You May Also Like</div>
                     <div className="overflow-x-scroll sm:scrollbar-thin pb-4">
-                        <div className="flex gap-4">
+                        <div className="flex gap-10">
                             {   productVariantOptions === null ?
                                 [1,2,3].map((_, index) => (
                                     <div key={index} className="border border-gray-200 basis-1/3 h-60 shrink-0 rounded-md overflow-hidden">
@@ -719,15 +719,31 @@ function SingleProduct() {
                 {
                     productVariantOptions !== null &&
                         <div className={`bg-white fixed right-0 ${isAddToCartVisible?"-bottom-full":"bottom-0"} sm:mr-4 w-full sm:w-[49.8%] flex justify-between sm:rounded-md items-center py-3 px-4 [box-shadow:0px_0px_6px_0.5px_var(--color-gray-300)] transition-all ease-in-out duration-300 z-2`}>
-                            <div>
-                                <div className="flex items-center gap-2"><div className="text-3xl text-gray-800"><span>₹</span><span className="font-semibold">{Math.floor((productVariantOptions?.[selectedFlavorVariant]?.[0].price||0)-(((productVariantOptions?.[selectedFlavorVariant]?.[0].price||0)*(Number(off??0)))/100))}</span></div><span className="text-gray-600 hidden sm:inline">(inclusive of all taxes, Free Delivery)</span></div>
-                                <div className="text-gray-500"><span>MRP:</span><span className="line-through">{productVariantOptions?.[selectedFlavorVariant]?.[0].price}</span> <span className="text-gray-600 hidden sm:inline">Save : {singleProduct.price - Math.floor((productVariantOptions?.[selectedFlavorVariant]?.[0].price||0)-(((productVariantOptions?.[selectedFlavorVariant]?.[0].price||0)*(Number(off??0)))/100))} ({off}% Off)</span></div>
-                            </div>
+                            {
+                                (productVariantOptions?.[selectedFlavorVariant][selectedWeightVariant.index].stock||0) > 0 ?
+                                    <div>
+                                        <div className="flex items-center gap-2"><div className="text-3xl text-gray-800"><span>₹</span><span className="font-semibold">{Math.floor((productVariantOptions?.[selectedFlavorVariant]?.[0].price||0)-(((productVariantOptions?.[selectedFlavorVariant]?.[0].price||0)*(Number(off??0)))/100))}</span></div><span className="text-gray-600 hidden sm:inline">(inclusive of all taxes, Free Delivery)</span></div>
+                                        <div className="text-gray-500"><span>MRP:</span><span className="line-through">{productVariantOptions?.[selectedFlavorVariant]?.[0].price}</span> <span className="text-gray-600 hidden sm:inline">Save : {singleProduct.price - Math.floor((productVariantOptions?.[selectedFlavorVariant]?.[0].price||0)-(((productVariantOptions?.[selectedFlavorVariant]?.[0].price||0)*(Number(off??0)))/100))} ({off}% Off)</span></div>
+                                    </div>
+                                    :
+                                    <div className="flex items-center gap-2 w-full">
+                                        <div className="border border-red-100 bg-red-50 p-1.5 relative w-min rounded-full translate-y-0.5">
+                                            <div className="size-1.5 bg-red-500 rounded-full">
+                                            </div>
+                                            <div className="absolute top-[50%] left-[50%] -translate-[50%] size-2.5 bg-red-400 rounded-full animate-ping -z-1">
+                                            </div>
+                                        </div>
+                                        <div className="text-red-400 text-sm">out of stock choose other variant if available</div>
+                                    </div>
+                            }
                             <div className="h-11 w-full max-w-50">
-                                <button className={`
-                                    border border-green-300 bg-green-300 text-center content-center h-full w-full rounded-md
-                                    transition-all ease-in-out duration-300 hover:bg-green-200
-                                `}
+                                <button
+                                    disabled={(productVariantOptions?.[selectedFlavorVariant][selectedWeightVariant.index].stock||0)<=0}
+                                    className={`
+                                        border text-center content-center h-full w-full rounded-md
+                                        ${(productVariantOptions?.[selectedFlavorVariant][selectedWeightVariant.index].stock||0) > 0 ? "border-green-300 bg-green-300 text-green-800 hover:bg-green-200":"border-gray-200 bg-gray-50 text-gray-300"}
+                                        transition-all ease-in-out duration-300
+                                    `}
                                     
                                     onClick={addToCartHandler}
                                 >

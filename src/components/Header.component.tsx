@@ -6,7 +6,6 @@ import { useEffect, useState, type ChangeEvent, type MouseEvent } from "react";
 import { BsArrowRight } from "react-icons/bs";
 import { getProducts, searchProducts } from "../apis/product.api";
 import type { ProductTypes } from "../utils/types";
-import { MdOutlineInventory2 } from "react-icons/md";
 import { ALL_BRANDS, FILTER_CATEGORIES_OBJECT, SUGGESSION_BADGES, SUGGESSIONS_TRENDING_SEARCHES } from "../utils/constants";
 import ImageWithFallback from "./ImageWithFallback.component";
 import Spinner from "./Spinner.component";
@@ -163,8 +162,8 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                         <div className="bg-gray-800 rounded-xs h-0.75 w-full xs:h-1"></div>
                     </div>
                 </div>
-                <NavLink to="/home" className="w-15 sm:w-15">
-                    <img src="/logo.png" alt="/logo.png" />
+                <NavLink to="/home" className="bg-gray-800 w-12 rounded-full p-1.5 [box-shadow:0px_0px_4px_0.5px_var(--color-primary-400)_inset]">
+                    <img src="/logo.png" alt="/logo.png" className="translate-y-1" />
                 </NavLink>
             </div>
 
@@ -509,14 +508,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Wallet</div>
                             </NavLink>*/}
-                            <NavLink to="/inventory" className="flex items-center gap-2 p-3 hover:bg-primary-100"
-                                onClick={() => setIsAccNavigationMenu(false)}
-                            >
-                                <div>
-                                    <MdOutlineInventory2 className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1" />
-                                </div>
-                                <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Inventory</div>
-                            </NavLink>
+                            
                             <NavLink to="/cart" className="flex items-center gap-2 p-3 hover:bg-primary-100"
                                 onClick={() => setIsAccNavigationMenu(false)}
                             >
@@ -550,7 +542,36 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Authenticity</div>
                             </NavLink>
-                            <NavLink to="####" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                            <NavLink to="/dashboard" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <rect width="7" height="9" x="3" y="3" rx="1"/>
+                                        <rect width="7" height="5" x="14" y="3" rx="1"/>
+                                        <rect width="7" height="9" x="14" y="12" rx="1"/>
+                                        <rect width="7" height="5" x="3" y="16" rx="1"/>
+                                    </svg>
+                                </div>
+                                <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Dashboard</div>
+                            </NavLink>
+                            <NavLink to="/inventory" className="flex items-center gap-2 p-3 hover:bg-primary-100"
+                                onClick={() => setIsAccNavigationMenu(false)}
+                            >
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path d="M12 12V9a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>
+                                        <path d="M16 20v-3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/>
+                                        <path d="M20 22V2"/>
+                                        <path d="M4 12h16"/>
+                                        <path d="M4 20h16"/>
+                                        <path d="M4 2v20"/>
+                                        <path d="M4 4h16"/>
+                                    </svg>
+                                </div>
+                                <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Inventory</div>
+                            </NavLink>
+                            {/*<NavLink to="####" className="flex items-center gap-2 p-3 hover:bg-primary-100"
                                 onClick={() => setIsAccNavigationMenu(false)}
                             >
                                 <div>
@@ -560,7 +581,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                     </svg>
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Customer Service</div>
-                            </NavLink>
+                            </NavLink>*/}
                             <NavLink to="/my_profile" className="flex items-center gap-2 p-3 hover:bg-primary-100"
                                 onClick={() => setIsAccNavigationMenu(false)}
                             >
@@ -604,12 +625,12 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
             {/* hamburger sidebar */}
             <div className={`h-screen w-full flex fixed gap-0.5 sm:gap-2 top-0 ${isHamburgerSideBarOpen?"left-0":"-left-[150%]"} transition-all ease-in-out duration-300`}>
                 {/* hamburger sidebar content */}
-                <div className="bg-white">
+                <div className="bg-white w-full max-w-75">
                     <div className="h-[92%] flex flex-col ">
                         {
                             isUserAuthenticated() ?
                                 <div className="text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200">
-                                    <span>{loggedInUserName()}</span>
+                                    <span className="truncate">{loggedInUserName()}</span>
                                 </div>
                                 :
                                 <NavLink to="/login" className="text-gray-700 text-md sm:text-lg font-semibold p-4 flex justify-start gap-1 items-center hover:bg-primary-200" onClick={hamburgerSideBarToggleHandler}>
@@ -621,7 +642,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                         <div className="border border-gray-200 grid grid-cols-3 text-sm sm:text-md">
                             <NavLink to="/my_profile" className="text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
                                 <div className="w-min mx-auto">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                                     </svg>
                                 </div>
@@ -639,10 +660,11 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 <div>Your Orders</div>
                             </NavLink>
                             <NavLink to="/cart" className="text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
-                                <div className="w-min mx-auto">
+                                <div className="relative w-min mx-auto">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
                                     </svg>
+                                    <div className="absolute -top-3 -right-3 text-white bg-primary-500 w-5 h-5 rounded-full text-center content-center text-sm">{calculateTotalCartItems()}</div>
                                 </div>
                                 <div>Your Cart</div>
                             </NavLink>
@@ -658,15 +680,26 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 <div>Address</div>
                             </NavLink>
                             <NavLink to="/wishlist" className="border border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
-                                <div className="w-min mx-auto">
+                                <div className="relative w-min mx-auto">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                     </svg>
+                                    <div className="absolute -top-3 -right-3 text-white bg-primary-500 w-5 h-5 rounded-full text-center content-center text-sm">{wishlistData.length}</div>
                                 </div>
                                 <div>Wishlist</div>
                             </NavLink>
                             <NavLink to="/inventory" className="border-y border-gray-200 text-center px-1 py-2 sm:px-3 sm:py-3 hover:bg-primary-100" onClick={hamburgerSideBarToggleHandler}>
-                                <MdOutlineInventory2 className="w-min mx-auto size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1" />
+                                <div className="w-min mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                        <path d="M12 12V9a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>
+                                        <path d="M16 20v-3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/>
+                                        <path d="M20 22V2"/>
+                                        <path d="M4 12h16"/>
+                                        <path d="M4 20h16"/>
+                                        <path d="M4 2v20"/>
+                                        <path d="M4 4h16"/>
+                                    </svg>
+                                </div>
                                 <div>Inventory</div>
                             </NavLink>
 
@@ -713,13 +746,20 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 {
                                     productsBy[selectedTab].map(({heading, fieldName, queryName}, index) => (
                                         <NavLink to={`/searched_products/${fieldName}/${queryName}/null`} key={index} target="_blank" className="flex items-center gap-2 p-3 hover:bg-primary-100 cursor-pointer" onClick={hamburgerSideBarToggleHandler}>
-                                            <div>O</div><div className="text-gray-500 text-shadow-xs text-shadow-gray-100">{heading}</div>
+                                            <div>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" strokeLinecap="round" strokeLinejoin="round" className="size-4.5 text-gray-400">
+                                                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                                                    <path d="m3.3 7 8.7 5 8.7-5"/>
+                                                    <path d="M12 22V12"/>
+                                                </svg>
+                                            </div>
+                                            <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">{heading}</div>
                                         </NavLink>
                                     ))
                                 }
                             </div>
                         </div>
-                        <NavLink to="/" className="border border-gray-200 flex items-center w-full text-primary-400 tracking-widest font-mono text-shadow-md text-shadow-primary-200/80 group" onClick={hamburgerSideBarToggleHandler}>
+                        <NavLink to="/" className="flex items-center w-full text-primary-400 tracking-widest font-mono text-shadow-md text-shadow-primary-200/80 group" onClick={hamburgerSideBarToggleHandler}>
                             <div className="flex flex-col gap-1 p-4 text-center flex-1">
                                 <p>BodyPrime Nutrition</p>
                                 <p className="flex justify-center items-center text-[6px]">
@@ -739,8 +779,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                 {/* hamburger sidebar closer */}
                 <div className="flex-1 translate-2" onClick={hamburgerSideBarToggleHandler}>
                     <button className="size-10 sm:size-15 rounded-full bg-white hover:bg-primary-300 text-primary-500 font-bold">X</button>
-                </div>
-                
+                </div>                
             </div>        
         </header>
 

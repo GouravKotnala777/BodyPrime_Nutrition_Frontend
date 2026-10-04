@@ -216,8 +216,8 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                     onClick={() => setIsProductVariantOptionsOpen(false)}
                 >X</button>
                 
-                <div className="bg-white p-4 h-145 rounded-2xl">
-                    <div className="w-full h-[90%] px-2 pt-4 pb-15 scrollbar-thin overflow-y-scroll">
+                <div className="bg-white p-4 h-145 rounded-t-2xl sm:rounded-2xl">
+                    <div className="w-full h-[90%] px-2 pt-4 pb-20 scrollbar-thin overflow-y-scroll">
                         {/*<pre>{JSON.stringify(productVariantOptions.img, null, `\t`)}</pre>*/}
                         <NavLink to={`/single_product/${productVariantOptions.product._id}`} target="_blank" className="border border-gray-200 text-gray-700 font-semibold flex items-center gap-4 rounded-md hover:bg-primary-100 transition-all ease-out duration-300 group">
                             <div className="w-20 h-25">
@@ -277,71 +277,71 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
 
                         {/*<pre>{JSON.stringify(cartData, null, `\t`)}</pre>*/}
 
-                        <div className="absolute left-0 bottom-15 sm:bottom-0 w-full rounded-b-2xl pointer-events-none">
-                            <div className="flex mx-5 py-5"
-                                style={{
-                                    background:"linear-gradient(0deg, white 70%, transparent 100%)"
-                                }}
+                        <div className="bg-white absolute left-0 bottom-15 sm:bottom-0 w-full rounded-b-2xl pointer-events-none [box-shadow:0px_-10px_15px_-10px_var(--color-gray-400)]">
+                            <div className="mx-5 py-5"
+                                //style={{
+                                //    background:"linear-gradient(0deg, white 70%, transparent 100%)"
+                                //}}
                             >
-                                {
-                                    productVariantOptions.variants[selectedFlavorVariant]?.[selectedWeightVariant.index]?.stock===0 &&
-                                        <div className="flex items-center gap-2">
-                                            <div className="border border-red-100 bg-red-50 p-1.5 relative w-min rounded-full translate-y-0.5">
-                                                <div className="size-1.5 bg-red-500 rounded-full">
-                                                </div>
-                                                <div className="absolute top-[50%] left-[50%] -translate-[50%] size-2.5 bg-red-400 rounded-full animate-ping -z-1">
-                                                </div>
-                                            </div>
-                                            <div className="text-red-400 text-sm">out of stock choose other variant</div>
-                                        </div>
-                                    
-                                }
 
                                 <div className="flex items-center gap-4 w-full sm:w-60 h-10 ml-auto">
-                                    <div className={`
-                                        relative w-full h-full overflow-hidden pointer-events-auto
-                                        ${!!processState?"opacity-30":"opacity-100"}
-                                    `}>
-                                        {/* add to cart */}
-                                        <button className={`
-                                            border text-center content-center h-full w-full rounded-lg
-                                            ${productVariantOptions.variants[selectedFlavorVariant]?.[selectedWeightVariant.index]?.stock===0?"border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed":"border-green-300 bg-green-300 hover:bg-green-200 text-green-900"}
-                                            transition-all ease-in-out duration-300
-                                        `}
-                                            disabled={!!processState || productVariantOptions.variants[selectedFlavorVariant]?.[selectedWeightVariant.index]?.stock===0}
-                                            onClick={()=>{
-                                                onClickAddToCartHandlers()
-                                            }}
-                                        >
-                                            Add To Cart
-                                        </button>
+                                    {
+                                        productVariantOptions.variants[selectedFlavorVariant]?.[selectedWeightVariant.index]?.stock===0 ?
+                                            <div className="flex items-center gap-2 w-full">
+                                                <div className="border border-red-100 bg-red-50 p-1.5 relative w-min rounded-full translate-y-0.5">
+                                                    <div className="size-1.5 bg-red-500 rounded-full">
+                                                    </div>
+                                                    <div className="absolute top-[50%] left-[50%] -translate-[50%] size-2.5 bg-red-400 rounded-full animate-ping -z-1">
+                                                    </div>
+                                                </div>
+                                                <div className="text-red-400 text-sm">out of stock choose other variant if available</div>
+                                            </div>
+                                            :
+                                            <div className={`
+                                                relative w-full h-full overflow-hidden pointer-events-auto
+                                                ${!!processState?"opacity-30":"opacity-100"}
+                                            `}>
+                                                {/* add to cart */}
+                                                <button className={`
+                                                    border text-center content-center h-full w-full rounded-lg
+                                                    ${(productVariantOptions.variants[selectedFlavorVariant]?.[selectedWeightVariant.index]?.stock||0) > 0 ? "border-green-300 bg-green-300 text-green-800 hover:bg-green-200":"border-gray-200 bg-gray-50 text-gray-300"}
+                                                    transition-all ease-in-out duration-300
+                                                `}
+                                                    disabled={!!processState || productVariantOptions.variants[selectedFlavorVariant]?.[selectedWeightVariant.index]?.stock===0}
+                                                    onClick={()=>{
+                                                        onClickAddToCartHandlers()
+                                                    }}
+                                                >
+                                                    Add To Cart
+                                                </button>
 
-                                        {/* quantity stepper */}
-                                        <div className={`
-                                            flex justify-center items-center
-                                            bg-primary-100 text-center content-center h-full w-full rounded-lg absolute left-0 overflow-hidden
-                                            ${selectedVariantQty>0?"bottom-0":"-bottom-full"}
-                                            transition-all ease-in-out duration-300 px-0.25
-                                        `}>
-                                            <button className="basis-1/2 h-full content-center bg-primary-100 hover:bg-primary-50"
-                                                disabled={!!processState}
-                                                onClick={()=>removeFromCartHandler({productID:productVariantOptions.product._id, variant:`${productVariantOptions.product._id}#${selectedFlavorVariant}#${selectedWeightVariant.weight}#${productVariantOptions["variants"][selectedFlavorVariant][selectedWeightVariant.index].price}`, quantity:1})}
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
-                                                </svg>
-                                            </button>
-                                            <div className="basis-1/4 h-full text-lg content-center text-gray-700 bg-white">{selectedVariantQty}</div>
-                                            <button className="basis-1/2 h-full content-center bg-primary-100 hover:bg-primary-50"
-                                                disabled={!!processState}
-                                                onClick={onClickAddToCartHandlers}
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
+                                                {/* quantity stepper */}
+                                                <div className={`
+                                                    flex justify-center items-center
+                                                    bg-primary-100 text-center content-center h-full w-full rounded-lg absolute left-0 overflow-hidden
+                                                    ${selectedVariantQty>0?"bottom-0":"-bottom-full"}
+                                                    transition-all ease-in-out duration-300 px-0.25
+                                                `}>
+                                                    <button className="basis-1/2 h-full content-center bg-primary-100 hover:bg-primary-50"
+                                                        disabled={!!processState}
+                                                        onClick={()=>removeFromCartHandler({productID:productVariantOptions.product._id, variant:`${productVariantOptions.product._id}#${selectedFlavorVariant}#${selectedWeightVariant.weight}#${productVariantOptions["variants"][selectedFlavorVariant][selectedWeightVariant.index].price}`, quantity:1})}
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                                                        </svg>
+                                                    </button>
+                                                    <div className="basis-1/4 h-full text-lg content-center text-gray-700 bg-white">{selectedVariantQty}</div>
+                                                    <button className="basis-1/2 h-full content-center bg-primary-100 hover:bg-primary-50"
+                                                        disabled={!!processState}
+                                                        onClick={onClickAddToCartHandlers}
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                    }
 
                                     <NavLink to="/cart" className="border border-green-300 bg-green-50 relative min-w-10 h-full rounded-lg grid place-items-center pointer-events-auto target-apply-cart-animation"
                                         onClick={() => setIsProductVariantOptionsOpen(false)}
