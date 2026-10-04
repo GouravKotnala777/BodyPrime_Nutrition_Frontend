@@ -2,6 +2,10 @@ import { NavLink } from "react-router-dom";
 import { MdKeyboardArrowRight } from "react-icons/md";
 //import { type ProductCardPropTypes } from "../components/ProductCard.component";
 import ImageWithFallback from "../components/ImageWithFallback.component";
+import { getProducts } from "../apis/product.api";
+import type { ProductTypes } from "../utils/types";
+import { useEffect, useState } from "react";
+import ProductCard from "../components/ProductCard.component";
 
 
 const CATEGORY_DATA = [
@@ -44,6 +48,23 @@ const CATEGORY_DATA3 = [
 
 
 function Home() {
+    const [bestSellers, setBestSellers] = useState<ProductTypes[]>([]);
+
+    async function getBestSellersHandler(signal?:AbortSignal) {
+        try {
+            const res = await getProducts(0, "soldCount", "", "", "", signal);
+            if (res.success) {
+                setBestSellers(res.jsonData);
+            }
+        } catch (error) {
+            console.log(error);
+            throw Error(error as string);
+        }
+    };
+
+    useEffect(() => {
+        getBestSellersHandler();
+    }, []);
 
 
     return(
@@ -57,11 +78,11 @@ function Home() {
                 </NavLink>
             </div>
             <div className="">
-                <div className="flex justify-between items-center flex-wrap gap-2">
+                <div className="flex justify-evenly flex-wrap gap-10">
                     {
                         CATEGORY_DATA.map(({img, heading, category, subCategory}) => (
-                            <NavLink key={heading} to={`/searched_products/category/${category}/${subCategory}`} className="text-center full w-20 sm:w-30">
-                                <div className="w-full h-full mx-auto rounded-3xl overflow-hidden">
+                            <NavLink key={heading} to={`/searched_products/category/${category}/${subCategory}`} className="text-center w-30 aspect-square">
+                                <div className="aspect-square w-full mx-auto rounded-3xl overflow-hidden">
                                     <ImageWithFallback src={img} alt={img} fallbackSrc="/placeholders/no_product.jpg" />
                                 </div>
                                 <div className="text-gray-700 text-lg py-1">{heading}</div>
@@ -74,7 +95,7 @@ function Home() {
 
             
             {/* second row */}
-            <div className="text-xl sm:text-2xl flex gap-2 font-semibold items-center my-5">
+            <div className="text-xl sm:text-2xl flex gap-2 font-semibold items-center my-10">
                 <div>Vitamins</div>
                 <NavLink to="/searched_products/category/vitamins/null" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
                     <div>All</div>
@@ -82,11 +103,11 @@ function Home() {
                 </NavLink>
             </div>
             <div className="">
-                <div className="flex justify-between items-center flex-wrap gap-2">
+                <div className="flex justify-evenly flex-wrap gap-20">
                     {
                         CATEGORY_DATA2.map(({img, heading, category, subCategory}) => (
-                            <NavLink key={heading} to={`/searched_products/category/${category}/${subCategory}`} className="text-center full w-20 sm:w-30">
-                                <div className="w-full h-full mx-auto rounded-3xl overflow-hidden">
+                            <NavLink key={heading} to={`/searched_products/category/${category}/${subCategory}`} className="text-center w-30 aspect-square">
+                                <div className="aspect-square w-full mx-auto rounded-3xl overflow-hidden">
                                     <ImageWithFallback src={img} alt={img} fallbackSrc="/placeholders/no_product.jpg" />
                                 </div>
                                 <div className="text-gray-700 text-lg py-1">{heading}</div>
@@ -100,7 +121,7 @@ function Home() {
 
             
             {/* third row */}
-            <div className="text-xl sm:text-2xl flex gap-2 font-semibold items-center my-5">
+            <div className="text-xl sm:text-2xl flex gap-2 font-semibold items-center my-10">
                 <div>Health Foods</div>
                 <NavLink to="/searched_products/category/health food/null" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
                     <div>All</div>
@@ -109,11 +130,11 @@ function Home() {
             </div>
 
             <div className="">
-                <div className="flex justify-between items-center flex-wrap gap-2">
+                <div className="flex justify-evenly flex-wrap gap-20">
                     {
                         CATEGORY_DATA3.map(({img, heading, category, subCategory}) => (
-                            <NavLink key={heading} to={`/searched_products/category/${category}/${subCategory}`} className="text-center full w-20 sm:w-30">
-                                <div className="w-full h-full mx-auto rounded-3xl overflow-hidden">
+                            <NavLink key={heading} to={`/searched_products/category/${category}/${subCategory}`} className="text-center w-30 aspect-square">
+                                <div className="aspect-square w-full mx-auto rounded-3xl overflow-hidden">
                                     <ImageWithFallback src={img} alt={img} fallbackSrc="/placeholders/no_product.jpg" />
                                 </div>
                                 <div className="text-gray-700 text-lg py-1">{heading}</div>
@@ -125,29 +146,31 @@ function Home() {
             </div>
 
 
-            {/* bestseller first row */}
-            <div className="text-xl sm:text-2xl flex gap-2 font-semibold items-center my-5">
+            {/* bestseller row */}
+            <div className="text-xl sm:text-2xl flex gap-2 font-semibold items-center my-10">
                 <div>Bestsellers in Performance Nutrition</div>
-                <NavLink to="####" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
+                <NavLink to="/searched_products/null/null/null" className="text-primary-400 flex items-center gap-2 group hover:opacity-70">
                     <div>All</div>
                     <div className="bg-primary-100 rounded-full w-10 h-10 text-center content-center pl-1"><MdKeyboardArrowRight className="text-3xl group-hover:translate-x-2 transition-transform ease-in-out duration-300" /></div>
                 </NavLink>
             </div>
-            <div>
-                <div className="flex justify-between">
+
+
+            <div className="my-10">
+                <div className="flex flex-col flex-wrap sm:flex-row items-start sm:justify-evenly w-full gap-10">
                     {
-                        //PRODUCTS.map((product, index) => (
-                        //    // give only 6 products
-                        //    <div className="w-[14%]">
-                        //        <ProductCard
-                        //            product={product}
-                        //            isCartMutating={false}
-                        //            isBestseller={index%3===0}
-                        //            isVeg={(index!==1 && index!==3)}
-                        //            off={index===2?25:undefined}
-                        //        />
-                        //    </div>
-                        //))
+                        bestSellers.map((product, index) => (
+                            // give only 6 products
+                            <div className="w-full sm:w-60">
+                                <ProductCard
+                                    product={product}
+                                    isCartMutating={false}
+                                    isBestseller={index%3===0}
+                                    isVeg={(index!==1 && index!==3)}
+                                    off={index===2?25:undefined}
+                                />
+                            </div>
+                        ))
                     }
                 </div>
             </div>
