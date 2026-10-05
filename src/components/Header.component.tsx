@@ -162,8 +162,8 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                         <div className="bg-gray-800 rounded-xs h-0.75 w-full xs:h-1"></div>
                     </div>
                 </div>
-                <NavLink to="/home" className="bg-gray-800 w-12 rounded-full p-1.5 [box-shadow:0px_0px_4px_0.5px_var(--color-primary-400)_inset]">
-                    <img src="/logo.png" alt="/logo.png" className="translate-y-1" />
+                <NavLink to="/home" className="bg-gray-800 w-12 h-12 grid place-items-center rounded-full p-1.5 [box-shadow:0px_0px_4px_0.5px_var(--color-primary-400)_inset]">
+                    <img src="/logo4.png" alt="/logo.png" className="" />
                 </NavLink>
             </div>
 
@@ -529,7 +529,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                     </svg>
                                 </div>
                                 <div className="text-gray-500 text-shadow-xs text-shadow-gray-100">Wishlist</div>
-                                <div className="text-primary-500/80 bg-primary-100/50 w-6 h-6 rounded-full text-center content-center text-sm">{wishlistData.length}</div>
+                                <div className="text-primary-500/80 bg-primary-100/50 w-6 h-6 rounded-full text-center content-center text-sm">{wishlistData.length!==0&&wishlistData[0]._id!=="initialProductId" ? wishlistData.length : 0}</div>
                             </NavLink>
                             <NavLink to="/authenticity" className="flex items-center gap-2 p-3 hover:bg-primary-100"
                                 onClick={() => setIsAccNavigationMenu(false)}
@@ -684,7 +684,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                     </svg>
-                                    <div className="absolute -top-3 -right-3 text-white bg-primary-500 w-5 h-5 rounded-full text-center content-center text-sm">{wishlistData.length}</div>
+                                    <div className="absolute -top-3 -right-3 text-white bg-primary-500 w-5 h-5 rounded-full text-center content-center text-sm">{wishlistData.length!==0&&wishlistData[0]._id!=="initialProductId" ? wishlistData.length : 0}</div>
                                 </div>
                                 <div>Wishlist</div>
                             </NavLink>
