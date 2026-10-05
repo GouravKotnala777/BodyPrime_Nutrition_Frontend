@@ -42,28 +42,28 @@ function Register() {
             <h1 className="text-xl font-bold">Register Page</h1>
             <div className="w-full max-w-xs">
                 <input type="text" name="name" placeholder="Full Name"
-                    className="border border-primary-200 bg-primary-50 text-gray-700 w-full px-3 py-2 rounded-md"
+                    className="border border-primary-200 bg-primary-50 text-gray-700 w-full px-3 py-3 rounded-md"
                     onChange={onChangeHandler}
                 />
             </div>
             <div className="w-full max-w-xs">
                 <input type="text" name="email"
                     placeholder="Email"
-                    className="border border-primary-200 bg-primary-50 text-gray-700 w-full px-3 py-2 rounded-md"
+                    className="border border-primary-200 bg-primary-50 text-gray-700 w-full px-3 py-3 rounded-md"
                     onChange={onChangeHandler}
                 />
             </div>
             <div className="border border-primary-200 bg-primary-50 text-gray-700 w-full max-w-xs flex items-center my-2 rounded-md">
-                <div className="text-gray-500 bg-primary-200 text-nowrap px-3 pr-4 py-2 flex items-center gap-1 rounded-l-md cursor-default">
+                <div className="text-gray-500 bg-primary-200 text-nowrap px-3 pr-4 py-3 flex items-center gap-1 rounded-l-md cursor-default">
                     <img src="/indian_flag.svg" alt="/indian_flag.svg" />
                     <span>+91</span>
                 </div>
                 <input type="text" name="mobile" placeholder="10-digit number"
-                    className="w-full px-3 py-2 rounded-r-md"
+                    className="w-full px-3 py-3 rounded-r-md"
                     onChange={onChangeHandler}
                 />
             </div>
-            <select name="gender" className="border border-primary-200 bg-primary-50 text-gray-700 w-full max-w-xs px-3 py-2 rounded-md" onChange={onChangeHandler}>
+            <select name="gender" className="border border-primary-200 bg-primary-50 text-gray-700 w-full max-w-xs px-3 py-3 rounded-md" onChange={onChangeHandler}>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
@@ -71,12 +71,12 @@ function Register() {
             <div className="border border-primary-200 w-full max-w-xs flex rounded-md overflow-hidden">
                 <input type={isPasswordVisible?"text":"password"} name="password"
                     placeholder="Password"
-                    className="bg-primary-50 text-gray-700 w-full px-3 py-2 rounded-l-md"
+                    className="bg-primary-50 text-gray-700 w-full px-3 py-3 rounded-l-md"
                     onChange={onChangeHandler}
                 />
                 <button
                     disabled={isProcessing}
-                    className="w-10 h-full bg-primary-200 text-primary-800 px-3 py-2 relative hover:opacity-50 transition-all ease-in-out duration-300"
+                    className="h-full bg-primary-200 text-primary-800 px-3 py-3 relative hover:opacity-50 transition-all ease-in-out duration-300"
                     onClick={()=>setIsPasswordVisible(!isPasswordVisible)}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`size-6 -translate-x-1 ${isPasswordVisible?"blur-0 opacity-100 scale-100":"blur-sm opacity-0 scale-50"} transition-all ease-in-out duration-300`}>
@@ -89,7 +89,7 @@ function Register() {
                     </svg>
                 </button>
             </div>
-            <div className="w-full max-w-xs h-10">
+            <div className="w-full max-w-xs">
                 <button
                     disabled={isProcessing}
                     className={`
@@ -105,11 +105,11 @@ function Register() {
                 >
                     {
                         isProcessing ?
-                            <div className="w-max mx-auto">
+                            <div className="w-max mx-auto py-3">
                                 <Spinner color="var(--color-primary-800)" type="secondary" />
                             </div>
                             :
-                            <span>Register</span>
+                            <div className="py-3">Register</div>
                     }
                 </button>
             </div>
@@ -121,13 +121,21 @@ function Register() {
                     <span className="border-[1px] border-gray-200 w-[40%]"></span>
                 </div>
 
-                <div className="flex justify-between">
+                <div className="flex justify-between my-4">
                     <NavLink to={"/user/forget_password"} className="underline underline-offset-3">Forget password</NavLink>
                     <div>
                         <span>already have acc </span>
                         <NavLink to={"/login"} className="underline underline-offset-3">Login</NavLink>
                     </div>
                 </div>
+
+                <div className="flex justify-between items-center">
+                    <span className="border-[1px] border-gray-200 w-[40%]"></span>
+                    <div>Or</div>
+                    <span className="border-[1px] border-gray-200 w-[40%]"></span>
+                </div>
+
+                <NavLink to="/login" className="my-4 underline underline-offset-2">Login by predefiend credential</NavLink>
             </div>
         </section>
     )

@@ -5,19 +5,19 @@ import { NavLink } from "react-router-dom";
 function Footer() {
     
     return(
-        <div className="w-full h-90 bg-primary relative overflow-hidden z-0">
+        <div className="w-full h-100 bg-primary relative overflow-hidden z-0">
             {/* arc stripe */}
-            <div className="w-full h-[40%] rounded-b-[100%] absolute -top-18 left-0 bg-white"></div>
+            <div className="w-full h-[40%] rounded-b-[100%] absolute -top-20 left-0 bg-white"></div>
 
             {/* footer links */}
-            <div className="h-full bg-primary-400">
+            <div className="h-full bg-primary-400 pb-20">
                 <div className="content-center h-full px-4 sm:px-10">
                     <div className="border-b pb-4 flex flex-col sm:flex-row justify-between items-center mt-25 text-white">
 
                         {/* navigations */}
                         <div className="flex gap-10 text-sm sm:text-lg">
                             <div className="group">
-                                <NavLink to="####">Product</NavLink>
+                                <NavLink to="/searched_products/null/null/null">Products</NavLink>
                                 <div className="w-full sm:w-0 h-0.25 sm:h-0.5 bg-white group-hover:w-full transition-all ease-in-out duration-300"></div>
                             </div>
                             <div className="group">
@@ -31,8 +31,8 @@ function Footer() {
                         </div>
 
                         {/* logo */}
-                        <NavLink to="/home" className="bg-gray-800 w-20 rounded-full p-2 [box-shadow:0px_0px_10px_2px_var(--color-primary-400)_inset] hover:[box-shadow:0px_0px_4px_2px_var(--color-primary-400)_inset] transition-all ease-in-out duration-300">
-                            <img src="logo.png" alt="logo.png" className="translate-y-1.5" />
+                        <NavLink to="/home" className="bg-gray-800 w-20 h-20 rounded-full my-4 p-2 grid place-items-center [box-shadow:0px_0px_10px_2px_var(--color-primary-400)_inset] hover:[box-shadow:0px_0px_4px_2px_var(--color-primary-400)_inset] transition-all ease-in-out duration-300">
+                            <img src="/logo4.png" alt="logo.png" className="" />
                         </NavLink>
 
                         {/* socials */}

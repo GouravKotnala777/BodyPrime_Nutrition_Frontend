@@ -200,7 +200,7 @@ function Dashboard() {
         <section className="">
             <div className="flex">
                 {/* left part */}
-                <div className="w-50 relative">
+                <div className="hidden sm:block w-50 relative">
                     <div className="flex flex-col sticky top-20 left-0 w-full py-1">
                         {
                             DASHBOARD_TABS.map(({heading, icon}) => (
@@ -219,7 +219,7 @@ function Dashboard() {
                 </div>
 
                 {/* right part */}
-                <div className="flex-1 p-4">
+                <div className="flex-1 p-4 mb-25">
                     {
                         activeTab === "Dashboard" &&
                             <div className="flex flex-col gap-4">
@@ -633,6 +633,15 @@ function Dashboard() {
                         activeTab === "Analytics" &&
                         <div className="border text-primary-200">
                         </div>
+                    }
+                </div>
+            </div>
+            <div className="border block sm:hidden fixed left-0 bottom-0 w-full h-20">
+                <div className="border border-red-500 flex justify-between w-full h-full">
+                    {
+                        [0,1,2,3,4,5].map((_, index) => (
+                            <button className="border p-2 rounded-md w-full">{index}</button>
+                        ))
                     }
                 </div>
             </div>

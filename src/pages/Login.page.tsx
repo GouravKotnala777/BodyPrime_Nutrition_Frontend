@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 
 function Login() {
     const {setUser} = useUser();
-    const [formData, setFormData] = useState<LoginFormTypes>({email:"", password:""});
+    const [formData, setFormData] = useState<LoginFormTypes>({email:"gouravkotnala777@gmail.com", password:"Gourav123"});
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
@@ -52,17 +52,19 @@ function Login() {
             <div className="w-full max-w-xs">
                 <input type="text" name="email"
                     placeholder="Email"
-                    className="border border-primary-200 bg-primary-50 text-gray-700 w-full px-3 py-2 rounded-md"
+                    value={formData.email}
+                    className="border border-primary-200 bg-primary-50 text-gray-700 w-full px-3 py-3 rounded-md"
                     onChange={onChangeHandler}
                 />
             </div>
             <div className="border border-primary-200 w-full max-w-xs flex rounded-md overflow-hidden">
                 <input type={isPasswordVisible?"text":"password"} name="password"
                     placeholder="Password"
-                    className="bg-primary-50 text-gray-700 w-full px-3 py-2 rounded-l-md"
+                    value={formData.password}
+                    className="bg-primary-50 text-gray-700 w-full px-3 py-3 rounded-l-md"
                     onChange={onChangeHandler}
                 />
-                <button className="w-10 h-full bg-primary-200 text-primary-800 px-3 py-2 relative hover:opacity-50 transition-all ease-in-out duration-300"
+                <button className="w-10 h-full bg-primary-200 text-primary-800 px-3 py-3 relative hover:opacity-50 transition-all ease-in-out duration-300"
                     onClick={()=>setIsPasswordVisible(!isPasswordVisible)}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`size-6 -translate-x-1 ${isPasswordVisible?"blur-0 opacity-100 scale-100":"blur-sm opacity-0 scale-50"} transition-all ease-in-out duration-300`}>
@@ -75,7 +77,7 @@ function Login() {
                     </svg>
                 </button>
             </div>
-            <div className="w-full max-w-xs h-10">
+            <div className="w-full max-w-xs">
                 <button
                     className={`
                         border
@@ -88,11 +90,11 @@ function Login() {
                 >
                     {
                         isProcessing ?
-                            <div className="w-max mx-auto">
+                            <div className="w-max mx-auto py-3">
                                 <Spinner color="var(--color-primary-800)" type="secondary" />
                             </div>
                             :
-                            <span>Login</span>
+                            <div className="py-3">Login</div>
                     }
                 </button>
             </div>
