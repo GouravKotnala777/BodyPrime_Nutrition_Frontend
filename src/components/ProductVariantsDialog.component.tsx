@@ -326,8 +326,8 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                                                         disabled={!!processState}
                                                         onClick={()=>removeFromCartHandler({productID:productVariantOptions.product._id, variant:`${productVariantOptions.product._id}#${selectedFlavorVariant}#${selectedWeightVariant.weight}#${productVariantOptions["variants"][selectedFlavorVariant][selectedWeightVariant.index].price}`, quantity:1})}
                                                     >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
                                                         </svg>
                                                     </button>
                                                     <div className="basis-1/4 h-full text-lg content-center text-gray-700 bg-white">{selectedVariantQty}</div>
@@ -335,8 +335,8 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                                                         disabled={!!processState}
                                                         onClick={onClickAddToCartHandlers}
                                                     >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                                         </svg>
                                                     </button>
                                                 </div>
@@ -378,12 +378,12 @@ function ProductVariantDialog({totalCartItems, addToLocalCart, cartData, isUserA
                                         </div>
                                         
                                         {/* check icon */}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className={`
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={`
                                             absolute top-[50%] left-[50%] -translate-[50%] text-5xl text-gray-700 size-6
                                             ${processState==="success"?"opacity-100 blur-0":"opacity-0 blur-md"}
                                             transition-all ease-in-out duration-300
                                         `}>
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                         </svg>
                                         
                                         {/* exclamation icon */}

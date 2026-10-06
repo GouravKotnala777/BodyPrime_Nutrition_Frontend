@@ -475,7 +475,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                 onClick={() => setIsAccNavigationMenu(false)}
                             >
                                 <div className="w-min mx-auto">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-7 text-primary-500/80 bg-primary-100/50 rounded-md p-1">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                                     </svg>
@@ -747,7 +747,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                     productsBy[selectedTab].map(({heading, fieldName, queryName}, index) => (
                                         <NavLink to={`/searched_products/${fieldName}/${queryName}/null`} key={index} target="_blank" className="flex items-center gap-2 p-3 hover:bg-primary-100 cursor-pointer" onClick={hamburgerSideBarToggleHandler}>
                                             <div>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" strokeLinecap="round" strokeLinejoin="round" className="size-4.5 text-gray-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="size-4.5 text-gray-400">
                                                     <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
                                                     <path d="m3.3 7 8.7 5 8.7-5"/>
                                                     <path d="M12 22V12"/>

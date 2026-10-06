@@ -454,8 +454,8 @@ function SingleProduct() {
                                     //onClick={()=>removeFromCartHandler({productID:productVariantOptions.product._id, variant:`${productVariantOptions.product._id}#${selectedFlavorVariant}#${selectedWeightVariant.weight}#${productVariantOptions["variants"][selectedFlavorVariant][selectedWeightVariant.index].price}`, quantity:1})}
                                     onClick={()=>removeFromCartHandler()}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14" />
                                     </svg>
                                 </button>
                                 <div className="basis-1/4 h-full text-lg content-center text-gray-700 bg-white">{quantityInCart}</div>
@@ -463,8 +463,8 @@ function SingleProduct() {
                                     //disabled={!!processState}
                                     onClick={addToCartHandler}
                                 >
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-5 mx-auto text-primary-700">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                     </svg>
                                 </button>
                             </div>
