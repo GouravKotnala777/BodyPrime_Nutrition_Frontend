@@ -207,7 +207,7 @@ function MyOrders() {
                                                             <div key={`${p.productID}-${i}`} className="flex flex-col justify-between gap-2 w-min h-58 p-2 text-center">
                                                                 <div>
                                                                     <div className="border border-gray-200 w-30 h-30 rounded-md overflow-hidden mx-auto">
-                                                                        <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID?.images?.[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID?.images?.[0]}`} fallbackSrc="/public/placeholders/no_product.jpg" />
+                                                                        <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID?.images?.[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID?.images?.[0]}`} fallbackSrc="/placeholders/no_product.jpg" />
                                                                     </div>
                                                                     <div className="font-semibold text-gray-700 w-30 line-clamp-3">{p.name} {p.quantity===2?"das sad asdsa asdasas adsasa asdas asdasd":""}</div>
                                                                 </div>
