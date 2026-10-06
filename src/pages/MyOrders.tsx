@@ -144,7 +144,7 @@ function MyOrders() {
                                         <div className="w-max flex gap-2">
                                             {
                                                 [0,1].map((_, index) => (
-                                                    <div key={index} className="border border-gray-200 rounded-lg flex flex-col justify-between gap-2 w-min h-58 p-2 text-center">
+                                                    <div key={`${index}-${ind}`} className="border border-gray-200 rounded-lg flex flex-col justify-between gap-2 w-min h-58 p-2 text-center">
                                                         <div className="flex flex-col gap-2">
                                                             <div className="w-30 h-30 mx-auto rounded-md overflow-hidden">
                                                                 <Skeletan />
@@ -197,43 +197,17 @@ function MyOrders() {
                     <>
                         {
                             orders.map(({_id, orderStatus, paymentInfo, priceSummary, products, createdAt, deliveredAt}) => (
-                                <div className="border-b border-dashed border-b-gray-200 my-4">
+                                <div key={_id} className="border-b border-dashed border-b-gray-200 my-4">
                                     <div className={` ${orderStatus === "cancelled"&&"bg-red-200"} flex items-center`}>
                                         <div className="relative w-[50%]">
                                             <div className="w-full overflow-x-scroll scrollbar-thin [box-shadow:0px_0px_5px_0.2px_var(--color-gray-500)_inset]">
                                                 <div className={`w-max flex gap-2 ${orderStatus !== "cancelled"&&"fog-x"}`}>
                                                     {
-                                                        products.map((p) => (
-                                                            <div className="flex flex-col justify-between gap-2 w-min h-58 p-2 text-center">
+                                                        products.map((p, i) => (
+                                                            <div key={`${p.productID}-${i}`} className="flex flex-col justify-between gap-2 w-min h-58 p-2 text-center">
                                                                 <div>
                                                                     <div className="border border-gray-200 w-30 h-30 rounded-md overflow-hidden mx-auto">
-                                                                        <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID.images[0]}`} fallbackSrc="/public/placeholders/no_product.jpg" />
-                                                                    </div>
-                                                                    <div className="font-semibold text-gray-700 w-30 line-clamp-3">{p.name} {p.quantity===2?"das sad asdsa asdasas adsasa asdas asdasd":""}</div>
-                                                                </div>
-                                                                <div><span className="text-gray-700">₹{p.price}</span> <span className="text-gray-500">x {p.quantity}</span></div>
-                                                            </div>
-                                                        ))
-                                                    }
-                                                    {
-                                                        products.map((p) => (
-                                                            <div className="flex flex-col justify-between gap-2 w-min h-58 p-2 text-center">
-                                                                <div>
-                                                                    <div className="border border-gray-200 w-30 h-30 rounded-md overflow-hidden mx-auto">
-                                                                        <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID.images[0]}`} fallbackSrc="/public/placeholders/no_product.jpg" />
-                                                                    </div>
-                                                                    <div className="font-semibold text-gray-700 w-30 line-clamp-3">{p.name} {p.quantity===2?"das sad asdsa asdasas adsasa asdas asdasd":""}</div>
-                                                                </div>
-                                                                <div><span className="text-gray-700">₹{p.price}</span> <span className="text-gray-500">x {p.quantity}</span></div>
-                                                            </div>
-                                                        ))
-                                                    }
-                                                    {
-                                                        products.map((p) => (
-                                                            <div className="flex flex-col justify-between gap-2 w-min h-58 p-2 text-center">
-                                                                <div>
-                                                                    <div className="border border-gray-200 w-30 h-30 rounded-md overflow-hidden mx-auto">
-                                                                        <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID.images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID.images[0]}`} fallbackSrc="/public/placeholders/no_product.jpg" />
+                                                                        <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID?.images?.[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.productID?.images?.[0]}`} fallbackSrc="/public/placeholders/no_product.jpg" />
                                                                     </div>
                                                                     <div className="font-semibold text-gray-700 w-30 line-clamp-3">{p.name} {p.quantity===2?"das sad asdsa asdasas adsasa asdas asdasd":""}</div>
                                                                 </div>
