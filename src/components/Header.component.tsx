@@ -93,12 +93,15 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
         }
         setIsSearching(false);
         const res = await searchProducts(searchQry);
+        console.log(searchQry);
+        console.log(res.jsonData);
+        
         if (res.success) {
             if (
+                res.jsonData.names.length !== 0 ||
+                res.jsonData.categories.length !== 0 ||
                 res.jsonData.brands.length !== 0 ||
-                res.jsonData.brands.length !== 0 ||
-                res.jsonData.brands.length !== 0 ||
-                res.jsonData.brands.length !== 0
+                res.jsonData.tags.length !== 0
             ) {
                 setSearchedData(res.jsonData);
                 setIsSearchFound(true);
@@ -172,9 +175,9 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                 <div className="border border-primary-800 bg-primary-200 placeholder-primary-800 relative rounded-md [box-shadow:0px_0px_4px_1px_white]">
                     {/* search input */}
 
-                    <div className="w-full absolute top-0 left-0 text-gray-700 rounded-md flex overflow-hidden">
-                        <input type="text" placeholder=""
-                            className="w-full px-3 py-3 caret-gray-700 focus:outline-0 -outline-offset-2 outline-gray-700 lg:focus:outline-3"
+                    <div className="w-full sm:absolute top-0 left-0 text-gray-700 rounded-md flex overflow-hidden">
+                        <input type="text" placeholder="Search..."
+                            className="placeholder:text-primary-800/80 sm:placeholder:text-transparent w-full px-3 py-3 caret-gray-700 focus:outline-0 -outline-offset-2 outline-gray-700 lg:focus:outline-3"
                             value={searchQry}
                             style={{
                                 color:searchQry?"#364153":"transparent"
@@ -182,7 +185,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                             onFocus={searchInputFocusHandler}
                             onChange={searchInpOnChnageHandler}
                         />
-                        <button className="px-3 py-3 border-primary-400 cursor-pointer hover:text-primary-500 transition-all ease-in-out duration-300"
+                        <button className="px-3 py-3 hidden sm:block border-primary-400 cursor-pointer hover:text-primary-500 transition-all ease-in-out duration-300"
                             style={{
                                 filter:searchQry?"blur(0px)":"blur(2px)",
                                 transform:searchQry?"scale(1)":"scale(0)"
@@ -201,7 +204,7 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                     </div>
                     
                     {   /* search input placeholder */
-                        <div className="w-full h-full text-nowrap truncate p-3 rounded-md font-mono"
+                        <div className="hidden sm:block w-full h-full text-nowrap truncate p-3 rounded-md font-mono"
                             style={{
                                 color:searchQry?"transparent":"oklch(44.4% 0.177 26.899)"
                                 //opacity:0
@@ -300,16 +303,14 @@ function Header({isHeaderVisible}:HeaderPropTypes) {
                                         <div className="flex flex-col">
                                             {
                                                 searchedData["tags"].map((product, index) => (
-                                                    product.tags.map((t, ind) => (
-                                                        <NavLink to={`/single_product/${product._id}`} key={t+ind+index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md">
-                                                            <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
-                                                            <div>
-                                                                <div className="text-gray-700 font-semibold">{t}</div>
-                                                                <div className="text-sm text-gray-400">{product.name} | {product.price}₹ | {product.description}</div>
-                                                            </div>
-                                                            <div className="text-gray-500 ml-auto"><BsArrowRight /></div>
-                                                        </NavLink>
-                                                    ))
+                                                    <NavLink to={`/single_product/${product._id}`} key={index} className="flex items-center gap-4 p-2 hover:bg-primary-100 rounded-md" onClick={searchInputClearHandler}>
+                                                        <div><BiSearch className="w-5 h-5 text-gray-600" /></div>
+                                                        <div>
+                                                            <div className="text-gray-700 font-semibold">{product.name}</div>
+                                                            <div className="text-sm text-gray-400">{product.name} | {product.brand} | {product.category}</div>
+                                                        </div>
+                                                        <div className="text-gray-500 ml-auto"><BsArrowRight /></div>
+                                                    </NavLink>
                                                 ))
                                             }
                                             <NavLink to={`####`} className="text-sm text-primary-400 my-2 underline underline-offset-2" onClick={searchInputClearHandler}>Show more</NavLink>
