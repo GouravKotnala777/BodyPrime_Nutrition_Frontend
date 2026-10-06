@@ -8,6 +8,8 @@ import { type CategoryTypes, type LocalCartTypes } from "../utils/types";
 import { addToCart } from "../apis/cart.api";
 import { useUser } from "../contexts/UserContext";
 import { converKgtolbs } from "../utils/functions";
+import { useState } from "react";
+import Spinner from "./Spinner.component";
 
 export interface ProductVariantOptionsInterface{
     img:string;
@@ -43,10 +45,12 @@ export interface ProductCardPropTypes{
     off?:number;
 };
 
+let timer = 0;
 function ProductCard({product, isBestseller, off, isVeg}:ProductCardPropTypes) {
     const {isUserAuthenticated} = useUser();
     const {cartData, setCartData, addToLocalCart} = useCart();
     const {_id:productID, name, brand, category, price, rating, numReviews, weight, variants, flavor="unflavored", images} = product;
+    const [targetedProduct, setTargetedProduct] = useState<string>("");
 
     //function isAlreadyWishlisted() {
     //    const isExist = wishlistData.some((p) => p._id === productID);
@@ -83,7 +87,6 @@ function ProductCard({product, isBestseller, off, isVeg}:ProductCardPropTypes) {
 
     async function addToCartHandler({productID, variant}:{productID:string; variant:string;}) {
         try {
-            //setSelectedProduct(productID);
             const res = await addToCart({productID, variant, quantity:1});
     
             if (cartData.length === 0) {
@@ -111,11 +114,19 @@ function ProductCard({product, isBestseller, off, isVeg}:ProductCardPropTypes) {
     };
 
     async function onClickEventHandlers({product}:{product:Pick<LocalCartTypes, "_id"|"brand"|"category"|"flavor"|"images"|"name"|"price"|"weight"|"quantity"|"variant">;}) {
+        setTargetedProduct(product._id);
+        clearTimeout(timer);
         if (isUserAuthenticated()) {
-            addToCartHandler({productID:product._id, variant:product.variant});
+            timer = setTimeout(() => {
+                addToCartHandler({productID:product._id, variant:product.variant});
+                setTargetedProduct("");
+            }, 1000);
         }
         else{
-            addToLocalCart(product);
+            timer = setTimeout(() => {
+                addToLocalCart(product);
+                setTargetedProduct("");
+            }, 1000);
         }        
     };
     return(
@@ -149,8 +160,12 @@ function ProductCard({product, isBestseller, off, isVeg}:ProductCardPropTypes) {
                 <button className="text-primary-400 bg-primary-50 w-10.5 h-10.5 absolute -right-1.25 -bottom-1.25 rounded-md place-items-center text-2xl group gradient-angle-selectable hidden sm:grid z-2"
                     onClick={()=>onClickEventHandlers({product:{_id:productID, brand, category, flavor, images, name, price, weight, quantity:1, variant:`${product._id}#${product.flavor}#${product.weight}#${product.price}`}})}
                 >
-
-                    <IoIosAdd className="stroke-20 group-hover:rotate-180 transition-transform ease-in-out duration-300" />
+                    {
+                        targetedProduct===productID ?
+                            <Spinner color="var(--color-primary-400)" />
+                            :
+                            <IoIosAdd className="stroke-20 group-hover:rotate-180 transition-transform ease-in-out duration-300" />
+                    }
                 </button>
 
                 {/* buy button border for larger devices */}
@@ -193,67 +208,21 @@ function ProductCard({product, isBestseller, off, isVeg}:ProductCardPropTypes) {
                 </div>
                 <div className="text-sm text-gray-400">₹{(Math.floor(price-((price*(off??0))/100)))/100}/100g</div>
                 {/* buy button for small devices */}
-                <button className="border border-green-300 text-green-400 bg-green-50 rounded-md flex justify-center items-center gap-1 p-1 sm:hidden"
+                <button className="border border-green-300 text-green-400 bg-green-50 rounded-md flex justify-center items-center gap-1 px-1 py-1.5 sm:hidden"
                     onClick={()=>onClickEventHandlers({product:{_id:productID, brand, category, flavor, images, name, price, weight, quantity:1, variant:`${product._id}#${product.flavor}#${product.weight}#${product.price}`}})}
                 >
-                    <span className="text-lg">Add</span>
-                    <IoIosAdd className="text-2xl stroke-5" />
+                    {
+                        targetedProduct===productID ?
+                            <Spinner color="var(--color-green-700)" width="24px" />    
+                            :
+                            <>
+                                <span className="text-lg">Add</span>
+                                <IoIosAdd className="text-2xl stroke-5" />
+                            </>
+                    }
                 </button>
             </div>
         </div>
-
-
-        //<div className="border product_card rounded-[8px] flex justify-between h-[55vh] items-center my-2">
-        //    <NavLink to={`/single_product/${productID}`} className="h-[clamp(120px,40vw,310px)] w-[clamp(90px,30vw,260px)] bg-gray-100">
-        //        <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${images[0]}`} fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`} className="h-full w-full" />
-        //    </NavLink>
-        //    <div className="w-[60%] h-full flex flex-col gap-2 py-4 px-2">
-        //        <NavLink to={`/single_product/${productID}`} className="h-[14rem]">
-        //            <div className="text-xl font-semibold h-[6rem]
-        //                overflow-hidden 
-        //                text-ellipsis 
-        //                [display:-webkit-box] 
-        //                [-webkit-line-clamp:3] 
-        //                [-webkit-box-orient:vertical]
-        //            ">{name} {brand} Beginer's {category}, {flavor} No Added Sugar, Faster Muscle Recovery & Lorem ipsum dolor, sit amet consectetur adipisicing elit. Veritatis, veniam.</div>
-        //            <div className="bg-gray-100 w-fit rounded-[4px] text-[0.9rem] px-2 mt-2">{weight} (Pack of 1)</div>
-        //        </NavLink>
-        //        <div>Options: <NavLink to={"/patoni"} className="underline underline-offset-2 text-blue-700">2 flavours</NavLink>, <NavLink to={"/patoni"} className="underline underline-offset-2 text-blue-700">4 sizes</NavLink></div>
-        //        <NavLink to={`/single_product/${productID}`} className="flex flex-col h-full">
-        //            <div className="flex">{rating} <RatingStars rating={rating} outOf={5} /> ({numReviews})</div>
-        //            <div className="text-[2rem] font-semibold flex gap-0.5"><span className="text-[1rem] font-normal">₹</span>{price}</div>
-        //            <div>Free delivery <span className="font-semibold">Thu, 11 Sept</span></div>
-        //            <div className="mt-auto flex flex-col gap-2">
-        //                <button className="w-min"
-        //                    name={buttonNames.addToWishlistHandler}
-        //                    data-set={JSON.stringify({_id:productID, name, brand, category, images, price})}
-        //                    onClick={(e) => {
-        //                        e.preventDefault();
-        //                }}><GoHeartFill
-        //                        className="
-        //                            w-[2rem] h-[2rem] transition-transform duration-300
-        //                            active:scale-115 active:text-pink-300 hover:opacity-70
-        //                        "
-        //                        style={{
-        //                            color:isAlreadyWishlisted()?"#f6339a":"#e1e1e1"
-        //                        }}
-        //                    /></button>
-        //                <button className="bg-yellow-300 rounded-2xl w-full max-w-80 overflow-hidden hover:opacity-70"
-        //                    name={buttonNames.addToCartHandler}
-        //                    data-set={JSON.stringify({_id:productID, name, brand, category, images, price})}
-        //                    onClick={(e) => {
-        //                        e.preventDefault();
-        //                    }}>
-        //                    <span className="only_for_same_btn_level w-full h-full inline-block">
-        //                        <span className="only_for_same_btn_level w-full h-full inline-block py-2">
-        //                            {isCartMutating?<Spinner />:"Add to cart"}
-        //                        </span>
-        //                    </span>
-        //                </button>
-        //            </div>
-        //        </NavLink>
-        //    </div>
-        //</div>
     )
 };
 
