@@ -184,8 +184,8 @@ function AddressFormModal() {
                                             para:(
                                                 <div className="flex flex-col gap-4 p-4 rounded-lg [box-shadow:0px_0px_4px_1px_var(--color-gray-300)_inset]">
                                                     {
-                                                        previousAddresses.map((adrs) => (
-                                                            <button className="border border-gray-200 flex justify-between items-center h-12 text-xs p-2 rounded-md group hover:bg-primary-100"
+                                                        previousAddresses.map((adrs, index) => (
+                                                            <button key={index} className="border border-gray-200 flex justify-between items-center h-12 text-xs p-2 rounded-md group hover:bg-primary-100"
                                                                 onClick={() => onClickAddressBadgesHandler(adrs)}
                                                             >
                                                                 <span className="">{adrs.address1}, {adrs.address2}, {adrs.landmark}, {adrs.city}, {adrs.state}, {adrs.country}, {adrs.pincode}</span>

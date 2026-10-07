@@ -626,18 +626,19 @@ function SingleProduct() {
                     <div className="text-lg my-3">Details</div>
                     <div className="flex flex-col gap-4">
                         <div className="flex rounded-lg overflow-hidden">
-                            {   productVariantOptions === null &&
-                                [{heading:"30g", para:"Protein/Serving"}, {heading:"", para:""}, {heading:"65.2%", para:"Protein"}, {heading:"", para:""}, {heading:"20", para:"Servings"}].map((iter) => (
+                            {   
+                                singleProduct.category === "protein" &&
+                                [{heading:singleProduct.nutritionFacts?.protein, para:"Protein/Serving"}, {heading:"", para:""}, {heading:singleProduct.nutritionFacts?.servingSize, para:"Serving Size"}, {heading:"", para:""}, {heading:singleProduct.nutritionFacts?.servingsPerContainer, para:"Servings"}].map((iter, index) => (
                                     iter.heading?
                                     (
-                                        <div className="bg-gray-100 py-5 text-center shrink-0 basis-1/3">
+                                        <div key={index} className="bg-gray-100 py-5 text-center shrink-0 basis-1/3">
                                             <div className="text-gray-600 text-md sm:text-lg font-semibold">{iter.heading}</div>
                                             <div className="text-gray-500 text-sm sm:text-md">{iter.para}</div>
                                         </div>
                                     )
                                     :
                                     (
-                                        <div className="bg-gray-100 py-4">
+                                        <div key={index} className="bg-gray-100 py-4">
                                             <div className="bg-gray-300 h-full w-0.75 rounded-2xl"></div>
                                         </div>
                                     )
@@ -645,30 +646,32 @@ function SingleProduct() {
                             }
                         </div>
                         <div>
-                            <div className={`relative grid grid-cols-2 gap-4 ${!revealer&&"h-50"} overflow-hidden`}>
+                            <div className={`relative  ${!revealer&&"h-50"} flex flex-col gap-4 overflow-hidden`}>
                                 {
-                                    productVariantOptions === null ?
-                                    [{heading:"Weight", para:"0.91kg"}, {heading:"Flavor", para:"Choco Mint"},{heading:"Deitry Type", para:"Veg"}, {heading:"Serving Size", para:"46g"}, {heading:"From", para:"Powder"}, {heading:"Packaging Type", para:"Jar"}, {heading:"Benefits", para:"Build Muscle, Muscle Recovery"}, {heading:"Gender", para:"Male, Female"}, {heading:"Lifestage", para:"Adults"}, {heading:"Weight", para:"0.91kg"}].map((iter) => (
-
-                                        <>
+                                    
+                                    
+                                    [{heading:"Weight", para:singleProduct.weight}, {heading:"Flavor", para:selectedFlavorVariant},{heading:"Deitry Type", para:singleProduct.dietaryType}, {heading:"Serving Size", para:singleProduct.nutritionFacts?.servingSize}, {heading:"Form", para:"Powder"}, {heading:"Packaging Type", para:"Jar"}, {heading:"Benefits", para:"Build Muscle, Muscle Recovery"}, {heading:"Gender", para:"Male, Female"}, {heading:"Lifestage", para:"Adults"}].map((iter, index) => (
+                                        // skeletans
+                                        productVariantOptions === null ?
+                                        <div key={index}>
                                             <span className="text-gray-400">{iter.heading}</span>
                                             <span className="rounded-md overflow-hidden"><Skeletan /></span>
-                                        </>
-                                        
-                                    ))
-                                    :
-                                    [{heading:"Weight", para:"0.91kg"}, {heading:"Flavor", para:"Choco Mint"},{heading:"Deitry Type", para:"Veg"}, {heading:"Serving Size", para:"46g"}, {heading:"From", para:"Powder"}, {heading:"Packaging Type", para:"Jar"}, {heading:"Benefits", para:"Build Muscle, Muscle Recovery"}, {heading:"Gender", para:"Male, Female"}, {heading:"Lifestage", para:"Adults"}, {heading:"Weight", para:"0.91kg"}].map((iter) => (
-
-                                        <>
-                                            <span className="text-gray-400">{iter.heading}</span>
-                                            <span className="text-gray-600">{iter.para}</span>
-                                        </>
+                                        </div>
+                                        :
+                                        // actual details
+                                        <div key={index} className="flex justify-between">
+                                            <span className="text-gray-400 font-semibold">{iter.heading}</span>
+                                            <span className="text-gray-600 w-[60%]">{iter.para}</span>
+                                        </div>
                                         
                                     ))
                                 }
-                                <div className="h-15 w-full absolute left-0 bottom-0 bg-linear-0 from-gray-50 to-transparent"></div>
+                                {
+                                    !revealer&&
+                                        <div className="h-10 w-full absolute left-0 bottom-0 bg-linear-0 from-gray-50 to-transparent backdrop-blur-[1px]"></div>
+                                }
                             </div>
-                            <div className="w-max my-2 mx-auto">
+                            <div className="w-max mt-8 mb-4 mx-auto">
                                 <button className="border border-gray-200 text-gray-600 text-sm w-max py-1 px-3 rounded-md hover:bg-gray-50" onClick={() => setRevealer(!revealer)}>{revealer?"Hide":"View More"}</button>
                             </div>
                         </div>
@@ -762,202 +765,6 @@ function SingleProduct() {
                 }
             </div>
         </section>
-        //<HandlePageUIWithState isLoading={dataStatus.isLoading} isSuccess={dataStatus.isSuccess} error={dataStatus.error}
-        //    errorChildren={
-        //        <>
-        //            <img src="/page_not_found8.jpg" alt="/page_not_found8.jpg" />
-        //            <p className="text-center">error reason : {dataStatus.error}</p>
-        //            <div className="text-center">
-        //                <button className="bg-[#dc7589] text-white text-[1.2rem] py-2 px-3 font-medium rounded-[8px] my-7" onClick={() => navigate("/home")}>Go Back Home</button>
-        //            </div>
-        //        </>
-        //    }
-        //>
-        //    <section className="max-w-602xl mx-auto">
-        //        <div className="flex justify-between items-center py-2 px-2 bg-[#f4476a24]">
-        //            <div className="flex items-center gap-5">
-        //                <div>
-        //                    <ImageWithFallback
-        //                        src={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct.images}`}
-        //                        alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${singleProduct.images}`}
-        //                        fallbackSrc={`${import.meta.env.VITE_SERVER_URL}/api/v1/public/no_product.png`}
-        //                        className="w-[50px] h-[50px]"
-        //                    />
-        //                </div>
-        //                <div className="flex flex-col">
-        //                    <span className="text-[1rem] font-semibold">{singleProduct.brand}</span>
-        //                    <span className="text-[0.9rem]">{singleProduct.name}</span>
-        //                </div>
-        //            </div>
-        //            <div className="text-[1rem] flex gap-2"><span>{singleProduct.rating}</span> <RatingStars rating={singleProduct.rating||0} outOf={5} /> ({singleProduct.numReviews})</div>
-        //        </div>
-        //        <p className="text-gray-700 px-2 font-semibold">{singleProduct.brand} {singleProduct.name} {singleProduct.category} ({singleProduct.flavor}, {singleProduct.weight}) - {singleProduct.description}</p>
-
-        //        <ImageSliderWithPreview singleProduct={singleProduct} />
-
-        //        {
-        //            isUserAdmin() &&
-        //            <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
-        //                <div className="text-[1.3rem]">
-        //                    <span>Add Images</span><span className="font-semibold">Milk Chocolate</span>
-        //                </div>
-        //                <div className="flex flex-col mt-2 gap-2">
-        //                    <input multiple={true} name="images" type="file" className="px-2 py-3 text-[1.2rem] bg-gray-200 text-gray-600" onChange={onChangeHandler} />
-        //                    <button className="py-3 text-[1.2rem] bg-[#fa3368] text-white rounded-2xl" onClick={upload}>Submit</button>
-        //                </div>
-        //            </div>
-        //        }
-
-        //        <div className="px-2">
-        //            {
-        //                quantityInCart ?
-        //                <div className="border-2 flex justify-between items-center w-60 mx-auto rounded-2xl">
-        //                    <button className="text-3xl font-semibold w-[4rem] h-[3rem]" disabled={isCartMutating} style={{opacity:isCartMutating?0.2:1}} onClick={removeFromCartHandler}>-</button>
-        //                    <span className="text-xl">{isCartMutating?<Spinner width="20px" />:quantityInCart}</span>
-        //                    <button className="text-3xl font-semibold w-[4rem] h-[3rem]" disabled={isCartMutating} style={{opacity:isCartMutating?0.2:1}} onClick={addToCartHandler}>+</button>
-        //                </div>
-        //                :
-        //                <button className="w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100 bg-yellow-300" onClick={addToCartHandler}>{isCartMutating?<Spinner width="20px" />:"Add to cart"}</button>
-
-        //            }
-        //        </div>
-
-
-        //        <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
-        //            <div className="text-[1.3rem]">
-        //                <span>Flavor Name: </span><span className="font-semibold">Milk Chocolate</span>
-        //            </div>
-        //            <div className="flex text-gray-800 text-[1.2rem] gap-6 overflow-scroll py-2">
-        //                {
-        //                    [1,2,3,4,5,6,7].map((num) => (
-        //                        <div key={num} className="border-2 border-gray-700 font-semibold px-3 py-1 rounded-[4px]">Flavor{num}</div>
-        //                    ))
-        //                }
-        //            </div>
-        //        </div>
-        //        <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
-        //            <div className="text-[1.3rem]">
-        //                <span>Size: </span><span className="font-semibold">2Kg (Pack of 1)</span>
-        //            </div>
-        //            <div className="flex text-gray-800 text-[1.2rem] gap-6 overflow-scroll py-2 w-full">
-        //                {
-        //                    ["2Kg (Pack of 1)", "3Kg (Pack of 1)", "4Kg (Pack of 1)", "5Kg (Pack of 1)", "6Kg (Pack of 1)"].map((flav, index) => (
-        //                        <div key={index} className="border-2 border-gray-700 font-semibold px-3 py-1 rounded-[4px]">{flav}</div>
-        //                    ))
-        //                }
-        //            </div>
-        //        </div>
-        //        <div className="px-2">
-        //            <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100">See Similar Items</button>
-        //        </div>
-        //        <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
-        //            <div className="flex text-5xl justify-around">
-        //                {
-        //                    Array.from({length:5}).map((_,num) => {
-        //                        if ((rating > 0) && (rating-num > 0)) {
-        //                            return <span className="text-yellow-400" key={num} onClick={() => {
-        //                                if (rating === num+1) {
-        //                                    setRating(0);
-        //                                }
-        //                                else{
-        //                                    setRating(num+1);
-        //                                }
-        //                            }}><BiSolidStar /></span>
-        //                        }else{
-        //                            return <span className="text-yellow-400" key={num} onClick={() => {
-        //                                if (rating === num+1) {
-        //                                    setRating(0);
-        //                                }
-        //                                else{
-        //                                    setRating(num+1);
-        //                                }
-        //                            }}><BiStar /></span>
-        //                        }
-        //                    })
-        //                }
-        //            </div>
-        //            <div className="mt-4 rounded-[8px]">
-        //                <textarea rows={5} className="border border-primary-200 w-full p-2 rounded-sm" placeholder="Comment...(optional)" onChange={(e) => setComment(e.target.value)}></textarea>
-        //            </div>
-        //            <div className="mt-4">
-        //                <button className="bg-yellow-300 w-full h-[3rem] text-[1.2rem] rounded-2xl active:bg-gray-100" disabled={isReviewMutating} onClick={createReviewHandler}>{isReviewMutating?<Spinner width="20px" />:"Submit"}</button>
-        //            </div>
-        //        </div>
-
-
-                
-        //        <ProductsSlider heading="Other variants" products={variantProducts} />
-                
-        //        <ProductsSlider heading={`Other products of ${singleProduct.brand}`} products={sameBrandProducts} />
-               
-        //        <ProductsSlider heading={`${capitalizeString(singleProduct.category)} from other brands`} products={sameCategoryProducts} />
-
-
-
-
-
-        //        <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
-        //            <div className="text-[1.3rem]">
-        //                <span>Measurement</span><span className="font-semibold"></span>
-        //            </div>
-        //            <div className="text-[1.2rem] gap-6 overflow-scroll w-full">
-        //                <div className="flex justify-between items-center border-b-[1px] border-b-gray-600">
-        //                    <span className="bg-gray-100 p-4 w-[40%]">Item Weight</span>
-        //                    <span>4 Pounds</span>
-        //                </div>
-        //                <div className="flex justify-between items-center border-b-[1px] border-b-gray-600">
-        //                    <span className="bg-gray-100 p-4 w-[40%]">No of Items</span>
-        //                    <span>1</span>
-        //                </div>
-        //                <div className="flex justify-between items-center border-b-[1px] border-b-gray-600">
-        //                    <span className="bg-gray-100 p-4 w-[40%]">Age Range (Description)</span>
-        //                    <span>Adult</span>
-        //                </div>
-        //                <div className="flex justify-between items-center border-b-[1px] border-b-gray-600">
-        //                    <span className="bg-gray-100 p-4 w-[40%]">Net Content Volume</span>
-        //                    <span>9.41 Litres</span>
-        //                </div>
-        //            </div>
-        //        </div>
-        //        <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
-        //            <div className="text-[1.3rem] font-semibold">
-        //                <span>Safety and product resources</span><span className="font-semibold"></span>
-        //            </div>
-        //            <div className="text-[1rem] w-full">
-        //                <p>As the Food and Drug Administration (FDA) advises, dietary supplements can support your overall health but may also have powerful effects on the body. It’s important to read labels carefully, exercise caution, and consult your healthcare professional before taking any supplement. Side effects are more likely if supplements are taken in high doses, as substitutes for prescribed medications, or in combination with multiple supplements. If you experience severe side effects, discontinue use immediately and seek medical attention.</p>
-        //            </div>
-        //        </div>
-        //        <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
-        //            <div className="text-[1.3rem] font-semibold">
-        //                <span>LEGAL DESCLAIMER</span><span className="font-semibold"></span>
-        //            </div>
-        //            <div className="text-[1rem] w-full">
-        //                <p>Some states prohibit the sale of products intended for weight loss or muscle building to individuals under age 18. Check your local laws prior to purchase.</p>
-        //            </div>
-        //        </div>
-        //        <div className="border-[1px] border-gray-100 my-2 px-2 py-4">
-        //            <div className="text-[1.3rem] font-semibold">
-        //                <span>Top Reviews</span><span className="font-semibold"></span>
-        //            </div>
-        //            <div className="text-[1rem] w-full flex flex-col gap-2">
-        //                {
-        //                    allReviews.map(({productID, userID, ...review}) => (
-        //                        <ReviewCard
-        //                            key={productID.name}
-        //                            productID={productID}
-        //                            userID={userID}
-        //                            rating={review.rating}
-        //                            comment={review.comment}
-        //                            isVerifiedPurchase={review.isVerifiedPurchase}
-        //                            createdAt={review.createdAt}
-        //                            updatedAt={review.updatedAt}
-        //                        />
-        //                    ))
-        //                }
-        //            </div>
-        //        </div>
-        //    </section>
-        //</HandlePageUIWithState>
     );
 };
 

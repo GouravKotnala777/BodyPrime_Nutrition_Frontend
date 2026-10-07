@@ -161,7 +161,7 @@ function Home() {
                     {
                         bestSellers.map((product, index) => (
                             // give only 6 products
-                            <div className="w-full sm:w-60">
+                            <div key={product._id} className="w-full sm:w-60">
                                 <ProductCard
                                     product={product}
                                     isCartMutating={false}

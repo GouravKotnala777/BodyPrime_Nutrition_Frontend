@@ -203,8 +203,8 @@ function Dashboard() {
                 <div className="hidden sm:block w-50 relative">
                     <div className="flex flex-col sticky top-20 left-0 w-full py-1">
                         {
-                            DASHBOARD_TABS.map(({heading, icon}) => (
-                                <div className={`
+                            DASHBOARD_TABS.map(({heading, icon}, index) => (
+                                <div key={index} className={`
                                     border-l-4 text-gray-600 font-semibold flex gap-4 py-4 px-8 cursor-pointer rounded-r-md transition-all ease-in-out duration-100
                                     ${activeTab === heading ? "bg-primary-200 border-primary-500":"bg-white border-transparent hover:bg-primary-100/80"}
                                 `}
@@ -314,8 +314,8 @@ function Dashboard() {
                                                     onChange={(e) => setSelectedCategory(e.target.value as CategoryTypes)}
                                                 >
                                                     {
-                                                        FILTER_CATEGORIES_OBJECT.map(i => i.queryName).map((iter) => (
-                                                            <option value={iter}>{capitalizeString(iter)}</option>
+                                                        FILTER_CATEGORIES_OBJECT.map(i => i.queryName).map((iter, index) => (
+                                                            <option key={index} value={iter}>{capitalizeString(iter)}</option>
                                                         ))
                                                     }
                                                 </select>
@@ -496,8 +496,8 @@ function Dashboard() {
                                         </div>
                                         <div className="flex flex-wrap justify-around">
                                             {
-                                                orderSummaryData?.data?.map(({_id, count}) => (
-                                                    <div className="flex flex-col items-center gap-4">
+                                                orderSummaryData?.data?.map(({_id, count}, index) => (
+                                                    <div key={index} className="flex flex-col items-center gap-4">
                                                         <div className="w-30 h-30 grid place-items-center rounded-full"
                                                             style={{
                                                                 background:`conic-gradient(at center, var(--color-primary-400) 0% ${Math.round((count/orderSummaryData.totalOrders)*100)}%, var(--color-primary-100) ${Math.round((count/orderSummaryData.totalOrders)*100)}% 100%)`
@@ -524,8 +524,8 @@ function Dashboard() {
                                         </div>
                                         <div>
                                             {
-                                                bestSellers.map(({name, brand, category, subCategory, flavor, weight, images, soldCount}) => (
-                                                    <div className="flex items-center gap-2 p-2">
+                                                bestSellers.map(({name, brand, category, subCategory, flavor, weight, images, soldCount}, index) => (
+                                                    <div key={index} className="flex items-center gap-2 p-2">
                                                         <div className="w-12 h-12 grid place-items-center rounded-full overflow-hidden">
                                                             <ImageWithFallback src={`${import.meta.env.VITE_SERVER_URL}/api/v1${images[0]}`} alt={`${import.meta.env.VITE_SERVER_URL}/api/v1${images[0]}`} fallbackSrc="/placeholders/no_product.jpg" />
                                                         </div>
@@ -640,7 +640,7 @@ function Dashboard() {
                 <div className="border border-red-500 flex justify-between w-full h-full">
                     {
                         [0,1,2,3,4,5].map((_, index) => (
-                            <button className="border p-2 rounded-md w-full">{index}</button>
+                            <button key={index} className="border p-2 rounded-md w-full">{index}</button>
                         ))
                     }
                 </div>

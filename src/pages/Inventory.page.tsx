@@ -233,8 +233,8 @@ function Inventory() {
                         <select name="subCategory" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeHandler}>
                             <option value="null" disabled>--select subCategory--</option>
                             {
-                                FILTER_SUB_CATEGORIES_OBJECT[createProductForm.category].map((iter) => (
-                                    <option value={iter.subCategory}>{iter.heading}</option>
+                                FILTER_SUB_CATEGORIES_OBJECT[createProductForm.category].map((iter, index) => (
+                                    <option key={index} value={iter.subCategory}>{iter.heading}</option>
                                     
                                 ))
                             }
@@ -252,8 +252,8 @@ function Inventory() {
                         <select name="weight" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeHandler}>
                             <option value="null" disabled>--select weight--</option>
                             {
-                                ["50g", "100g", "200g", "500g", "1kg", "2kg", "5kg"].map((iter) => (
-                                    <option value={iter}>{iter}</option>
+                                ["50g", "100g", "200g", "500g", "1kg", "2kg", "5kg"].map((iter, index) => (
+                                    <option key={index} value={iter}>{iter}</option>
                                 ))
                             }
                         </select>
@@ -307,8 +307,8 @@ function Inventory() {
                     <select name="subCategory" defaultValue={selectedProduct?.subCategory}  className="px-5 py-2 text-gray-500" onChange={onChangeUpdateHandler}>
                         <option value="null" disabled>--select subCategory--</option>
                         {
-                            FILTER_SUB_CATEGORIES_OBJECT[createProductForm.category].map((iter) => (
-                                <option value={iter.subCategory}>{iter.heading}</option>
+                            FILTER_SUB_CATEGORIES_OBJECT[createProductForm.category].map((iter, index) => (
+                                <option key={index} value={iter.subCategory}>{iter.heading}</option>
                                 
                             ))
                         }
@@ -326,8 +326,8 @@ function Inventory() {
                     <select name="weight" defaultValue="null" className="px-5 py-2 text-gray-500" onChange={onChangeUpdateHandler}>
                         <option value="null" disabled>--select weight--</option>
                         {
-                            ["50g", "100g", "200g", "500g", "1kg", "2kg", "5kg"].map((iter) => (
-                                <option value={iter}>{iter}</option>
+                            ["50g", "100g", "200g", "500g", "1kg", "2kg", "5kg"].map((iter, index) => (
+                                <option key={index} value={iter}>{iter}</option>
                             ))
                         }
                     </select>
