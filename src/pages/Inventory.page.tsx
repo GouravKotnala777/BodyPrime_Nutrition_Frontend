@@ -8,6 +8,7 @@ import HandlePageUIWithState from "../components/HandlePageUIWithState";
 import { ButtonPrimary } from "../components/Button.component";
 import ImageWithFallback from "../components/ImageWithFallback.component";
 import { FILTER_CATEGORIES_OBJECT, FILTER_SUB_CATEGORIES_OBJECT } from "../utils/constants";
+import {motion} from "motion/react";
 
 type InventoryTabTypes = "all"|"add"|"update"|"addVariant";
 
@@ -181,11 +182,27 @@ function Inventory() {
                     </div>
                     <div className="flex flex-wrap justify-around gap-4">
                         {
-                            products.map((p) => (
-                                <div key={p._id} className="border border-gray-200 w-30 h-46 rounded-lg overflow-hidden" onClick={() => {
-                                    setSelectedProduct(p);
-                                    setTab("update");
-                                }}>
+                            products.map((p, index) => (
+                                <motion.div key={p._id}
+                                    className="border border-gray-200 w-30 h-46 rounded-lg overflow-hidden"
+                                    initial={{
+                                        opacity: 0,
+                                        y: 25,
+                                    }}
+                                    animate={{
+                                        opacity: 1,
+                                        y: 0,
+                                    }}
+                                    transition={{
+                                        duration: 0.35,
+                                        delay: 0.1*(index%5),
+                                        ease: "easeOut",
+                                    }}
+                                    onClick={() => {
+                                        setSelectedProduct(p);
+                                        setTab("update");
+                                    }}
+                                >
                                     <div className="h-[85%]">
                                         <ImageWithFallback
                                             src={`${import.meta.env.VITE_SERVER_URL}/api/v1${p.images[0]}`}
@@ -196,7 +213,7 @@ function Inventory() {
                                     <div className="text-gray-600 text-center">
                                         <h3>₹ {p.price}/-</h3>
                                     </div>
-                                </div>
+                                </motion.div>
                             ))
                         }
                         <div className="w-full h-fit text-xl text-center font-semibold mt-8 mb-4">
