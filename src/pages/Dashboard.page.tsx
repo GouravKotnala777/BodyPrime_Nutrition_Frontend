@@ -219,7 +219,7 @@ function Dashboard() {
                 </div>
 
                 {/* right part */}
-                <div className="flex-1 p-4 mb-25">
+                <div className="flex-1 p-4 mb-25 max-w-screen overflow-x-scroll">
                     {
                         activeTab === "Dashboard" &&
                             <div className="flex flex-col gap-4">
@@ -591,25 +591,25 @@ function Dashboard() {
 
                     {
                         activeTab === "Orders" &&
-                            <div>
-                                <div className="">
-                                    <div className="text-lg text-gray-700 font-semibold flex gap-10 py-2 px-4">
-                                        <div className="w-40 ">Order ID</div>
-                                        <div className="w-70 ">Customer Name</div>
-                                        <div className="w-30 ">Payment</div>
-                                        <div className="w-40 ">Location</div>
-                                        <div className="w-20 ">Status</div>
-                                        <div className="w-25 ">Contact</div>
+                            <div className="">
+                                <div className="w-250">
+                                    <div className="text-lg text-gray-700 font-semibold grid grid-cols-6 py-2 px-4">
+                                        <div className="">Order ID</div>
+                                        <div className="">Customer Name</div>
+                                        <div className="">Payment</div>
+                                        <div className="">Location</div>
+                                        <div className="">Status</div>
+                                        <div className="">Contact</div>
                                     </div>
 
                                     {
                                         ORDER_DETAILS.map(({orderID, customerName, mop, location, status, contact}) => (
-                                            <div className="border text-gray-600 flex gap-10 py-3 hover:bg-primary-50 border-transparent hover:border-primary-200 hover:text-primary-400 transition-all ease-in-out duration-100 px-4 rounded-md">
-                                                <div className="w-40">{orderID}</div>
-                                                <div className="w-70">{customerName}</div>
-                                                <div className="w-30">{mop}</div>
-                                                <div className="w-40">{location}</div>
-                                                <div className="flex items-center gap-1 w-25">
+                                            <div className="border text-gray-600 grid grid-cols-6 py-3 hover:bg-primary-50 border-transparent hover:border-primary-200 hover:text-primary-400 transition-all ease-in-out duration-100 px-4 rounded-md">
+                                                <div className="">{orderID}</div>
+                                                <div className="">{customerName}</div>
+                                                <div className="">{mop}</div>
+                                                <div className="">{location}</div>
+                                                <div className="flex items-center gap-1">
                                                     <div className={`size-1.5 rounded-full
                                                         ${status === "Pending" && "bg-green-500"}
                                                         ${status === "Delivered" && "bg-sky-500"}
@@ -621,7 +621,7 @@ function Dashboard() {
                                                         ${status === "Cancelled" && "text-red-500"}
                                                     `}>{status}</div>
                                                 </div>
-                                                <div className="w-25">{contact}</div>
+                                                <div className="">{contact}</div>
                                             </div>
                                         ))
                                     }
@@ -636,11 +636,23 @@ function Dashboard() {
                     }
                 </div>
             </div>
-            <div className="border block sm:hidden fixed left-0 bottom-0 w-full h-20">
-                <div className="border border-red-500 flex justify-between w-full h-full">
+
+            {/* dashboard navigation tabs for small devices only */}
+            <div className="block sm:hidden fixed left-0 bottom-0 w-screen h-20 z-2 [box-shadow:0px_0px_10px_2px_var(--color-gray-300)]">
+                <div className="bg-white flex justify-between w-full h-full">
                     {
-                        [0,1,2,3,4,5].map((_, index) => (
-                            <button key={index} className="border p-2 rounded-md w-full">{index}</button>
+                        DASHBOARD_TABS.map(({heading, icon}, index) => (
+                            // don't add logout tab for small devices
+                            heading !== "Logout"&&
+                            <button key={index} className={`
+                                border-b-4 text-gray-600 font-semibold flex flex-col gap-1 p-2 cursor-pointer rounded-t-lg transition-all ease-in-out duration-100
+                                ${activeTab === heading ? "bg-primary-200 border-primary-500":"bg-white border-transparent hover:bg-primary-100/80"}
+                            `}
+                            onClick={() => setActiveTab(heading)}    
+                        >
+                                <span>{icon}</span>
+                                <span className="text-sm">{heading}</span>
+                            </button>
                         ))
                     }
                 </div>
